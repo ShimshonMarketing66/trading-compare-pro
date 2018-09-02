@@ -1,0 +1,7 @@
+{
+  "name": "tradingComparePro",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "ionic-angular"
+}
