@@ -3,6 +3,7 @@ import { IonicPageModule } from 'ionic-angular';
 import { PipesModule } from '../../../pipes/pipes.module';
 import { ComponentsModule } from '../../../components/components.module';
 import { ItemDetailsStockPage } from './item-details-stock';
+import { AmChartsModule } from '@amcharts/amcharts3-angular';
 
 
 @NgModule({
@@ -12,6 +13,7 @@ import { ItemDetailsStockPage } from './item-details-stock';
   imports: [
     IonicPageModule.forChild(ItemDetailsStockPage),
     PipesModule,
+    AmChartsModule,
     ComponentsModule
   ],
 })

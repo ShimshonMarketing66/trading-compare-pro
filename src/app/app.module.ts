@@ -4,6 +4,7 @@ import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 import { Keyboard } from '@ionic-native/keyboard';
+import { AmChartsModule } from "@amcharts/amcharts3-angular";
 
 import { MyApp } from './app.component';
 import { StockProvider } from '../providers/stock/stock';
@@ -41,7 +42,8 @@ const firebaseConfig = {
     BrowserAnimationsModule,
     BrowserModule,
     HttpClientModule,
-    HttpModule
+    HttpModule,
+    AmChartsModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
