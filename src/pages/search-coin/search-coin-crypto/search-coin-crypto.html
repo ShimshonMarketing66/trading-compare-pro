@@ -1,0 +1,66 @@
+<ion-header>
+  <ion-navbar>
+    <ion-buttons left>
+      <button ion-button icon-only (click)="viewCtrl.dismiss()" class="my-style-for-modal">
+        <ion-icon name="arrow-back"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-searchbar #searchbar (ionInput)="search()" [(ngModel)]="myInput" (window:keydown)="onKey($event)"></ion-searchbar>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content>
+  <ion-grid style="background: #373737;">
+    <ion-row>
+      <ion-col class="col123" style="padding-left: 3px;">
+        Name
+      </ion-col>
+      <ion-col class="col123" style="text-align: end;padding-right: 3px;">
+        Price
+      </ion-col>
+      <!-- <ion-col class="col123" style="text-align: center;">
+        high24
+      </ion-col> -->
+      <!-- <ion-col class="col123" style="text-align: end;padding-right: 3px;">
+        low24
+      </ion-col> -->
+    </ion-row>
+  </ion-grid>
+
+  <ion-grid>
+    <ion-row style="border-bottom: 1px solid #4a4a4a;height: 40px;" *ngFor="let element of array;let i = index;" (tap)="goToDetails(i)">
+      <ion-col style="margin:auto;text-align: left;overflow: hidden;
+      white-space: nowrap; /* Don't forget this one */
+      text-overflow: ellipsis;">
+        <span style="padding-left: 3px;">
+          <img style="border-radius: 50%;vertical-align:middle" src="{{element.logo}}" height="30" width="30">
+        <!-- <object [data]="getImgStock(i)" type="image/png" style="border-radius: 50%;vertical-align:middle;height:30px ;width:30px;">
+            <img src="assets/imgs/flags/flag general.png" style="border-radius: 50%;vertical-align:middle;height:30px ;width:30px;" alt="example">
+          </object> -->
+        </span>
+        <span style="font-size:14px;font-weight: 700;white-space: nowrap;">
+          {{element.name}}
+        </span>
+      </ion-col>
+      <!-- <ion-col style="text-align: center;margin:auto;">
+        <div style="font-size:14px;">
+          {{element.price}} {{element.currency|currencySymbol}}
+        </div>
+        <div style="font-size:12px;">
+          {{element.day_high}} ({{element.change_pct}}%)
+        </div>
+      </ion-col> -->
+      <!-- <ion-col style="text-align: center;margin:auto;font-size:16px;">
+        <div>
+          {{element.day_high}}
+        </div>
+      </ion-col> -->
+      <ion-col col-3 style="text-align: end;padding-right: 3px;margin:auto;font-size:11px;">
+        <div>
+          {{element.price}} {{element.toSymbol|currencySymbol}}
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

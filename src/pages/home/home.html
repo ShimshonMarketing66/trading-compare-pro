@@ -1,14 +1,93 @@
 <ion-header>
+
   <ion-navbar>
-    <ion-title>
-      Ionic Blank
-    </ion-title>
+    <ion-title>Home</ion-title>
+    <ion-buttons end>
+      <button class="button-comment-header" (click)="openComments()">
+        <ion-icon style="color: white;" name="ios-chatbubbles-outline"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
+
+
 </ion-header>
 
-<ion-content padding>
-  The world is your oyster.
-  <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will be your guide.
-  </p>
+
+<ion-content>
+
+  <div class="sub-header">
+    Leaderboard
+  </div>
+
+  <ion-grid class="title-line">
+    <ion-row>
+      <ion-col col-1>
+
+      </ion-col>
+      <ion-col col-2>
+
+      </ion-col>
+      <ion-col>
+        Name
+      </ion-col>
+      <ion-col style="text-align: right;padding-right: 10px;">
+        Profit
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <div [ngStyle]="AllLeaderboard && {'overflow-y': 'unset','height':'unset'} || !AllLeaderboard && {'overflow-y': 'hidden','height': '35%'}">
+    <ion-grid style="padding-top: 10px;">
+      <ion-row *ngFor="let user of users;let i = index;" style="padding: 6px;">
+        <ion-col col-1 style="text-align: center;margin:auto;">
+          {{i+1}}
+        </ion-col>
+        <ion-col col-2>
+          <img style="max-height: 30px;" src="assets/imgs/flags/{{user.flag}}.png">
+        </ion-col>
+        <ion-col style="margin:auto;">
+          {{user.name}}
+        </ion-col>
+        <ion-col style="text-align: right;padding-right: 10px;margin:auto;">
+          {{user.profit}}
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+  <button *ngIf="!AllLeaderboard" ion-button full style="height: 27px;background: #12a6f9;" (click)="seeAllLeaderboard()">See All</button>
+
+
+  <div class="sub-header">
+    Social Feed
+  </div>
+
+
+  <ion-grid style="padding-bottom:10px;">
+    <ion-row>
+      <ion-col style="font-size: 20px;text-align: center;font-weight: 900;color:#707070;" (click)="changeSocialFeedSegment('Following')" [ngStyle]="selectedSegmentSocialFeeds == 'Following' && {'border-bottom': '1px solid #12a6f9'}">
+        Following
+      </ion-col>
+
+      <ion-col style="font-size: 20px;text-align: center;font-weight: 900;color:#707070;" (click)="changeSocialFeedSegment('Newest')" [ngStyle]="selectedSegmentSocialFeeds == 'Newest' && {'border-bottom': '1px solid #12a6f9'}">
+        Newest
+      </ion-col>
+
+      <ion-col style="font-size: 20px;text-align: center;font-weight: 900;color:#707070;" (click)="changeSocialFeedSegment('Popular')" [ngStyle]="selectedSegmentSocialFeeds == 'Popular' && {'border-bottom': '1px solid #12a6f9'}">
+        Popular
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <div *ngIf="selectedSegmentSocialFeeds == 'Following'" style="text-align: center;color:#707070;">
+      Looks like you aren’t Following any traders. Go to POPULAR or NEWEST tabs to discover new traders!
+  </div>
+
+  <div *ngIf="selectedSegmentSocialFeeds == 'Newest'" style="text-align: center;color:#707070;">
+      Looks like you aren’t Newest any traders. Go to POPULAR or NEWEST tabs to discover new traders!
+  </div>
+
+  <div *ngIf="selectedSegmentSocialFeeds == 'Popular'" style="text-align: center;color:#707070;">
+      Looks like you aren’t Popular any traders. Go to POPULAR or NEWEST tabs to discover new traders!
+  </div>
+
 </ion-content>

@@ -1,0 +1,36 @@
+page-item-details-forex{
+    .toolbar-title {
+        text-overflow: unset;
+        white-space: unset;
+        font-size:18px;
+     }
+
+           
+    .container {
+        border-bottom: 1px solid #4a4a4a;
+        padding-bottom: 2px;
+        border-top: 1px solid #4a4a4a;
+        padding-top: 2px;
+        width: 100%;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .th-segments {
+        font-size: 16px;
+		padding: .5em 1em;
+    }
+    ::-webkit-scrollbar { 
+        display: none; 
+    }
+
+    :host {
+  display: block;
+  overflow: hidden; /* Hide everything that doesn't fit compoennt */
+}
+
+ion-slides {
+    height: auto;
+  
+  }
+}

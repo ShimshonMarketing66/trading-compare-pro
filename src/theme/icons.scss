@@ -1,0 +1,86 @@
+@font-face {
+  font-family: 'icomoon';
+  src:  url('../assets/fonts/icomoon.eot?omkezx');
+  src:  url('../assets/fonts/icomoon.eot?omkezx#iefix') format('embedded-opentype'),
+    url('../assets/fonts/icomoon.ttf?omkezx') format('truetype'),
+    url('../assets/fonts/icomoon.woff?omkezx') format('woff'),
+    url('../assets/fonts/icomoon.svg?omkezx#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+@mixin makeIcon($arg, $val) {
+  .#{$arg}:before ,
+  .ion-ios-#{$arg}:before ,
+  .ion-ios-#{$arg}-outline:before ,
+  .ion-md-#{$arg}:before ,
+  .ion-md-#{$arg}-outline:before {
+  content: $val;
+  font-size:12px;
+  }
+  }
+
+  .star-disable:before ,
+.ion-ios-star-disable:before ,
+.ion-ios-star-disable-outline:before ,
+.ion-md-star-disable:before ,
+.ion-md-star-disable-outline:before  {
+  content: '\f006';
+  font-size: 18px;
+}
+
+.star-active:before ,
+.ion-ios-star-active:before ,
+.ion-ios-star-active-outline:before ,
+.ion-md-star-active:before ,
+.ion-md-star-active-outline:before  {
+  content: '\f005';
+  font-size: 18px;
+  color: #12a6f9;
+}
+  
+  @include makeIcon(double-sort,'\e900');
+  // @include makeIcon(star-active,'\f005');
+  // @include makeIcon(star-disable,'\f006');
+
+// @include makeIcon(paint-format,'\e90c');
+// @include makeIcon(music,'\f001');
+// @include makeIcon(check,'\f00c');
+// @include makeIcon(cog,'\f013');
+// @include makeIcon(gear,'\f013');
+// @include makeIcon(pencil,'\f040');
+// @include makeIcon(heck-circle-o,'\f05d');
+// @include makeIcon(arrow-left,'\f060');
+// @include makeIcon(comment,'\f075');
+// @include makeIcon(unlock,'\f09c');
+// @include makeIcon(arrow-circle-up,'\f0aa');
+// @include makeIcon(users,'\f0c0');
+// @include makeIcon(money,'\f0d6');
+// @include makeIcon(group,'\f0c0');
+// @include makeIcon(caret-down,'\f0d7');
+// @include makeIcon(caret-up,'\f0d8');
+// @include makeIcon(caret-left,'\f0d9');
+// @include makeIcon(caret-right,'\f0da');
+// @include makeIcon(bell,'\f0f3');
+// @include makeIcon(thumbs-up1,'\f164');
+// @include makeIcon(thumbs-down2,'\f165');
+// @include makeIcon(google,'\f1a0');
+// @include makeIcon(trash,'\f1f8');
+// @include makeIcon(google2,'\ea88');
+// @include makeIcon(google3,'\ea8a');
+// @include makeIcon(facebook,'\ea90');
+// @include makeIcon(rss,'\ea9b');

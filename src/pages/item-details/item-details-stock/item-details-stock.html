@@ -1,0 +1,163 @@
+<ion-header (click)="getImgStock22()">
+
+  <ion-navbar>
+    <ion-title>{{item.name}}</ion-title>
+    <ion-buttons end> <img alt="logo" height="40" width="40" style="border-radius: 50px;" src="assets/imgs/flags/{{item.country}}.png">
+    </ion-buttons>
+
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+  <ion-grid style="padding:16px;">
+    <ion-row>
+      <ion-col col-3>
+        <img style="width: 60px;height: 60px;border-radius: 50px;" [src]="item.logo" (error)="errorHandler($event)">
+      </ion-col>
+      <ion-col>
+        <div>
+          <span style="font-size:24px;">
+            {{item.price|tofixe}} {{item.currency|currencySymbol}}
+
+          </span>
+          &nbsp;
+          <span style="font-size:16px;" [ngStyle]="item.change_pct < 0  && {'color': '#ee6071'}  || item.change_pct > 0  && {'color': '#00d68b'}">
+            {{item.change_pct|tofixe}} %
+          </span>
+        </div>
+        <div style="position: absolute;bottom: 10px;">
+          <span style="font-size:14px;">
+            High : {{item.day_high|tofixe}}
+          </span>
+          &nbsp;
+          &nbsp;
+          <span style="font-size:14px;">
+            Low : {{item.day_low|tofixe}}
+          </span>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <div style="display: inline-flex;padding:16px;width: 100%;padding-top: unset;">
+    <div style="width: 77px;height: 30px;border: 1px solid;text-align: center;border-radius: 2px;font-size: 14px;padding-top: 6px;margin-right: 12px;color: #91c353">
+      BULLISH
+    </div>
+    <div style="width: 77px;height: 30px;border: 1px solid;text-align: center;border-radius: 2px;font-size: 14px;padding-top: 6px;color: #e34c47;margin-right: 12px;">
+      BEARISH
+    </div>
+
+    <div style="width: 40%;">
+      <div style="font-size: 8px;">
+        SENTIMENT: 63% BEARISH
+      </div>
+      <div>
+        <progress-bar [progress]="20" [color]="'#e34c47'"></progress-bar>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <table>
+      <thead>
+        <tr>
+          <th class="th-segments" (click)="changeSegment('CHAT')" [ngStyle]="selectedSegment == 'CHAT' && {'border-bottom': '2px solid #12a6f9','color':'#12a6f9'}">CHAT</th>
+          <th class="th-segments" (click)="changeSegment('OVERVIEW')" [ngStyle]="selectedSegment == 'OVERVIEW' && {'border-bottom': '2px solid #12a6f9','color':'#12a6f9'}">OVERVIEW</th>
+          <th class="th-segments" (click)="changeSegment('CHART')" [ngStyle]="selectedSegment == 'CHART' && {'border-bottom': '2px solid #12a6f9','color':'#12a6f9'}">CHART</th>
+          <th class="th-segments" (click)="changeSegment('SOCIAL')" [ngStyle]="selectedSegment == 'SOCIAL' && {'border-bottom': '2px solid #12a6f9','color':'#12a6f9'}">SOCIAL</th>
+          <th class="th-segments" (click)="changeSegment('NEWS')" [ngStyle]="selectedSegment == 'NEWS' && {'border-bottom': '2px solid #12a6f9','color':'#12a6f9'}">NEWS</th>
+        </tr>
+      </thead>
+    </table>
+  </div>
+
+  <ion-slides (ionSlideDidChange)="onSlideChanged($event)" #mySlider>
+
+
+
+
+
+    <ion-slide #slideChat>
+      cxvcc
+    </ion-slide>
+
+
+    <ion-slide #slideOverview style="padding: 16px;">
+      <button ion-button style="background: #12a6f9;height: 30px;" block>Trade Now</button>
+
+      <div style="text-align: left;font-size: 15px; line-height: 1.8;">
+        Price : {{item.price}}
+        <br>
+        Currency : {{item.currency}}
+        <br>
+        Open : {{ item.price_open}}
+        <br>
+        Day High: {{item.day_high}}
+        <br>
+        Day Low: {{item.day_low}}
+        <br>
+        Year High: {{item['52_week_high']}}
+        <br>
+        Year Low: {{item['52_week_low']}}
+        <br>
+        Day Change : {{item.day_change}}
+        <br>
+        Change Pct : {{item.change_pct}}
+        <br>
+        Close Yesterday : {{item.close_yesterday}}
+        <br>
+        Market Cap : {{item.market_cap}}
+        <br>
+        Volume : {{ item.volume}}
+        <br>
+        Shares : {{item.shares}}
+        <br>
+        Stock Exchange : {{item.stock_exchange_long}}
+        <br>
+        Timezone : {{ item.timezone_name}}
+        <br>
+        Last Trade: {{item.last_trade_time}}
+      </div>
+    </ion-slide>
+
+    <ion-slide #slideChart>
+      <h1>slideChart</h1>
+    </ion-slide>
+
+    <ion-slide #slideSocial style="padding:16px;">
+      <ion-grid>
+        <ion-row *ngFor="let item1 of tweetsdata;let i = index;" style="margin-bottom: 6px;padding-bottom: 5px;border-bottom: 1px solid #4a4a4a;"
+          (click)="openUrl(i)">
+          <ion-grid>
+            <ion-row>
+              <ion-col style="text-align: left;font-size:14px;font-weight: 900;">
+                Twitter @{{item1.user.name}}
+              </ion-col>
+              <ion-col col-3 style="text-align: right;font-size:12px;color:#9b9b9b">
+                {{item1.created_at}}
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col style="text-align: left;font-size:14px;">
+                {{item1.text}}
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col style="text-align: left;font-size:12px;color:#9b9b9b">
+                {{item1.retweet_count}} Retweets {{item1.retweet_count}} Likes
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-row>
+      </ion-grid>
+    </ion-slide>
+
+    <ion-slide #slideNews>
+      <h1>slideNews</h1>
+    </ion-slide>
+
+
+  </ion-slides>
+</ion-content>

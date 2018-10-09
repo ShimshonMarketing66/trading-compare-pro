@@ -1,0 +1,132 @@
+{
+  "project_info": {
+    "project_number": "212982281977",
+    "firebase_url": "https://trading-compare-93afb.firebaseio.com",
+    "project_id": "trading-compare-93afb",
+    "storage_bucket": "trading-compare-93afb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:212982281977:android:cde064b6c4e284af",
+        "android_client_info": {
+          "package_name": "com.tradingcompare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "212982281977-2ht9ksfac7p4b10fmsa9vg1nt81gba9p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tradingcompare",
+            "certificate_hash": "3c58bef99eb8d0d68b0865132124314566f9b922"
+          }
+        },
+        {
+          "client_id": "212982281977-nrar31o20thlvs4k7f3civmhtthcg94i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAe6ax7wrF2ppnEHtv7pfjunTrd-MGmpRU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "212982281977-nrar31o20thlvs4k7f3civmhtthcg94i.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "212982281977-kmnlp6tpu8mt49un9ohcp4shbj82360v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.tradingcompare.app",
+                "app_store_id": "1406118849"
+              }
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:212982281977:android:5e6f063354e21569",
+        "android_client_info": {
+          "package_name": "com.tradingcompare.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "212982281977-m2gce2ha7bpv5hrghgnbdhas38fgndld.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tradingcompare.app",
+            "certificate_hash": "e615de7f7cf85347d74370b34dbffa5468e14411"
+          }
+        },
+        {
+          "client_id": "212982281977-c6as5ksb81rvb87acv6ieoeplqaupb53.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tradingcompare.app",
+            "certificate_hash": "75bec67b5715d6e4bff45ddcc74fed8e12115c59"
+          }
+        },
+        {
+          "client_id": "212982281977-3phdb0bdltklgcal6ufceaolo9kv647i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tradingcompare.app",
+            "certificate_hash": "8279bb62f15083103c3821b93d32e6885386341f"
+          }
+        },
+        {
+          "client_id": "212982281977-nrar31o20thlvs4k7f3civmhtthcg94i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAe6ax7wrF2ppnEHtv7pfjunTrd-MGmpRU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "212982281977-nrar31o20thlvs4k7f3civmhtthcg94i.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "212982281977-kmnlp6tpu8mt49un9ohcp4shbj82360v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.tradingcompare.app",
+                "app_store_id": "1406118849"
+              }
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      },
+      "admob_app_id": "ca-app-pub-7144298839495795~1276163708"
+    }
+  ],
+  "configuration_version": "1"
+}

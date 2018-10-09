@@ -1,0 +1,18 @@
+<ion-content class="main-view">
+  <div class="overlay" (click)="dismiss(undefined)"></div>
+  <div class="modal_content">
+    <ion-grid>
+      <ion-row style="height: 40px;border-bottom: solid 1px #4a4a4a;" *ngFor="let country of contries">
+        <ion-col style="margin:auto;"(click)="dismiss(country)">
+          <img style="height: 25px;padding-right:10px;vertical-align:middle" src="assets/imgs/flags/{{country}}.png">
+          <span>
+            {{country}}
+          </span>
+        </ion-col>
+      </ion-row>
+      
+
+      
+    </ion-grid>
+  </div>
+</ion-content>
