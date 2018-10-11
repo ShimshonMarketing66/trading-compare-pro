@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { Profile } from '../../../models/profile-model';
+import { AuthDataProvider } from '../../../providers/auth-data/auth-data';
 
 
 
@@ -12,11 +14,21 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class SignUpPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public profile: Profile,public authData:AuthDataProvider) {
+    authData.getContry()
+  }
+
+
+  loginUserWithProvider(m_provider: string) {
+    this.authData.loginUserWithProvider(m_provider).then((data)=>{
+      console.log(data);
+      
+    })
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad SignUpPage');
+    console.log('ionViewDidLoad SignUpPag e');
   }
+
 
 }

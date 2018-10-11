@@ -8,7 +8,7 @@
     </span>
   </button>
 
-  <button ion-button style="text-align: center;height: 30px;width: 100%;background: #3b5995;padding: 5px;">
+  <button (click)="loginUserWithProvider('facebook')" ion-button style="text-align: center;height: 30px;width: 100%;background: #3b5995;padding: 5px;">
       <span>
           <ion-icon name="logo-facebook"></ion-icon>
         </span>
@@ -16,5 +16,95 @@
           Facebook
         </span>
     </button>
+
+
+
+    <ion-grid style="background: #2b2b2b;">
+  
+      <ion-row>
+        <ion-col>
+          <ion-item style="background: #2b2b2b;">
+            <ion-input type="text" style="color:#ffffff;font-size:16px;font-weight: 500;" [(ngModel)]="profile.first_name" placeholder="First Name"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-item style="background: #2b2b2b;">
+            <ion-input type="text" style="color:#ffffff;font-size:16px;font-weight: 500;" [(ngModel)]="profile.last_name" placeholder=" Last Name"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-item style="background: #2b2b2b;">
+            <ion-input type="text" style="color:#ffffff;font-size:16px;font-weight: 500;" [(ngModel)]="profile.email" placeholder="{{'Email'|translate}}"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-item style="background: #2b2b2b;">
+            <ion-input type="text" style="color:#ffffff;font-size:16px;font-weight: 500;" [(ngModel)]="profile.password" placeholder="{{'Password'|translate}}"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col (click)="presentcountries()">
+          <ion-item style="background: #2b2b2b;">
+            <ion-input disabled="true" type="text" style="color:#ffffff;font-size:16px;font-weight: 500;" [(ngModel)]="profile.country"
+              placeholder="{{'Country'|translate}}"></ion-input>
+            <ion-icon style="color: #ffffff;font-size:15px; " name="md-arrow-dropdown" item-right></ion-icon>
+  
+          </ion-item>
+        </ion-col>
+  
+      </ion-row>
+  
+  
+      <ion-row>
+        <ion-col (click)="presentDialCode()" col-4>
+          <ion-item style="background: #2b2b2b;">
+            <ion-input type="text" style="color:#ffffff;font-size:16px;font-weight: 500;" [(ngModel)]="profile.dial_code" placeholder="(+000)">
+            </ion-input>
+            <ion-icon style="color: #ffffff;font-size:15px; " name="md-arrow-dropdown" item-right></ion-icon>
+  
+          </ion-item>
+  
+        </ion-col>
+        <ion-col>
+          <ion-item style="background: #2b2b2b;">
+            <ion-input type="text" style="color:#ffffff;font-size:16px;font-weight: 500;" [(ngModel)]="profile.phone_number" placeholder="{{'Phone_Number'|translate}}"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col (click)="presentbrokerlist()">
+          <ion-item style="background: #2b2b2b;">
+            <ion-input disabled="true" type="text" style="color:#ffffff;font-size:16px;font-weight: 500;" [(ngModel)]="profile.broker"
+              placeholder="{{'Broker_(if applicable)'|translate}}"></ion-input>
+            <ion-icon style="color: #ffffff;font-size:15px; " name="md-arrow-dropdown" item-right></ion-icon>
+  
+          </ion-item>
+        </ion-col>
+  
+      </ion-row>
+  
+      <ion-row style="margin-top: 4%;">
+        <div (click)="register()" style="width: 100%;text-align: center;">
+          <button style="border-radius: 20px;font-size: 16px;font-weight: 500;background: #00aeef;color: white;height: 45px;width: 55%;">{{'Register'|translate}}</button>
+        </div>
+      </ion-row>
+    </ion-grid>
+    <div (click)="goToTremsAndConditions()" style="color: #00aeef; height:35px;text-align:   center;width: 70%;    margin-left: 15%;">{{'By_hitting_register you_are_aggreein_ to_our_terms _and_conditions'|translate}}</div>
+    <ion-grid style="margin-top: 5%;">
+      <ion-row>
+        <ion-col col-7 style="color:#4a4a4a;">{{'Already_have_an_account?'|translate}}</ion-col>
+        <ion-col style="    text-align: center;        ">
+          <button (click)="goTologin()" style="font-size: 14px;margin-top: -10px; height: 35px;width: 70%;text-align: center; color: white;background: #fd943c;border-radius: 20px;">{{'Login'|translate}}</button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  
   
 </ion-content>
