@@ -25,6 +25,8 @@ import { AuthDataProvider } from '../providers/auth-data/auth-data';
 import { InAppPurchase2 } from '@ionic-native/in-app-purchase-2';
 import { GooglePlus } from '@ionic-native/google-plus';
 import { Facebook } from '@ionic-native/facebook';
+import { AndroidPermissions } from '@ionic-native/android-permissions';
+import { Sim } from '@ionic-native/sim';
 
 
 
@@ -37,6 +39,7 @@ const firebaseConfig = {
   messagingSenderId: "212982281977"
 }
 
+console.log("bb");
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -69,6 +72,7 @@ export function createTranslateLoader(http: HttpClient) {
     MyApp
   ],
   providers: [
+    Sim,
     FCM,
     Keyboard,
     StatusBar,
@@ -81,6 +85,7 @@ export function createTranslateLoader(http: HttpClient) {
     Facebook,
     GooglePlus,
     AuthDataProvider,
+    AndroidPermissions
 
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

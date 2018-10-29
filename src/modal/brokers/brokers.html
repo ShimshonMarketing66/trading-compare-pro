@@ -1,0 +1,28 @@
+<ion-header style="background: #e9e9e9!important;">
+        <ion-navbar>
+        <ion-grid style="background: #e9e9e9;">
+        <ion-row >
+         <ion-col>
+       <ion-searchbar (ionInput)="getItems($event)" [(ngModel)]="myInput" [showCancelButton]="false" (ionCancel)="onCancel($event)">
+    </ion-searchbar>
+              </ion-col>
+         <ion-col col-3> 
+        <button (click)="closeModal()" style="height: 27px;   width: 100%;background: #00aeef;color: #ffffff;border-radius: 4px;">{{'Cancel'|translate}}</button >
+           </ion-col>
+             </ion-row>
+                </ion-grid>
+        </ion-navbar>
+
+</ion-header>
+<ion-content>
+
+
+        <div *ngFor="let  broker of brokers; let i = index" (click)="choosebrokers(i)" style="color: white;padding: 16px;border-bottom: solid 1px #7d7d7d;">
+             <span>
+                <img src="{{ broker['img']}}" style="vertical-align:middle"> 
+             </span>   
+             <span style="margin-left: 20px;">
+                {{ broker['name']}} 
+             </span>  
+        </div>
+</ion-content>

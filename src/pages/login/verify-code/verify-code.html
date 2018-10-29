@@ -1,0 +1,37 @@
+<ion-content padding>
+  <div style="margin-top: 35px;font-size: 24px;text-align: center;"> 
+    Verification Code
+  </div>
+  <div style="margin-top: 34px;margin-bottom: 30px;text-align: center;">
+    Please enter the 4-digit verification code sent to your phone here:
+  </div>
+  <div align="center" style="margin-bottom:20px;">
+    <table>
+      <tr>
+        <td style="border-right: solid 15px #2b2b2b;border-left-color: #2b2b2b;border-top: none;text-align: center;">
+          <ion-input type="tel" #otp1 class="otp" maxlength="2" size="1" (keyup)="keyup2('1',$event)">
+          </ion-input>
+        </td>
+        <td style="border-right: solid 15px #2b2b2b;border-left-color: #2b2b2b;border-top: none;text-align: center;">
+          <ion-input type="tel" #otp2 class="otp" maxlength="2" size="1" (keyup)="keyup2('2',$event)">
+          </ion-input>
+        </td>
+        <td style="border-right: solid 15px #2b2b2b;border-left-color: #2b2b2b;border-top: none;text-align: center;">
+          <ion-input type="tel" #otp3 class="otp" maxlength="2" size="1" (keyup)="keyup2('3',$event)">
+          </ion-input>
+        </td>
+        <td style="border-right: none;border-left-color: #2b2b2b;border-top: none;text-align: center;">
+          <ion-input type="tel" #otp4 class="otp" maxlength="1" size="1" (keyup)="keyup2('4',$event)">
+          </ion-input>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div style="text-align: center;">
+      <button ion-button [style.background]="canSubmit && '#12a6f9' || !canSubmit && '#7fffd4'" (click)="submit()">Submit</button>
+  </div>
+  
+
+
+</ion-content>

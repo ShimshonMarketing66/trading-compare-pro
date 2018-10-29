@@ -359,9 +359,9 @@
                   {{crypto.price|tofixe}}
                 </span>
               </div>
-              <div style="font-size:12px;white-space: nowrap;text-align: right;" [ngStyle]="crypto.change > 0 && {'color': '#91c353'} || crypto.change < 0 && {'color': '#e34c47'}">
+              <div style="font-size:12px;white-space: nowrap;text-align: right;" [ngStyle]="crypto.change24 > 0 && {'color': '#91c353'} || crypto.change24 < 0 && {'color': '#e34c47'}">
                 <span [@changeBackgroundColor]="crypto.state">
-                  {{crypto.change|tofixe}}%
+                  {{crypto.change24|tofixe}}%
                 </span>
               </div>
             </ion-col>

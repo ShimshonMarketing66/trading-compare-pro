@@ -1,0 +1,39 @@
+page-verify-code {
+
+
+      .otp {
+        text-align: center;
+        color: white;
+        border-style: none;
+        width: 45px;
+        height: 50px;
+        background: #4a4a4a;
+        font-size: 30px;
+        padding: 5px;
+      }
+      
+      td {
+        border:none;
+      }
+      
+      table {
+        border-collapse: collapse;
+      }
+      
+      #divInner{
+        left: 0;
+        position: sticky;
+      }
+      
+      #divOuter{
+        width:190px; 
+        overflow:hidden;
+      }
+
+      .text-input{
+
+        text-align: center;
+        margin: auto;
+      }
+
+}

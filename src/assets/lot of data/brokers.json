@@ -1,0 +1,324 @@
+{
+    "brokers": [
+    {
+      "name": "etoro",
+      "img":"assets/imgs/brokers/etoro.png"
+    },
+    {
+      "name":"24 options",
+      "img":"assets/imgs/brokers/24 options.png"
+    },
+    {
+      "name":"city index",
+      "img":"assets/imgs/brokers/city index.png"
+    },
+    {
+      "name":"luno",
+      "img":"assets/imgs/brokers/luno.png"
+    }, {
+      "name":"Tradefred",
+      "img":"assets/imgs/brokers/Tradefred.png"
+    },
+    
+     {
+      "name":"thinkmarkets",
+      "img":"assets/imgs/brokers/thinkmarkets.png"
+    },
+      {
+      "name":"markets.com",
+      "img":"assets/imgs/brokers/markets.com.png"
+    },
+      {
+      "name":"plus500",
+      "img":"assets/imgs/brokers/plus500.png"
+    },
+      {
+      "name":"alvexo",
+      "img":"assets/imgs/brokers/alvexo.png"
+    },
+      {
+      "name":"pepperstone",
+      "img":"assets/imgs/brokers/pepperstone.png"
+    },
+      {
+      "name":"xtb",
+      "img":"assets/imgs/brokers/xtb.png"
+    },
+      {
+      "name":"easymarkets",
+      "img":"assets/imgs/brokers/easymarkets.png"
+    },
+      {
+      "name":"admiral markets",
+      "img":"assets/imgs/brokers/admiral markets.png"
+    },
+      {
+      "name":"binance",
+      "img":"assets/imgs/brokers/binance.png"
+    },
+      {
+      "name":"localbitcoins",
+      "img":"assets/imgs/brokers/localbitcoins.png"
+    },
+      {
+      "name":"bitfinex",
+      "img":"assets/imgs/brokers/bitfinex.png"
+    },
+      {
+      "name":"changely",
+      "img":"assets/imgs/brokers/changely.png"
+    },
+      {
+      "name":"pax forex",
+      "img":"assets/imgs/brokers/pax forex.png"
+    },
+      {
+      "name":"coinbull",
+      "img":"assets/imgs/brokers/coinbull.png"
+    },
+      {
+      "name":"bitmex",
+      "img":"assets/imgs/brokers/bitmex.png"
+    },
+      {
+      "name":"simple fx",
+      "img":"assets/imgs/brokers/simple fx.png"
+    },
+      {
+      "name":"hit btc",
+      "img":"assets/imgs/brokers/hit btc.png"
+    },
+      {
+      "name":"cexio",
+      "img":"assets/imgs/brokers/cexio.png"
+    },
+      {
+      "name":"whaleclub",
+      "img":"assets/imgs/brokers/whaleclub.png"
+    },
+      {
+      "name":"bkcoin",
+      "img":"assets/imgs/brokers/bkcoin.png"
+    },
+      {
+      "name":"cryptopia",
+      "img":"assets/imgs/brokers/cryptopia.png"
+    },
+      {
+      "name":"fx open",
+      "img":"assets/imgs/brokers/fx open.png"
+    },
+      {
+      "name":"deribit",
+      "img":"assets/imgs/brokers/deribit.png"
+    },
+      {
+      "name":"magnr",
+      "img":"assets/imgs/brokers/magnr.png"
+    },
+      {
+      "name":"bittrex",
+      "img":"assets/imgs/brokers/bittrex.png"
+    },
+      {
+      "name":"poloniex",
+      "img":"assets/imgs/brokers/poloniex.png"
+    },
+      {
+      "name":"kraken",
+      "img":"assets/imgs/brokers/kraken.png"
+    },
+      {
+      "name":"gdax",
+      "img":"assets/imgs/brokers/gdax.png"
+    },
+      {
+      "name":"avatrade",
+      "img":"assets/imgs/brokers/avatrade.png"
+    }
+      ,
+      {
+      "name":"fxtm",
+      "img":"assets/imgs/brokers/fxtm.png"
+    }
+      ,
+      {
+      "name":"fxcm",
+      "img":"assets/imgs/brokers/fxcm.png"
+    }
+      ,
+      {
+      "name":"trade360",
+      "img":"assets/imgs/brokers/trade360.png"
+    }
+      ,
+      {
+      "name":"etx",
+      "img":"assets/imgs/brokers/etx.png"
+    }
+      ,
+      {
+      "name":"trade.com",
+      "img":"assets/imgs/brokers/trade.com.png"
+    }
+      ,
+      {
+      "name":"easymarkets",
+      "img":"assets/imgs/brokers/easymarkets.png"
+    }
+      ,
+      {
+      "name":"triomarkets",
+      "img":"assets/imgs/brokers/triomarkets.png"
+    }
+      ,
+      {
+      "name":"atfx",
+      "img":"assets/imgs/brokers/atfx.png"
+    }
+      ,
+      {
+      "name":"ufx",
+      "img":"assets/imgs/brokers/ufx.png"
+    }
+      ,
+      {
+      "name":"itrader",
+      "img":"assets/imgs/brokers/itrader.png"
+    }
+      ,
+      {
+      "name":"fxcc",
+      "img":"assets/imgs/brokers/fxcc.png"
+    }
+      ,
+      {
+      
+      "name":"trymarkets",
+      "img":"assets/imgs/brokers/trymarkets.png"
+    }
+      ,
+      {
+      "name":"ironfx",
+      "img":"assets/imgs/brokers/ironfx.png"
+    }
+      ,
+      {
+      "name":"q8 trade",
+      "img":"assets/imgs/brokers/q8 trade.png"
+    }
+      ,
+      {
+      "name":"24fx",
+      "img":"assets/imgs/brokers/24fx.png"
+    }
+      ,
+      {
+      "name":"destek",
+      "img":"assets/imgs/brokers/destek.png"
+    }
+      ,
+      {
+      "name":"octafx",
+      "img":"assets/imgs/brokers/octafx.png"
+    }
+      ,
+      {
+      
+      "name":"tradenet",
+      "img":"assets/imgs/brokers/tradenet.png"
+    }
+      ,
+      {
+      "name":"fxcm",
+      "img":"assets/imgs/brokers/fxcm.png"
+    }
+      ,
+      {
+      "name":"xtrade",
+      "img":"assets/imgs/brokers/xtrade.png"
+    }
+      ,
+      {
+      "name":"windsor",
+      "img":"assets/imgs/brokers/windsor.png"
+    }
+      ,
+      {
+      "name":"xforex",
+      "img":"assets/imgs/brokers/xforex.png"
+    }
+      ,
+      {
+      "name":"core spreads",
+      "img":"assets/imgs/brokers/core spreads.png"
+    }
+      ,
+      {
+      "name":"forex.com",
+      "img":"assets/imgs/brokers/forex.com.png"
+    }
+      ,
+      {
+      "name":"ig markets",
+      "img":"assets/imgs/brokers/ig markets.png"
+    }
+      ,
+      {
+      "name":"fx pro",
+      "img":"assets/imgs/brokers/fx pro.png"
+    }
+      ,
+      {
+      "name":"wex",
+      "img":"assets/imgs/brokers/wex.png"
+    }
+      ,
+      {
+      "name":"coinbase",
+      "img":"assets/imgs/brokers/coinbase.png"
+    }
+      ,
+      {
+      "name":"tradeo",
+      "img":"assets/imgs/brokers/tradeo.png"
+    }
+
+      ,
+      {
+      "name":"fidelity",
+      "img":"assets/imgs/brokers/fidelity.png"
+    }
+      ,
+      {
+      "name":"ameritrade",
+      "img":"assets/imgs/brokers/ameritrade.png"
+    }
+      ,
+      {
+
+      "name":"charles schwab",
+      "img":"assets/imgs/brokers/charles schwab.png"
+    }
+      ,
+      {
+      "name":"etrade",
+      "img":"assets/imgs/brokers/etrade.png"
+    }
+      ,
+      {
+      "name":"interactivebrokers",
+      "img":"assets/imgs/brokers/interactivebrokers.png"
+    }
+      ,
+      {
+      "name":"edge",
+      "img":"assets/imgs/brokers/edge.png"
+    }
+      ,
+      {
+      "name":"trade station",
+      "img":"assets/imgs/brokers/trade station.png"
+    }
+    ]
+}

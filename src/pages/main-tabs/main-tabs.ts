@@ -9,14 +9,18 @@ import { IonicPage, NavController } from 'ionic-angular';
   templateUrl: 'main-tabs.html'
 })
 export class MainTabsPage {
+  tabIndex: number = 0;
 
   homeRoot = 'HomePage'
   liveFeedRoot = 'live-feed'
   alertsRoot = 'AlertsPage'
-  brokersRoot = 'BrokersPage'
+  menuRoot = 'menu'
   profileRoot = 'ProfilePage'
 
 
-  constructor(public navCtrl: NavController) {}
+  constructor(public navCtrl: NavController) {
+    console.log("jdasl");
+    
+  }
 
 }

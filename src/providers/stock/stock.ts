@@ -14,7 +14,7 @@ export class StockProvider {
   }[] = [];
 
   public topStocks: IStock[] = [];
-  private readonly base_url: string = "https://websocket-stock.herokuapp.com/";  //http://localhost:5000/  // https://websocket-stock.herokuapp.com/
+  private readonly base_url: string = "https://websocket-stock.herokuapp.com/";  //https://xosignals.herokuapp.com/  // https://websocket-stock.herokuapp.com/
   private readonly path_getStock: string = "stocksPrice"; // path to 200 first top stocks
   private readonly path_search_stock: string = "searchStock"; // path to 200 first top stocks
 

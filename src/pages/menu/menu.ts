@@ -2,22 +2,20 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
 
-
 @IonicPage({
-  
+  name:"menu"
 })
 @Component({
-  selector: 'page-brokers',
-  templateUrl: 'brokers.html',
+  selector: 'page-menu',
+  templateUrl: 'menu.html',
 })
-export class BrokersPage {
+export class MenuPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad BrokersPage');
+    console.log('ionViewDidLoad MenuPage');
   }
 
 }
-

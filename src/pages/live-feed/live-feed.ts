@@ -473,7 +473,7 @@ export class LiveFeedPage implements AfterViewInit {
         this.socketCrypto = io.connect("https://crypto.tradingcompare.com/");
 
         this.socketCrypto.on("message", (data) => {
-          let pair = data.pair;
+          let pair = data.pair;          
           for (let index = 0; index < this.CoinConnectedWSCrypto.length; index++) {
             let a = this.cryptos[index]["index"];
             if (pair == this.CoinConnectedWSCrypto[index].pair) {

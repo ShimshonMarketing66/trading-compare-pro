@@ -1,0 +1,30 @@
+<ion-header style="background: #e9e9e9!important;">
+        <ion-navbar>
+                <ion-grid style="background: #e9e9e9;">
+                        <ion-row>
+                                <ion-col style="margin: auto;">
+                                        <ion-searchbar (ionInput)="getItems($event)" [(ngModel)]="myInput"
+                                                [showCancelButton]="false" (ionCancel)="onCancel($event)">
+                                        </ion-searchbar>
+                                </ion-col>
+                                <ion-col col-3 style="margin: auto;padding:3px;">
+                                        <button (click)="closeModal()" style="height: 27px;   width: 100%;background: #00aeef;color: #ffffff;border-radius: 4px;">{{'Cancel'|translate}}</button>
+                                </ion-col>
+                        </ion-row>
+                </ion-grid>
+        </ion-navbar>
+</ion-header>
+<ion-content>
+
+        <!-- 
+        <ion-list>
+                <ion-item *ngFor="let country of countries; let i = index" (click)="chooseCountry(i)">
+                        
+                </ion-item>
+
+        </ion-list> -->
+
+        <div *ngFor="let country of countries; let i = index" (click)="chooseCountry(i)" style="color: white;padding: 16px;border-bottom: solid 1px #7d7d7d;">
+                {{country[a]}} &nbsp; &nbsp;({{country[b]}} )
+        </div>
+</ion-content>
