@@ -1,5 +1,55 @@
-
-
 <ion-content padding>
 
+    <button ion-button style="text-align: center;height: 30px;width: 100%;background: #e54840;padding: 5px;">
+        <span>
+            <ion-icon name="logo-googleplus"></ion-icon>
+        </span>
+        <span style="padding-left:5px">
+            Google
+        </span>
+    </button>
+
+    <button (click)="loginUserWithProvider('facebook')" ion-button style="text-align: center;height: 30px;width: 100%;background: #3b5995;padding: 5px;">
+        <span>
+            <ion-icon name="logo-facebook"></ion-icon>
+        </span>
+        <span style="padding-left:5px">
+            Facebook
+        </span>
+    </button>
+
+
+    <div style="text-align: center;margin-top: 30px;margin-bottom: 20px;">--------------------- OR ---------------------</div>
+
+    <ion-grid style="background: #2b2b2b;">
+        <div style="color: red;text-align: center;">
+            {{error}}
+        </div>
+
+
+        <ion-row>
+            <ion-col>
+                <ion-item style="background: #2b2b2b;">
+                    <ion-input type="email" style="color:#ffffff;font-size:16px;font-weight: 500;" [(ngModel)]="email"
+                        placeholder="{{'Email'|translate}}"></ion-input>
+                </ion-item>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <ion-item style="background: #2b2b2b;">
+                    <ion-input type="password" style="color:#ffffff;font-size:16px;font-weight: 500;" [(ngModel)]="password"
+                        placeholder="{{'Password'|translate}}"></ion-input>
+                </ion-item>
+            </ion-col>
+        </ion-row>
+
+
+
+        <ion-row style="margin-top: 4%;">
+            <div (click)="signin()" style="width: 100%;text-align: center;">
+                <button style="border-radius: 20px;font-size: 16px;font-weight: 500;background: #00aeef;color: white;height: 45px;width: 55%;">{{'Login'|translate}}</button>
+            </div>
+        </ion-row>
+    </ion-grid>
 </ion-content>

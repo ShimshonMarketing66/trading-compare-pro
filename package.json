@@ -38,6 +38,7 @@
     "@types/socket.io-client": "^1.4.32",
     "compare-versions": "^3.4.0",
     "cordova-android": "7.0.0",
+    "cordova-device-accounts": "git+https://github.com/danielsogl/cordova-device-accounts.git",
     "cordova-ios": "4.5.5",
     "cordova-plugin-android-permissions": "^1.0.0",
     "cordova-plugin-device": "^2.0.2",

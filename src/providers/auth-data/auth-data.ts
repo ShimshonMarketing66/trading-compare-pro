@@ -17,7 +17,7 @@ export class AuthDataProvider {
   localCountry: CountryModel = new CountryModel();
   isAuth: boolean = false
   user: Profile = new Profile();
-
+  platform: any = "browser";
   constructor(
     public afAuth: AngularFireAuth,
     private store: InAppPurchase2,
@@ -103,8 +103,8 @@ export class AuthDataProvider {
   sendVerifyCode(loading: Loading): Promise<any> {
     loading.setContent("sending verifing code to your Phone device..");
     return new Promise((resolve, reject) => {
-      console.log("avi",this.user);
-      
+      console.log("avi", this.user);
+
       this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/send-user-verify-code", this.user).toPromise()
         .then((data: any) => {
           console.log(data);
@@ -113,16 +113,16 @@ export class AuthDataProvider {
             a.verify_id = data.request_id;
             a.is_verify_code_sent = true;
             var x = {
-              "verifyData":a
+              "verifyData": a
             }
             console.log(a);
-            
-            this.updateFields(x).then(()=>{
+
+            this.updateFields(x).then(() => {
               console.log("promise from this.updateFields()");
-              
+
             })
             resolve();
-          }else{ // in futur need check the status response and to response as well
+          } else { // in futur need check the status response and to response as well
             reject(data);
           }
 
@@ -134,19 +134,19 @@ export class AuthDataProvider {
 
   }
 
-  updateFields(fieldsToUpdate) : Promise<any>{
+  updateFields(fieldsToUpdate): Promise<any> {
     fieldsToUpdate["_id"] = this.user._id;
-    return new Promise((resolve)=>{
+    return new Promise((resolve) => {
       this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/update-fields", fieldsToUpdate)
-      .toPromise()
-      .then(() => {
-        console.log("server updated field", fieldsToUpdate);
-        resolve();
-      })
-      .catch((err) => {
-        console.log(err);
-        
-      })
+        .toPromise()
+        .then(() => {
+          console.log("server updated field", fieldsToUpdate);
+          resolve();
+        })
+        .catch((err) => {
+          console.log(err);
+
+        })
     })
 
   }
@@ -172,9 +172,20 @@ export class AuthDataProvider {
           resolve(false);
         })
     })
-
   }
 
+  checkIfUserExistAlready(_id: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.http.post("https://xosignals.herokuapp.com/api2/getUsersById", { _id: _id })
+        .toPromise()
+        .then(() => {
+          resolve(true);
+        })
+        .catch(() => {
+          resolve(false);
+        })
+    })
+  }
 
   /* until here I used these functions */
 
@@ -204,30 +215,30 @@ export class AuthDataProvider {
         this.providerLogin(m_provider).then((profile: Profile) => {
           console.log(profile);
 
-          this.checkIfUserExistAlready(profile._id).then(userFromServer2 => {
-            if (userFromServer2 == null) {
-              profile.verifyData.is_phone_number_verified = false
-              this.keepProfileInServer(profile).then((profile) => {
-                this.user.first_name = profile.first_name
-                this.user.last_name = profile.last_name
-                this.user._id = profile._id
-                this.user.email = profile.email
-                this.user.countryData = profile.countryData
-                this.user.verifyData.is_phone_number_verified = profile.verifyData.is_phone_number_verified
-                if (profile.provider != undefined) {
-                  this.user.provider = profile.provider
-                }
-                this.user = profile as Profile
-                resolve(profile)
-              })
-                .catch(() => {
-                  reject("error")
-                })
-            } else {
-              this.user = userFromServer2
-              resolve(userFromServer2 as Profile)
-            }
-          })
+          // this.checkIfUserExistAlready(profile._id).then(userFromServer2 => {
+          //   if (userFromServer2 == null) {
+          //     profile.verifyData.is_phone_number_verified = false
+          //     this.keepProfileInServer(profile).then((profile) => {
+          //       this.user.first_name = profile.first_name
+          //       this.user.last_name = profile.last_name
+          //       this.user._id = profile._id
+          //       this.user.email = profile.email
+          //       this.user.countryData = profile.countryData
+          //       this.user.verifyData.is_phone_number_verified = profile.verifyData.is_phone_number_verified
+          //       if (profile.provider != undefined) {
+          //         this.user.provider = profile.provider
+          //       }
+          //       this.user = profile as Profile
+          //       resolve(profile)
+          //     })
+          //       .catch(() => {
+          //         reject("error")
+          //       })
+          //   } else {
+          //     this.user = userFromServer2
+          //     resolve(userFromServer2 as Profile)
+          //   }
+          // })
         })
           .catch((err) => {
             console.log("err", err);
@@ -266,7 +277,7 @@ export class AuthDataProvider {
                   reject("error")
                 })
             } else {
-              resolve(userFromServer2 as Profile)
+              resolve({} as Profile)
             }
           })
             .catch(err => {
@@ -294,18 +305,6 @@ export class AuthDataProvider {
 
 
 
-  checkIfUserExistAlready(_id: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.http.post("https://xosignals.herokuapp.com/api2/getUsersById", { _id: _id })
-        .toPromise()
-        .then(data => {
-          resolve(data)
-        })
-        .catch(() => {
-          resolve("error in our servers")
-        })
-    })
-  }
 
   getProfileWithFirebaseUser(user, m_provider): Profile {
     var profile = new Profile()

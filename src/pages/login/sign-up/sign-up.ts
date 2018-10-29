@@ -28,12 +28,10 @@ export class SignUpPage {
   ) {
 
     authData.getContry().then(data => {
-      console.log(data);
-
-      
-
-      profile.countryData = data;
-
+      profile.countryData = data;      
+      if (this.authData.platform == "browser") {
+        return;
+      }
       this.sim.hasReadPermission().then((info) => {
         if (!info) {
           this.sim.requestReadPermission().then(() => {

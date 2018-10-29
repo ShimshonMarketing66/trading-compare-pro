@@ -9,6 +9,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { MainTabsPage } from '../pages/main-tabs/main-tabs';
 import firebase from 'firebase';
 import { Sim } from '@ionic-native/sim';
+import { AuthDataProvider } from '../providers/auth-data/auth-data';
 
 @Component({
   templateUrl: 'app.html'
@@ -22,7 +23,7 @@ export class MyApp {
 
 
   constructor(
-    private sim: Sim,
+    public authData: AuthDataProvider,
     private afAuth: AngularFireAuth,
     private androidPermissions: AndroidPermissions,
     private fcm: FCM,
@@ -31,53 +32,59 @@ export class MyApp {
     splashScreen: SplashScreen,
     public translate: TranslateService,
   ) {
-    // this.loop();
-    // this.afAuth.auth.onAuthStateChanged(user => {
-    //   this.onAuthStateChangedCalled = true;
-    //   if (user) {
-    //     this.isLogin = true;
-    //   } else {
-    //     this.isLogin = false;
+    this.loop();
+    this.afAuth.auth.onAuthStateChanged(user => {
+      this.onAuthStateChangedCalled = true;
+      if (user) {
+        this.isLogin = true;
+      } else {
+        this.isLogin = false;
+      }
 
-    //   }
-    //   platform.ready().then(() => {
-
-    //     if (platform.is("cordova")) {
-    //       statusBar.styleDefault();
-    //       splashScreen.hide();
-    //       if (!this.isLogin) {
-    //         this.checkPermission();
-    //       }
-
-    //       if (this.isLogin) {
-    //         this.fcm.getToken().then(token => {
-    //           console.log("getToken", token);
-    //         });
-
-    //         this.fcm.onNotification().subscribe(data => {
-    //           console.log(data);
-
-    //           if (data.wasTapped) {
-    //             console.log("Received in background");
-    //           } else {
-    //             console.log("Received in foreground");
-    //           };
-    //         });
-
-    //         this.fcm.onTokenRefresh().subscribe(token => {
-    //           console.log("onTokenRefresh", token);
-    //         });
-    //       }
-    //     }
-    //   });
-
-    // });
-
-          platform.ready().then(() => {
-         
-          })
+      platform.ready().then(() => {
+        
+        if (!platform.is("cordova")) {
+          this.authData.platform = "browser";
+        } else if (platform.is("android")) {
+          this.authData.platform = "android";
+        } else if (platform.is("ios")) {
+          this.authData.platform = "ios";
+        }
+        if (!platform.is("cordova")) {
+          return;
+        }
+        statusBar.styleDefault();
+        splashScreen.hide();
 
 
+        if (!this.isLogin) {
+          this.checkPermission();
+          return;
+        }
+
+
+        this.fcm.getToken().then(token => {
+          console.log("getToken", token);
+        });
+
+        this.fcm.onNotification().subscribe(data => {
+          console.log(data);
+
+          if (data.wasTapped) {
+            console.log("Received in background");
+          } else {
+            console.log("Received in foreground");
+          };
+        });
+
+        this.fcm.onTokenRefresh().subscribe(token => {
+          console.log("onTokenRefresh", token);
+        });
+
+
+      });
+
+    });
     translate.setDefaultLang('english');
 
   }
