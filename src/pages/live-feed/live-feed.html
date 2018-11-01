@@ -183,9 +183,12 @@
 
           <div style="float:left;padding-top: 12px;width: 45%;height: 170px;margin:2.5%;background: #373737;border-radius: 5px;"
             *ngFor="let stock of stocksSquares;let i = index;"    (click)="goToDetailsStock(i)">
-            <object [data]="getImgStock(i)" type="image/png" style="width: 37px;height: 37px;border-radius: 50px;">
+            <!-- <object [data]="getImgStock(i)" type="image/png" style="width: 37px;height: 37px;border-radius: 50px;">
               <img src="assets/imgs/flags/flag general.png" style="width: 37px;height: 37px;border-radius: 50px;" alt="example">
-            </object>
+            </object> -->
+
+            <img style="width: 37px;height: 37px;border-radius: 50px;" [src]="stock.logo" (error)="errorHandler($event)">
+
 
             <div>
               <span>

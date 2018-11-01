@@ -169,9 +169,9 @@ export class VerifyCodePage {
             loading.setContent("restarting app");
             loading.dismiss();
             this.splashscreen.show();
-            window.location.reload();
-            this.app.getRootNav().setRoot(MyApp);
-           
+            this.app.getRootNav().setRoot(MyApp).then(()=>{
+              window.location.reload();
+            })
           }, 2000)
         }, 2000)
       } else {

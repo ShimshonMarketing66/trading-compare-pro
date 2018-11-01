@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
 import { Brokers } from './brokers';
 import { TranslateModule } from '../../../node_modules/@ngx-translate/core';
+import { PipesModule } from '../../pipes/pipes.module';
 
 @NgModule({
   declarations: [
@@ -9,7 +10,8 @@ import { TranslateModule } from '../../../node_modules/@ngx-translate/core';
   ],
   imports: [
     IonicPageModule.forChild(Brokers),
-    TranslateModule.forChild()
+    TranslateModule.forChild(),
+    PipesModule 
   ],
 })
 export class AboutUsPageModule {}

@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
 import { Profile } from '../../models/profile-model';
 import { ModalController, Platform, Loading } from 'ionic-angular';
 import { Facebook } from '@ionic-native/facebook';
@@ -19,7 +18,6 @@ export class AuthDataProvider {
   user: Profile = new Profile();
   platform: any = "browser";
   constructor(
-    public afAuth: AngularFireAuth,
     private store: InAppPurchase2,
     private googlePlus: GooglePlus,
     public facebook: Facebook,
@@ -32,10 +30,49 @@ export class AuthDataProvider {
   }
   /* from here I used these functions */
 
+
+
+  providerLogin(m_provider): Promise<firebase.User> {
+    if (m_provider == "facebook") {
+      return new Promise((resolve, reject) => {
+        this.facebook.login(['email'])
+          .then(response => {
+            const facebookCredential = firebase.auth.FacebookAuthProvider
+              .credential(response.authResponse.accessToken);
+           firebase.auth().signInWithCredential(facebookCredential)
+              .then((success) => {
+                resolve(success)
+              });
+          }).catch((error) => {
+            console.log("error", error);
+            reject(error)
+          });
+      })
+    }
+    else if (m_provider == "google") {
+      return new Promise((resolve, reject) => {
+        this.googlePlus.login({
+          'webClientId': '740803067623-sivifgg69dmiq5r7reo9m0vncnri3ahk.apps.googleusercontent.com',
+        }).then(response => {
+          console.log(response);
+          const googleCrendential = firebase.auth.GoogleAuthProvider
+            .credential(response.idToken);
+            firebase.auth().signInWithCredential(googleCrendential)
+            .then(success => {
+              resolve(success);
+            })
+            .catch(err => {
+              alert(err + "error");
+            })
+        }).catch((error) => { reject(error) });
+      })
+    }
+  }
+
   getContry(): Promise<CountryModel> {
     return new Promise((resolve, reject) => {
       if (this.localCountry.isRequested) {
-        return this.localCountry;
+        resolve(this.localCountry);
       } else {
         this.http.get("https://xosignals.herokuapp.com/get-location").toPromise()
           .then((data: CountryModel) => {
@@ -65,7 +102,7 @@ export class AuthDataProvider {
   signupUser(profile: Profile, loading: Loading): Promise<any> {
     return new Promise((resolve, reject) => {
       loading.setContent("create user with email and password...");
-      this.afAuth.auth.createUserWithEmailAndPassword(profile.email, profile.password)
+      firebase.auth().createUserWithEmailAndPassword(profile.email, profile.password)
         .then((newUser) => {
           profile._id = newUser.user.uid;
           profile.platform = (this.plt.is('ios')) ? "ios" : "android";
@@ -86,6 +123,24 @@ export class AuthDataProvider {
         })
     })
   }
+
+  deleteProfile(_id: String): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/delete-user", { _id: _id })
+        .toPromise()
+        .then((newUserServer) => {
+          console.log(newUserServer);
+
+          resolve(newUserServer);
+        })
+        .catch((err) => {
+          console.log("err7676767", err);
+
+          reject("error in our server.");
+        })
+    })
+  }
+
 
   keepProfileInServer(profile: Profile): Promise<Profile> {
     return new Promise((resolve, reject) => {
@@ -108,20 +163,18 @@ export class AuthDataProvider {
       this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/send-user-verify-code", this.user).toPromise()
         .then((data: any) => {
           console.log(data);
+          
           if (data.status == "0") {
-            let a = new Nexmo();
-            a.verify_id = data.request_id;
-            a.is_verify_code_sent = true;
+           
+            this.user.verifyData.verify_id = data.request_id;
+            this.user.verifyData.is_verify_code_sent = true;
             var x = {
-              "verifyData": a
+              "verifyData": this.user.verifyData
             }
-            console.log(a);
-
             this.updateFields(x).then(() => {
-              console.log("promise from this.updateFields()");
-
+              console.log("promise from this.updateFields()",x);
             })
-            resolve();
+            resolve("A SMS has sent to you.");
           } else { // in futur need check the status response and to response as well
             reject(data);
           }
@@ -162,7 +215,17 @@ export class AuthDataProvider {
           console.log(data);
 
           if (data == "ok") {
-            resolve(true);
+          
+           this.user.verifyData.is_phone_number_verified = true;
+           this.user.verifyData.verify_code = verify_code;
+           
+            var x = {
+              "verifyData":  this.user.verifyData
+            }
+            this.updateFields(x).then(() => {
+              console.log("promise from this.updateFields()",x);
+              resolve(true);
+            })
           } else {
             resolve(false);
           }
@@ -174,37 +237,31 @@ export class AuthDataProvider {
     })
   }
 
-  checkIfUserExistAlready(_id: string): Promise<boolean> {
+  getProfileFromServer(_id: string): Promise<Profile> {
     return new Promise((resolve, reject) => {
-      this.http.post("https://xosignals.herokuapp.com/api2/getUsersById", { _id: _id })
+      this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/getUsersById", { _id: _id })
         .toPromise()
-        .then(() => {
-          resolve(true);
+        .then((profile: Profile) => {
+          resolve(profile);
         })
-        .catch(() => {
-          resolve(false);
+        .catch((err) => {
+          if (err.status == 500) {
+            reject(err.error);
+          } else {
+            reject(err);
+          }
         })
     })
   }
-
-  /* until here I used these functions */
-
-
-
-  resetPassword(email: string): Promise<void> {
-    return this.afAuth.auth.sendPasswordResetEmail(email);
-  }
-
-
-
+  
   loginUserWithProvider(m_provider: string): Promise<Profile> {
     var provider;
     switch (m_provider) {
       case "facebook":
-        provider = new firebase.auth.FacebookAuthProvider()
+        provider = new firebase.auth.FacebookAuthProvider();
         break;
       case "google":
-        provider = new firebase.auth.GoogleAuthProvider()
+        provider = new firebase.auth.GoogleAuthProvider();
       default:
         break;
     }
@@ -212,39 +269,28 @@ export class AuthDataProvider {
     //real device
     if (this.plt.is("cordova")) {
       return new Promise((resolve, reject) => {
-        this.providerLogin(m_provider).then((profile: Profile) => {
-          console.log(profile);
+        this.providerLogin(m_provider).then((profileFireBase) => {
 
-          // this.checkIfUserExistAlready(profile._id).then(userFromServer2 => {
-          //   if (userFromServer2 == null) {
-          //     profile.verifyData.is_phone_number_verified = false
-          //     this.keepProfileInServer(profile).then((profile) => {
-          //       this.user.first_name = profile.first_name
-          //       this.user.last_name = profile.last_name
-          //       this.user._id = profile._id
-          //       this.user.email = profile.email
-          //       this.user.countryData = profile.countryData
-          //       this.user.verifyData.is_phone_number_verified = profile.verifyData.is_phone_number_verified
-          //       if (profile.provider != undefined) {
-          //         this.user.provider = profile.provider
-          //       }
-          //       this.user = profile as Profile
-          //       resolve(profile)
-          //     })
-          //       .catch(() => {
-          //         reject("error")
-          //       })
-          //   } else {
-          //     this.user = userFromServer2
-          //     resolve(userFromServer2 as Profile)
-          //   }
-          // })
+          this.getProfileFromServer(profileFireBase.uid)
+            .then((user: Profile) => {
+              console.log("user", user);
+              resolve(user);
+            })
+            .catch(() => {
+              console.log("user created in firebase but not exsist in mongo");
+              this.getProfileWithFirebaseUser(profileFireBase);
+              this.user.provider = m_provider;
+              this.keepProfileInServer(this.user).then(() => {
+                resolve(this.user);
+              })
+                .catch(() => {
+                  reject("error in server")
+                })
+            })
+        }).catch((err) => {
+          console.log("err from firebase", err);
+          reject(err)
         })
-          .catch((err) => {
-            console.log("err", err);
-
-            reject(err)
-          })
       })
     }
 
@@ -252,46 +298,44 @@ export class AuthDataProvider {
     //browser
     else {
       return new Promise((resolve, reject) => {
-        console.log("signInWithPopup " + m_provider);
-        firebase.auth().signInWithPopup(provider).then((newUser) => {
-          console.log(newUser.user, "newUser");
+        firebase.auth().signInWithPopup(provider).then((profileFireBase) => {
 
-          this.checkIfUserExistAlready(newUser.user.uid).then(userFromServer2 => {
-            if (userFromServer2 == null) {
-
-
-              var profile = this.getProfileWithFirebaseUser(newUser.user, m_provider)
-              console.log(profile);
-
-              profile.verifyData.is_phone_number_verified = false
-              profile.platform = (this.plt.is('ios')) ? "ios" : "android"
-
-              this.keepProfileInServer(profile).then((profile) => {
-                this.user = profile
-                if (profile.provider != undefined) {
-                  this.user.provider = profile.provider
-                }
-                resolve(profile)
+          this.getProfileFromServer(profileFireBase.user.uid)
+            .then((user: Profile) => {
+              console.log("user", user);
+              resolve(user);
+            })
+            .catch(() => {
+              console.log("user created in firebase but not exsist in mongo");
+              this.getProfileWithFirebaseUser(profileFireBase.user);
+              this.user.provider = m_provider;
+              this.keepProfileInServer(this.user).then(() => {
+                resolve(this.user);
               })
                 .catch(() => {
-                  reject("error")
+                  reject("error in server")
                 })
-            } else {
-              resolve({} as Profile)
-            }
-          })
-            .catch(err => {
-              reject("error")
             })
+        }).catch((err) => {
+          console.log("err from firebase", err);
+          reject(err)
         })
-          .catch(function (error) {
-            console.log(error);
-
-            reject(error.message)
-          });
       })
     }
   }
+
+
+  /* until here I used these functions */
+
+
+
+  resetPassword(email: string): Promise<void> {
+    return firebase.auth().sendPasswordResetEmail(email);
+  }
+
+
+
+  
 
   loginUserViaEmail(email: string, password: string): Promise<any> {
     return firebase.auth().signInWithEmailAndPassword(email, password)
@@ -306,31 +350,23 @@ export class AuthDataProvider {
 
 
 
-  getProfileWithFirebaseUser(user, m_provider): Profile {
-    var profile = new Profile()
-    console.log("getProfileWithFirebaseUser", user);
-
+  getProfileWithFirebaseUser(user: firebase.User) {
     if (user.displayName != null) {
-      let displayName = user.displayName.split(" ")
-
+      let displayName = user.displayName.split(" ");
       if (displayName.length >= 2) {
-        profile.first_name = displayName[0]
-
-        profile.last_name = ""
+        this.user.first_name = displayName[0]
         for (let index = 1; index < displayName.length - 1; index++) {
-          profile.last_name += displayName[index] + " "
+          this.user.last_name += displayName[index] + " "
         }
-        profile.last_name += displayName[displayName.length - 1]
-
+        this.user.last_name += displayName[displayName.length - 1];
       } else {
-        profile.first_name = user.displayName
+        this.user.first_name = user.displayName;
       }
     }
-    profile.email = user.email
-    profile._id = user.uid
-    profile.provider = m_provider
-
-    return profile
+    this.user.email = user.email;
+    this.user._id = user.uid;
+    this.user.platform = this.platform;
+    this.user.createAccountDate = new Date().toLocaleDateString();
   }
 
 
@@ -345,57 +381,6 @@ export class AuthDataProvider {
     this.user.phone_number = phone.phone_number
     this.user.broker = phone.broker
     // this.sendVerifyCode().then(
-  }
-
-
-
-
-
-  providerLogin(m_provider): Promise<Profile> {
-    if (m_provider == "facebook") {
-      return new Promise((resolve, reject) => {
-        this.facebook.login(['email'])
-          .then(response => {
-            const facebookCredential = firebase.auth.FacebookAuthProvider
-              .credential(response.authResponse.accessToken);
-            firebase.auth().signInWithCredential(facebookCredential)
-              .then((success: any) => {
-
-                console.log(JSON.stringify("success", success));
-                resolve(this.getProfileWithFirebaseUser(success, m_provider))
-              });
-          }).catch((error) => {
-            console.log("error", error);
-
-            reject(error)
-          });
-      })
-    }
-    else if (m_provider == "google") {
-      return new Promise((resolve, reject) => {
-        this.googlePlus.login({
-          'webClientId': '740803067623-sivifgg69dmiq5r7reo9m0vncnri3ahk.apps.googleusercontent.com',
-        }).then(response => {
-          console.log(response);
-          const googleCrendential = firebase.auth.GoogleAuthProvider
-            .credential(response.idToken);
-
-          firebase.auth().signInWithCredential(googleCrendential)
-            .then(success => {
-              console.log(JSON.stringify(success));
-
-              resolve(this.getProfileWithFirebaseUser(success, m_provider))
-            })
-            .catch(err => {
-              alert(err + "error");
-
-            })
-
-        }).catch((error) => { reject(error) });
-      })
-
-    }
-
   }
 
   updateProfileChangeinServer(data2) {

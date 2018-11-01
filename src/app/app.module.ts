@@ -16,8 +16,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CryptoProvider } from '../providers/crypto/crypto';
 // import { ChartUI } from '../components/chart-iq/ui_component/ui.component';
 import { FCM } from '@ionic-native/fcm';
-import { AngularFireModule } from '@angular/fire';
-import { AngularFireAuthModule } from '@angular/fire/auth';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateModule } from '@ngx-translate/core';
 import { TranslateLoader } from '@ngx-translate/core';
@@ -27,17 +25,11 @@ import { GooglePlus } from '@ionic-native/google-plus';
 import { Facebook } from '@ionic-native/facebook';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { Sim } from '@ionic-native/sim';
+import firebase from 'firebase';
 
 
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBvTHEcyqfyj4G7qZU0qVBasRIqYd1K3o4",
-  authDomain: "trading-compare-93afb.firebaseapp.com",
-  databaseURL: "https://trading-compare-93afb.firebaseio.com",
-  projectId: "trading-compare-93afb",
-  storageBucket: "trading-compare-93afb.appspot.com",
-  messagingSenderId: "212982281977"
-}
+
 
 console.log("bb");
 
@@ -51,8 +43,6 @@ export function createTranslateLoader(http: HttpClient) {
   ],
   imports: [
     // ChartUI,
-    AngularFireModule.initializeApp(firebaseConfig),
-    AngularFireAuthModule,
     BrowserModule,
     IonicModule.forRoot(MyApp),
     BrowserAnimationsModule,

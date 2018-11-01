@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
 import { EnterPhonePage } from './enter-phone';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   declarations: [
@@ -8,6 +9,7 @@ import { EnterPhonePage } from './enter-phone';
   ],
   imports: [
     IonicPageModule.forChild(EnterPhonePage),
+    TranslateModule.forChild()
   ],
 })
 export class EnterPhonePageModule {}

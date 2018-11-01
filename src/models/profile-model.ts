@@ -20,6 +20,6 @@ export class Profile {
     nickname: string = "";
     watchlist: any[] = [];
     createAccountDate: string = "";
-    version: number = 0;
+    version: string = "";
     countryData: CountryModel = new CountryModel();
 }

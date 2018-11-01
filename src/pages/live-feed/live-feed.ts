@@ -371,7 +371,10 @@ export class LiveFeedPage implements AfterViewInit {
             arr.push(data[index].symbol);
           }
         }
-        this.content.scrollTop = 0;
+        if (this.content!=undefined) {
+          this.content.scrollTop = 0;
+        }
+     
         await this.startWS(this.STOCK);
         this.addCoinWebsocketStock(arr);
         resolve();
@@ -902,6 +905,11 @@ export class LiveFeedPage implements AfterViewInit {
       this.content.resize();
       this.scrolllll += 1500;
     })
+  }
+
+  errorHandler(event) {
+    console.debug(event);
+    event.target.src = "assets/imgs/flags/flag general.png";
   }
 
 

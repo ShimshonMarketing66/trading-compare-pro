@@ -1,5 +1,8 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { Component, ViewChild } from '@angular/core';
+import { IonicPage, NavController, NavParams, AlertController, App, Tabs } from 'ionic-angular';
+import { AuthDataProvider } from '../../../providers/auth-data/auth-data';
+import { SplashScreen } from '@ionic-native/splash-screen';
+import { MyApp } from '../../../app/app.component';
 import { Profile } from '../../../models/profile-model';
 
 @IonicPage({
@@ -10,11 +13,17 @@ import { Profile } from '../../../models/profile-model';
   templateUrl: 'sign-in.html',
 })
 export class SignInPage {
-  email:string = "";
-  password:string = "";
+  email: string = "";
+  password: string = "";
   error: string = "";
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
-   
+  constructor(
+    public app: App,
+    public splashscreen: SplashScreen,
+    public alertCtrl: AlertController,
+    public navCtrl: NavController,
+    public navParams: NavParams,
+    public authData: AuthDataProvider) {
+
   }
 
   ionViewDidLoad() {
@@ -36,34 +45,70 @@ export class SignInPage {
     }
 
     console.log("done");
-    
-    this.authdata.loginUserViaEmail(this.profile.email,this.profile.password).then((user) => {
-        console.log(user,"user");
-        this.authdata.checkIfUserExistAlready(user.uid).then(profile=>{
-          console.log(profile,"profile");
-          this.authdata.user=profile
-          if(profile.is_phone_number_verified)
-          this.navCtrl.setRoot("main-tabs")
-          else
-          this.navCtrl.setRoot("verify-phone")
 
-        }).catch((err) => {
-          console.log(err.message);
-          let alert = this.alertCtrl.create({
-            message: err.message,
-            buttons: [
-              {
-                text: "Ok",
-                role: 'cancel'
-              }
-            ]
-          });
-          alert.present();
+    this.authData.loginUserViaEmail(this.email, this.password).then((user) => {
+      console.log(user, "user");
+      this.authData.getProfileFromServer(user.user.uid)
+        .then((data) => {
+          if (data.verifyData.is_phone_number_verified) {
+            this.splashscreen.show();
+            window.location.reload();
+            this.app.getRootNav().setRoot(MyApp);
+          } else {
+            let alert = this.alertCtrl.create({
+              message: "need to complete registration",
+              buttons: [
+                {
+                  text: "complete registration",
+                  role: 'cancel',
+                  handler: () => {
+                    this.navCtrl.setRoot("verify-code");
+                  }
+
+                }
+              ]
+            });
+            alert.present();
+          }
         })
-          }).catch((err) => {
-      console.log(err.message);
+        .catch(err => {
+          console.log("aaa");
+          this.authData.deleteProfile(user.user.uid).then(()=>{
+            console.log("user deleted");
+            let alert = this.alertCtrl.create({
+              message: "Sorry, please complet registretion.",
+              buttons: [
+                {
+                  text: "complete registration",
+                  role: 'cancel',
+                  handler: () => {
+                    this.authData.user.password = this.password;
+                    this.authData.user.email = this.email;
+                    this.navCtrl.parent.select(0);                  }
+                }
+              ]
+            });
+            alert.present();
+          }).catch((err)=>{
+            console.log("err123334", err);
+          })
+          console.log("err", err);
+        })
+    }).catch((err) => {
+      console.log(err);
+      let message = ""
+      switch (err.code) {
+        case "auth/user-not-found":
+          message = "this email is not exist."
+          break;
+        case "auth/wrong-password":
+          message = "wrong password."
+        default:
+        message = "check the email or the password.";
+          break;
+      }
       let alert = this.alertCtrl.create({
-        message: err.message,
+        message: message,
         buttons: [
           {
             text: "Ok",
@@ -73,6 +118,22 @@ export class SignInPage {
       });
       alert.present();
     })
+  }
 
+
+  loginUserWithProvider(m_provider: string) {
+    this.authData.loginUserWithProvider(m_provider).then((user: Profile) => {
+      if (user.verifyData.is_phone_number_verified) {
+        this.splashscreen.show();
+        this.app.getRootNavs()[0].setRoot(MyApp).then(() => {
+          window.location.reload();
+        })
+      } else {
+        this.app.getRootNavs()[0].setRoot("enter-phone");
+      }
+    })
+      .catch((err) => {
+        console.log("err 656721356731 ", err);
+      })
   }
 }

@@ -1,6 +1,6 @@
 <ion-content padding>
 
-    <button ion-button style="text-align: center;height: 30px;width: 100%;background: #e54840;padding: 5px;">
+    <button (click)="loginUserWithProvider('google')" ion-button style="text-align: center;height: 30px;width: 100%;background: #e54840;padding: 5px;">
         <span>
             <ion-icon name="logo-googleplus"></ion-icon>
         </span>
@@ -25,8 +25,6 @@
         <div style="color: red;text-align: center;">
             {{error}}
         </div>
-
-
         <ion-row>
             <ion-col>
                 <ion-item style="background: #2b2b2b;">

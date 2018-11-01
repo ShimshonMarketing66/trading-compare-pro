@@ -5,26 +5,23 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { FCM } from '@ionic-native/fcm';
 import { TranslateService } from '@ngx-translate/core';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
-import { AngularFireAuth } from '@angular/fire/auth';
-import { MainTabsPage } from '../pages/main-tabs/main-tabs';
 import firebase from 'firebase';
-import { Sim } from '@ionic-native/sim';
 import { AuthDataProvider } from '../providers/auth-data/auth-data';
+import { Profile } from '../models/profile-model';
 
 @Component({
   templateUrl: 'app.html'
 })
 export class MyApp {
   @ViewChild(Nav) navCtrl: Nav;
-  rootPage: any = "login-tabs";
+  rootPage: any;
   isLogin: boolean;
   onAuthStateChangedCalled: boolean = false;
-
-
+  firstTime: boolean = true;
+  _id: string;
 
   constructor(
     public authData: AuthDataProvider,
-    private afAuth: AngularFireAuth,
     private androidPermissions: AndroidPermissions,
     private fcm: FCM,
     public platform: Platform,
@@ -32,17 +29,30 @@ export class MyApp {
     splashScreen: SplashScreen,
     public translate: TranslateService,
   ) {
+    const firebaseConfig = {
+      apiKey: "AIzaSyBvTHEcyqfyj4G7qZU0qVBasRIqYd1K3o4",
+      authDomain: "trading-compare-93afb.firebaseapp.com",
+      databaseURL: "https://trading-compare-93afb.firebaseio.com",
+      projectId: "trading-compare-93afb",
+      storageBucket: "trading-compare-93afb.appspot.com",
+      messagingSenderId: "212982281977"
+    }
+    firebase.initializeApp(firebaseConfig),
+
+
+
     this.loop();
-    this.afAuth.auth.onAuthStateChanged(user => {
+    firebase.auth().onAuthStateChanged(user => {
       this.onAuthStateChangedCalled = true;
       if (user) {
+        this._id = user.uid;
         this.isLogin = true;
       } else {
         this.isLogin = false;
       }
 
       platform.ready().then(() => {
-        
+
         if (!platform.is("cordova")) {
           this.authData.platform = "browser";
         } else if (platform.is("android")) {
@@ -56,7 +66,10 @@ export class MyApp {
         statusBar.styleDefault();
         splashScreen.hide();
 
-
+        if (this.firstTime) {
+          this.firstTime = false;
+          return;
+        }
         if (!this.isLogin) {
           this.checkPermission();
           return;
@@ -80,10 +93,7 @@ export class MyApp {
         this.fcm.onTokenRefresh().subscribe(token => {
           console.log("onTokenRefresh", token);
         });
-
-
       });
-
     });
     translate.setDefaultLang('english');
 
@@ -113,7 +123,18 @@ export class MyApp {
     setTimeout(() => {
       if (this.onAuthStateChangedCalled) {
         if (this.isLogin) {
-          this.rootPage = "main-tabs";
+          this.authData.getProfileFromServer(this._id).then((user:Profile) => {
+            this.authData.user = user;
+            if (user.verifyData.is_phone_number_verified) {
+              this.rootPage = "main-tabs";
+            }else{
+              this.rootPage = "enter-phone";
+            }
+          })
+          .catch((err)=>{
+            console.log("err this.authData.getProfileFromServer app commponnent"); 
+            this.rootPage = "login-tabs";
+          })
         } else {
           this.rootPage = "login-tabs";
         }

@@ -10,7 +10,9 @@ import { ComponentsModule } from '../../components/components.module';
   ],
   imports: [
     IonicPageModule.forChild(LiveFeedPage),
-    PipesModule,ComponentsModule  ],
+    PipesModule,
+    ComponentsModule
+    ],
     
 })
 export class LiveFeedPageModule {}

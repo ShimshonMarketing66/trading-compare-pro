@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, LoadingController, App, ModalController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController, App, ModalController, AlertController } from 'ionic-angular';
 import { Profile } from '../../../models/profile-model';
 import { AuthDataProvider } from '../../../providers/auth-data/auth-data';
 import { Sim } from '@ionic-native/sim';
-
-
+import { SplashScreen } from '@ionic-native/splash-screen';
+import { MyApp } from '../../../app/app.component';
 
 @IonicPage({
   name: "sign-up"
@@ -17,46 +17,46 @@ export class SignUpPage {
   error: string = "";
 
   constructor(
-    public sim:Sim,
+    public alertCtrl:AlertController,
+    public splashscreen: SplashScreen,
+    public sim: Sim,
     public modalCtrl: ModalController,
     public navCtrl: NavController,
     public navParams: NavParams,
-    public profile: Profile,
     public authData: AuthDataProvider,
     public loadingCtrl: LoadingController,
     private app: App
   ) {
-
     authData.getContry().then(data => {
-      profile.countryData = data;      
+      this.authData.user.countryData = data;
       if (this.authData.platform == "browser") {
         return;
       }
       this.sim.hasReadPermission().then((info) => {
         if (!info) {
           this.sim.requestReadPermission().then(() => {
-            console.log('Permission granted')
+            console.log('Permission granted');
             this.sim.getSimInfo().then(
               (info) => {
-                console.log("info",info);
-                
-               let a =  profile.countryData.dial_code.length
-               profile.phone_number = info.phoneNumber.substring(a);
+                console.log("info", info);
+                let a = this.authData.user.countryData.dial_code.length
+                this.authData.user.phone_number = info.phoneNumber.substring(a);
               },
               (err) => {
                 console.log('Unable to get sim info: ', err);
               }
-            );},
+            );
+          },
             () => {
               console.log('Permission denied')
             }
           );
-        }else{
+        } else {
           this.sim.getSimInfo().then(
             (info) => {
-              console.log("info",info);
-             let a =  profile.countryData.dial_code.length
-             profile.phone_number = info.phoneNumber.substring(a);
+              console.log("info", info);
+              let a = this.authData.user.countryData.dial_code.length
+              this.authData.user.phone_number = info.phoneNumber.substring(a);
             },
             (err) => {
               console.log('Unable to get sim info: ', err);
@@ -68,52 +68,73 @@ export class SignUpPage {
   }
 
   loginUserWithProvider(m_provider: string) {
-    this.authData.loginUserWithProvider(m_provider).then((data) => {
-      console.log(data);
+    this.authData.loginUserWithProvider(m_provider).then((user: Profile) => {
+      console.log(user);
+      if (user.verifyData.is_phone_number_verified) {
+        this.splashscreen.show();
+        this.app.getRootNavs()[0].setRoot(MyApp).then(() => {
+          window.location.reload();
+        })
+      } else {
+        this.app.getRootNavs()[0].setRoot("enter-phone");
+      }
     })
+      .catch((err) => {
+        console.log("err 656721356731 ", err);
+      })
   }
 
   register() {
-
-    // this.app.getRootNav().setRoot("verify-code");
-    // return;
-    // this.navCtrl.setRoot("verify-code");
-    if (this.profile.first_name == "") {
+    if (this.authData.user.first_name == "") {
       this.error = "*Please enter Correct First name.";
       return;
     }
 
-    if (this.profile.last_name == "") {
+    if (this.authData.user.last_name == "") {
       this.error = "*Please enter Correct Last name.";
       return;
     }
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if (!re.test(String(this.profile.email).toLowerCase())) {
+    if (!re.test(String(this.authData.user.email).toLowerCase())) {
       this.error = "*Please enter Correct Email.";
       return;
     }
-    if (this.profile.password.length < 6) {
+    if (this.authData.user.password.length < 6) {
       this.error = "*Please enter Correct Password (6 characters minimum).";
       return;
     }
 
-    if (this.profile.phone_number.length < 5) {
+    if (this.authData.user.phone_number.length < 5) {
       this.error = "*Please enter Correct Phone Number.";
       return;
     }
-    if (this.profile.countryData.country == "") {
+    if (this.authData.user.countryData.country == "") {
       this.error = "*Please select Country.";
       return;
     }
-    if (this.profile.countryData.dial_code == "") {
+    if (this.authData.user.countryData.dial_code == "") {
       this.error = "*Please select Dial Code.";
       return;
     }
     this.error = "";
 
-    this.loginUserWithPassword();
-
-
+    let alert = this.alertCtrl.create({
+      message: "A message will send to you with this phone number.",
+      buttons: [
+        {
+          text: "Accept",
+          handler: () => {
+            this.loginUserWithPassword();     
+          }
+        },
+        {
+          text: "Cancel",
+          role:"cancel"
+        }
+      ]
+    });
+    alert.present()
+   
   }
 
 
@@ -122,7 +143,7 @@ export class SignUpPage {
       content: "checking data..."
     })
     loading.present();
-    this.authData.signupUser(this.profile, loading).then(() => {
+    this.authData.signupUser(this.authData.user, loading).then(() => {
       this.authData.sendVerifyCode(loading).then(() => {
         loading.dismiss();
         this.app.getRootNav().setRoot("verify-code");
@@ -153,8 +174,8 @@ export class SignUpPage {
     });
     profileModal.onDidDismiss(data => {
       if (data != undefined && data.dial_code != undefined) {
-        this.profile.countryData.dial_code = data.dial_code;
-        this.profile.countryData.country = data.name;
+        this.authData.user.countryData.dial_code = data.dial_code;
+        this.authData.user.countryData.country = data.name;
       }
     });
     profileModal.present();
@@ -166,21 +187,28 @@ export class SignUpPage {
     });
     profileModal.onDidDismiss(data => {
       if (data != undefined && data.dial_code != undefined) {
-        this.profile.countryData.dial_code = data.dial_code
+        this.authData.user.countryData.dial_code = data.dial_code
       }
     });
     profileModal.present();
   }
 
   presentbrokerlist() {
-
     let profileModal = this.modalCtrl.create("brokers-modal");
     profileModal.onDidDismiss(data => {
       if (data != undefined && data.name != undefined) {
-        this.profile.broker = data.name
+        this.authData.user.broker = data.name;
       }
     });
     profileModal.present();
   }
 
+  ionViewDidEnter() {
+    if (this.authData.user.email != "") {
+      this.authData.user.email = this.authData.user.email;
+    }
+    if (this.authData.user.password != "") {
+      this.authData.user.password = this.authData.user.password;
+    }
+  }
 }
