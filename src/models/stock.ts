@@ -20,7 +20,8 @@ export interface IStock {
     timezone_name: string;
     gmt_offset: string;
     last_trade_time: string;
-    variation: string
+    variation: string,
+    is_in_watchlist:boolean;
     
 }
  

@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { AuthDataProvider } from '../auth-data/auth-data';
 
 @Injectable()
 export class ForexProvider {
 
   allForex: any[] = [];
 
-  constructor(public http: HttpClient) {
+  constructor(public http: HttpClient,public authData:AuthDataProvider) {
 
   }
 
@@ -24,6 +25,20 @@ export class ForexProvider {
               data[key]["toSymbol"] = data[key].pair[3] + data[key].pair[4] + data[key].pair[5]
               data[key]["index"] = index;
               data[key]["logo"] = "https://xosignals.herokuapp.com/api2/sendImgByName/" + (data[key]["symbol"]).toLowerCase() + "%20" + data[key]["toSymbol"].toLowerCase();
+              data[key]["is_in_watchlist"] = false;
+              data[key]["symbol"] = data[key]["pair"];
+              data[key]["type"] = "FOREX";
+              for (let index = 0; index < this.authData.user.watchlist.length; index++) {
+                if (this.authData.user.watchlist[index].type == "FOREX") {
+                  if ( data[key].symbol == this.authData.user.watchlist[index].symbol) {
+                    console.log(data[key].symbol);
+                    
+                    data[key]["is_in_watchlist"] = true;
+                    break;
+                  }
+                }
+                
+              }
               this.allForex.push(data[key])
               index++;
             }

@@ -125,11 +125,11 @@
 
 
         <ion-grid>
-          <ion-row style="border-bottom: 1px solid #4a4a4a;height: 40px;" *ngFor="let stock of stocks;let i = index;"
-            (click)="goToDetailsStock(i)">
-            <ion-col style="margin:auto;text-align: left;white-space: nowrap;" (click)="watchlist(i,$event)">
+          <ion-row style="border-bottom: 1px solid #4a4a4a;height: 40px;" *ngFor="let stock of stocks;let i = index;"(click)="goToDetailsStock(i)">
+            <ion-col style="margin:auto;text-align: left;white-space: nowrap;" >
               <span style="padding-left: 3px;">
-                <ion-icon name="star-active"></ion-icon>
+                <ion-icon *ngIf="stock.is_in_watchlist" name="star-active" (click)="remove_from_watchlist($event,stock.symbol,'STOCK',i)"></ion-icon>
+                <ion-icon *ngIf="!stock.is_in_watchlist" name="star-disable" (click)="add_to_watchlist($event,stock.symbol,'STOCK',i)"></ion-icon>
               </span>
               <span style="font-size:14px;font-weight: 700;white-space: nowrap;">
                 {{stock.symbol | rmPoint}}
@@ -192,7 +192,8 @@
 
             <div>
               <span>
-                <ion-icon name="star-active"></ion-icon>
+                <ion-icon *ngIf="stock.is_in_watchlist" name="star-active" (click)="remove_from_watchlist($event,stock.symbol,'STOCK',i)"></ion-icon>
+                <ion-icon *ngIf="!stock.is_in_watchlist" name="star-disable" (click)="add_to_watchlist($event,stock.symbol,'STOCK',i)"></ion-icon>
               </span>
               <span style="font-size: 14px;">
                 {{stock["shortName"]}}
@@ -241,7 +242,8 @@
             (click)="goToDetailsForex(i)">
             <ion-col style="margin:auto;text-align: left;white-space: nowrap;" (click)="watchlist(i,$event)">
               <span style="padding-left: 3px;">
-                <ion-icon name="star-active"></ion-icon>
+                <ion-icon *ngIf="forex.is_in_watchlist" name="star-active"  (click)="remove_from_watchlist($event,forex.symbol,'FOREX',i)"></ion-icon>
+                <ion-icon *ngIf="!forex.is_in_watchlist" name="star-disable"(click)="add_to_watchlist($event,forex.symbol,'FOREX',i)"></ion-icon>
               </span>
               <span style="font-size:14px;font-weight: 700;white-space: nowrap;">
                 {{forex.fromSymbol}}
@@ -297,7 +299,8 @@
             <img src={{forex.logo}} style="width: 37px;height: 37px;border-radius: 50px;">
             <div>
               <span>
-                <ion-icon name="star-active"></ion-icon>
+                <ion-icon *ngIf="forex.is_in_watchlist" name="star-active" (click)="remove_from_watchlist($event,forex.symbol,'FOREX',i)"></ion-icon>
+                <ion-icon *ngIf="!forex.is_in_watchlist" name="star-disable"  (click)="add_to_watchlist($event,forex.symbol,'FOREX',i)"></ion-icon>
               </span>
               <span style="font-size: 14px;">
                 {{forex.pair}}
@@ -340,7 +343,8 @@
             (click)="goToDetailsCrypto(i)">
             <ion-col style="overflow: hidden;margin:auto;text-align: left;white-space: nowrap;" (click)="watchlist(i,$event)">
               <span style="padding-left: 3px;">
-                <ion-icon name="star-active"></ion-icon>
+                <ion-icon *ngIf="crypto.is_in_watchlist" name="star-active"  (click)="remove_from_watchlist($event,crypto.symbol,'CRYPTO',i)"></ion-icon>
+                <ion-icon *ngIf="!crypto.is_in_watchlist" name="star-disable" (click)="add_to_watchlist($event,crypto.symbol,'CRYPTO',i)"></ion-icon>
               </span>
               <span style="font-size:14px;font-weight: 700;white-space: nowrap;">
                 {{crypto.name}}
@@ -384,7 +388,8 @@
             <img src={{crypto.logo}} style="width: 37px;height: 37px;border-radius: 50px;">
             <div>
               <span>
-                <ion-icon name="star-active"></ion-icon>
+                <ion-icon *ngIf="crypto.is_in_watchlist" name="star-active" (click)="remove_from_watchlist($event,crypto.symbol,'CRYPTO',i)"></ion-icon>
+                <ion-icon *ngIf="!crypto.is_in_watchlist" name="star-disable" (click)="add_to_watchlist($event,crypto.symbol,'CRYPTO',i)"></ion-icon>
               </span>
               <span style="font-size: 14px;">
                 {{crypto.shortName}}

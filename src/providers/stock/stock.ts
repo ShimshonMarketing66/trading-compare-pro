@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IStock } from '../../models/stock';
 import { DomSanitizer } from '@angular/platform-browser';
+import { AuthDataProvider } from '../auth-data/auth-data';
 
 
 @Injectable()
@@ -20,6 +21,7 @@ export class StockProvider {
 
   constructor(
     public http: HttpClient,
+    public authData:AuthDataProvider
   ) {
     // let aa = new RmPointPipe()
 
@@ -57,6 +59,18 @@ export class StockProvider {
                   tmp[j]["shortName"] = tmp[j]["name"].split(" ")[0];
                   let a = (data[index].symbol).split(".")[0];
                   tmp[j]["logo"] = "https://storage.googleapis.com/iex/api/logos/" + a + ".png";
+
+                  tmp[j]["is_in_watchlist"] = false;
+                  tmp[j]["type"] = "STOCK";
+                  for (let index = 0; index < this.authData.user.watchlist.length; index++) {
+                    if (this.authData.user.watchlist[index].type == "STOCK") {
+                      if (  tmp[j].symbol == this.authData.user.watchlist[index].symbol) {
+                        tmp[j]["is_in_watchlist"] = true;
+                        break;
+                      }
+                    }
+                    
+                  }
                 }
                 for (let i = m_offset; i < m_offset + 200; i++) {
                   if (i < tmp.length)
@@ -78,7 +92,7 @@ export class StockProvider {
         this.http.get(this.base_url + this.path_getStock + "/" + 0 + "/" + m_country)
           .toPromise()
           .then(data => {
-            console.log("made requeust with offset 0 because never get this stock yet.");
+            console.log("made requeust with offset 0 because never get this stock yet.",this.authData.user.watchlist);
             let data2 = Object["values"](data) as IStock[];
             for (let index = 0; index < data2.length; index++) {
               data2[index]["state"] = "none";
@@ -86,6 +100,19 @@ export class StockProvider {
               data2[index]["shortName"] = data2[index]["name"].split(" ")[0];
               let a = (data[index].symbol).split(".")[0];
               data2[index]["logo"] = "https://storage.googleapis.com/iex/api/logos/" + a + ".png";
+              data2[index]["is_in_watchlist"] = false;
+              data2[index]["type"] = "STOCK";
+              for (let index2 = 0; index2 < this.authData.user.watchlist.length; index2++) {
+                if (this.authData.user.watchlist[index2].type == "STOCK") {
+                  if (data2[index].symbol == this.authData.user.watchlist[index2].symbol) {
+                    console.log(data2[index].symbol);
+                    
+                    data2[index]["is_in_watchlist"] = true;
+                    break;
+                  }
+                }
+                
+              }
             }
             this.allStocks.push({
               data: data2,
@@ -173,6 +200,10 @@ export class StockProvider {
   //     }
   //   })
   // }
+  get_stock_by_symbol(symbol:string) :Promise<any>{
+    return this.http.get("https://websocket-stock.herokuapp.com/getStockPrice/" + symbol ).toPromise();
+    
+  }
 
 
 

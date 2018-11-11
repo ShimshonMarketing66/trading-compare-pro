@@ -5,6 +5,9 @@ import { IStock } from '../../models/stock';
 import { ForexProvider } from '../../providers/forex/forex';
 import * as io from "socket.io-client";
 import { CryptoProvider } from '../../providers/crypto/crypto';
+import { GlobalProvider } from '../../providers/global/global';
+import { ToastController } from 'ionic-angular/components/toast/toast-controller';
+import { AuthDataProvider } from '../../providers/auth-data/auth-data';
 
 @HostListener('scroll', ['$event'])
 @HostListener("click", ["$event"])
@@ -41,7 +44,7 @@ import { CryptoProvider } from '../../providers/crypto/crypto';
 })
 export class LiveFeedPage implements AfterViewInit {
   /*  DEFINITIONS CONSTANTS*/
-  private readonly STOCK: string = "STOCKS";
+  private readonly STOCK: string = "STOCK";
   private readonly FOREX: string = "FOREX";
   private readonly CRYPTO: string = "CRYPTO";
   private readonly WATCHLIST: string = "WATCHLIST";
@@ -57,7 +60,7 @@ export class LiveFeedPage implements AfterViewInit {
   @ViewChild('content') content: Content;
   modeView: string = "LINES"
 
-
+  watchlists = [];
   /* CRYPTO */
   cryptoConterSquares: number = 20;
   cryptoSquares: any[] = [];
@@ -98,6 +101,9 @@ export class LiveFeedPage implements AfterViewInit {
 
 
   constructor(
+    public authData: AuthDataProvider,
+    public toastCtrl: ToastController,
+    public globalProvider: GlobalProvider,
     public cryptoProvider: CryptoProvider,
     public platform: Platform,
     public forexProvider: ForexProvider,
@@ -107,11 +113,6 @@ export class LiveFeedPage implements AfterViewInit {
     public navCtrl: NavController,
     public navParams: NavParams
   ) {
-
-    // ticker(pairs) {
-    // }
-    //=> 'Bitcoin'
-
     this.sizeOfBody = window.screen.height - (this.platform.is("ios") ? 180 : 199);
     this.numOfLines = Math.ceil(this.sizeOfBody / this.sizeOfLine);
 
@@ -149,7 +150,6 @@ export class LiveFeedPage implements AfterViewInit {
   }
 
   changeSegment(segment) {
-    console.log('changeSegment', segment);
 
     if (this.selectedSegment == segment) return;
     if (this.modeView == "SQUARES") {
@@ -158,6 +158,7 @@ export class LiveFeedPage implements AfterViewInit {
     this.stopWS(this.selectedSegment);
     switch (this.selectedSegment) {
       case this.STOCK:
+        this.content.scrollToTop();
         this.stocks = [];
         this.scrolllll = 0;
         this.stocksSquares = [];
@@ -209,6 +210,9 @@ export class LiveFeedPage implements AfterViewInit {
         break;
       case this.WATCHLIST:
         this.selectedSegment = this.WATCHLIST;
+        if (this.watchlists.length == 0) {
+          this.buildWatchlist();
+        }
         break;
       case this.TRENDING:
         this.selectedSegment = this.TRENDING;
@@ -296,13 +300,13 @@ export class LiveFeedPage implements AfterViewInit {
     })
   }
 
-  goToDetailsForex(i: number){
+  goToDetailsForex(i: number) {
     this.navCtrl.push("item-details-forex", {
       item: this.forexs[i]
     })
   }
 
-  goToDetailsCrypto(i: number){
+  goToDetailsCrypto(i: number) {
     this.navCtrl.push("item-details-crypto", {
       item: this.cryptos[i]
     })
@@ -310,6 +314,58 @@ export class LiveFeedPage implements AfterViewInit {
 
   watchlist(i: number, ev: any) {
     ev.stopPropagation();
+  }
+
+
+  buildWatchlist(): Promise<any> {
+    return new Promise((resolve) => {
+      let promises = [this.forexProvider.getAllForex(),this.cryptoProvider.getAllCrypto()];
+      // var promisesStock = [];
+      for (let index = 0; index < this.authData.user.watchlist.length; index++) {
+        if(this.authData.user.watchlist[index].type == this.STOCK){
+          promises.push(this.stockProvider.get_stock_by_symbol(this.authData.user.watchlist[index].symbol));
+        }
+      }
+      Promise.all(promises).then((data:any[])=>{
+        for (let i = 0; i < this.authData.user.watchlist.length; i++) {
+          switch (this.authData.user.watchlist[i].type) {
+            case this.FOREX:
+              for (let j = 0; j < data[0].length; j++) {
+               if (data[0][j].symbol == this.authData.user.watchlist[i].symbol ) {
+                 this.watchlists.push(data[0][j]);
+                 break;
+               }
+              }
+              break;
+
+              case this.CRYPTO:
+              for (let j = 0; j < data[1].length; j++) {
+                if (data[1][j].symbol == this.authData.user.watchlist[i].symbol ) {
+                  this.watchlists.push(data[1][j]);
+                  break;
+                }
+               }
+              break;
+
+              case this.STOCK:
+              for (let j = 2; j < data.length; j++) {
+                if (data[j].symbol == this.authData.user.watchlist[i].symbol ) {
+                  this.watchlists.push(data[j]);
+                  break;
+                }
+               }
+              break;
+          
+            default:
+              break;
+          }
+        }
+        console.log("watchlist" , this.watchlists);
+        
+      })
+      // var promises = [];
+
+    })
   }
 
   buildForex(): Promise<any> {
@@ -323,7 +379,7 @@ export class LiveFeedPage implements AfterViewInit {
             arr.push(data[index].pair);
           }
         }
-        if (this.content!=undefined) {
+        if (this.content != undefined) {
           this.content.scrollTop = this.ScrollFromTopForex;
         }
         if (this.modeView == "LINES") {
@@ -359,7 +415,6 @@ export class LiveFeedPage implements AfterViewInit {
 
   buildStocks(stockOffset?: number): Promise<any> {
     return new Promise((resolve) => {
-
       this.stockProvider.getStocks(stockOffset, this.exchangeStock).then(async (data) => {
         this.stocks = data;
         this.stockOffset = this.stocks.length;
@@ -371,15 +426,14 @@ export class LiveFeedPage implements AfterViewInit {
             arr.push(data[index].symbol);
           }
         }
-        if (this.content!=undefined) {
-          this.content.scrollTop = 0;
-        }
-     
+        // if (this.content!=undefined) {
+        //   this.content.scrollTop = 0;
+        // }
+
         await this.startWS(this.STOCK);
         this.addCoinWebsocketStock(arr);
         resolve();
       })
-
     })
   }
 
@@ -476,7 +530,7 @@ export class LiveFeedPage implements AfterViewInit {
         this.socketCrypto = io.connect("https://crypto.tradingcompare.com/");
 
         this.socketCrypto.on("message", (data) => {
-          let pair = data.pair;          
+          let pair = data.pair;
           for (let index = 0; index < this.CoinConnectedWSCrypto.length; index++) {
             let a = this.cryptos[index]["index"];
             if (pair == this.CoinConnectedWSCrypto[index].pair) {
@@ -503,8 +557,6 @@ export class LiveFeedPage implements AfterViewInit {
 
 
       case this.FOREX:
-        console.log(this.socketForex);
-
         this.socketForex = io.connect("https://forex-websocket.herokuapp.com/", {
           path: "/socket/forex/livefeed"
         });
@@ -580,10 +632,8 @@ export class LiveFeedPage implements AfterViewInit {
     }
   }
 
-
-
   addCoinWebsocketStock(arr: string[]) {
-
+    console.log("addCoinWebsocketStock", arr);
     let str = ""
     for (let index = 0; index < arr.length; index++) {
       str += arr[index];
@@ -591,17 +641,15 @@ export class LiveFeedPage implements AfterViewInit {
         str += ","
       }
     }
-
     if (this.socketStock != undefined) {
       this.socketStock.emit("subscribe", str);
     } else {
       console.log("this.socketStock!=undefined");
     }
-
   }
 
-
   leaveCoinWebsocketStock(arr: string[]) {
+    console.log("leaveCoinWebsocketStock", arr);
     let str = "";
     for (let index = 0; index < arr.length; index++) {
       str += arr[index];
@@ -613,6 +661,7 @@ export class LiveFeedPage implements AfterViewInit {
   }
 
   addCoinWebsocketForex(arr: string[]) {
+    console.log("addCoinWebsocketForex", arr);
     for (let index = 0; index < arr.length; index++) {
       arr[index] += "_2sec";
     }
@@ -620,13 +669,12 @@ export class LiveFeedPage implements AfterViewInit {
   }
 
   leaveCoinWebsocketForex(arr: string[]) {
+    console.log("leaveCoinWebsocketForex", arr);
     for (let index = 0; index < arr.length; index++) {
       arr[index] += "_2sec";
       this.socketForex.emit("leave_room", arr);
     }
-
   }
-
 
   addCoinWebsocketCrypto(arr: string[]) {
     console.log(arr);
@@ -648,8 +696,6 @@ export class LiveFeedPage implements AfterViewInit {
         SuposedToBe.push(this.cryptos[a + j]);
       }
     }
-    console.log("sad", SuposedToBe);
-
     for (let j1 = 0; j1 < SuposedToBe.length; j1++) {
       let flag1 = false;
       for (let j2 = 0; j2 < this.CoinConnectedWSCrypto.length; j2++) {
@@ -674,8 +720,8 @@ export class LiveFeedPage implements AfterViewInit {
       }
     }
 
-    console.log(Toconect);
-    console.log(Todisconect);
+    // console.log(Toconect);
+    // console.log(Todisconect);
 
 
 
@@ -907,9 +953,60 @@ export class LiveFeedPage implements AfterViewInit {
     })
   }
 
+  add_to_watchlist(event: any, symbol: string, type: string, i) {
+    switch (type) {
+      case this.STOCK:
+        this.stocks[i].is_in_watchlist = true;
+        break;
+      case this.FOREX:
+        this.forexs[i].is_in_watchlist = true;
+        break;
+      case this.CRYPTO:
+        this.cryptos[i].is_in_watchlist = true;
+        break;
+      default:
+        console.log("missing params");
+        return;
+    }
+    event.stopPropagation();
+    this.watchlists=[];
+    let toast = this.toastCtrl.create({
+      message: symbol + ' was added successfully',
+      duration: 2000,
+      position: 'bottom'
+    });
+    toast.present();
+    this.globalProvider.add_to_watchlist(symbol, type)
+  }
+
   errorHandler(event) {
     console.debug(event);
     event.target.src = "assets/imgs/flags/flag general.png";
+  }
+
+  remove_from_watchlist(event: any, symbol: string, type: string, i) {
+    switch (type) {
+      case this.STOCK:
+        this.stocks[i].is_in_watchlist = false;
+        break;
+      case this.FOREX:
+        this.forexs[i].is_in_watchlist = false;
+        break;
+      case this.CRYPTO:
+        this.cryptos[i].is_in_watchlist = false;
+        break;
+      default:
+        console.log("missing params");
+        return;
+    }
+    event.stopPropagation();
+    let toast = this.toastCtrl.create({
+      message: symbol + ' was removed from watchlist successfully',
+      duration: 2000,
+      position: 'bottom'
+    });
+    toast.present();
+    this.globalProvider.remove_from_watchlist(symbol, type)
   }
 
 

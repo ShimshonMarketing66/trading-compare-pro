@@ -19,7 +19,6 @@ export class MainTabsPage {
 
 
   constructor(public navCtrl: NavController) {
-    console.log("jdasl");
     
   }
 

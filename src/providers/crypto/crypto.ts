@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { AuthDataProvider } from '../auth-data/auth-data';
 declare var require: any;
 
 @Injectable()
@@ -9,7 +10,8 @@ export class CryptoProvider {
   cryptocurrencies;
   // private readonly base_url: string = "https://min-api.cryptocompare.com/data/pricemultifull?fsyms="
   // private readonly base_url_CONTINUE: string = "&tsyms="
-  constructor(public http: HttpClient) {
+  constructor(public http: HttpClient,
+    public authData:AuthDataProvider) {
     this.cryptocurrencies = require('cryptocurrencies');
   }
 
@@ -27,6 +29,18 @@ export class CryptoProvider {
               data[key]["state"] = "none";
               data[key]["index"] = index;
               data[key]["logo"] = "https://cloud-marketing66.herokuapp.com/logo/" + (data[key]["fromSymbol"]);
+              data[key]["is_in_watchlist"] = false;
+              data[key]["symbol"] = data[key]["pair"];
+              data[key]["type"] = "CRYPTO";
+              for (let index = 0; index < this.authData.user.watchlist.length; index++) {
+                if (this.authData.user.watchlist[index].type == "CRYPTO") {
+                  if ( data[key].symbol == this.authData.user.watchlist[index].symbol) {
+                    data[key]["is_in_watchlist"] = true;
+                    break;
+                  }
+                }
+                
+              }
               this.arrAllCrypto.push(data[key]);
               index++;
             } 

@@ -26,13 +26,18 @@ import { Facebook } from '@ionic-native/facebook';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { Sim } from '@ionic-native/sim';
 import firebase from 'firebase';
+import { GlobalProvider } from '../providers/global/global';
 
 
-
-
-
-console.log("bb");
-
+const firebaseConfig = {
+  apiKey: "AIzaSyBvTHEcyqfyj4G7qZU0qVBasRIqYd1K3o4",
+  authDomain: "trading-compare-93afb.firebaseapp.com",
+  databaseURL: "https://trading-compare-93afb.firebaseio.com",
+  projectId: "trading-compare-93afb",
+  storageBucket: "trading-compare-93afb.appspot.com",
+  messagingSenderId: "212982281977"
+}
+firebase.initializeApp(firebaseConfig)
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
 }
@@ -75,7 +80,8 @@ export function createTranslateLoader(http: HttpClient) {
     Facebook,
     GooglePlus,
     AuthDataProvider,
-    AndroidPermissions
+    AndroidPermissions,
+    GlobalProvider
 
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

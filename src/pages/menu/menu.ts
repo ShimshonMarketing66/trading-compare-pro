@@ -4,7 +4,7 @@ import { AuthDataProvider } from '../../providers/auth-data/auth-data';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { MyApp } from '../../app/app.component';
 
-
+declare var navigator:any;
 @IonicPage({
   name: "menu"
 })
@@ -28,10 +28,8 @@ export class MenuPage {
 
   logout() {
     this.authData.logoutUser().then(() => {
-      this.splashscreen.show();
-      this.app.getRootNavs()[0].setRoot(MyApp).then(() => {
-        window.location.reload();
-      })
+      // navigator.navigateTo('http://www.google.com');
+
     })
   }
 

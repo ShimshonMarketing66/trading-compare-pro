@@ -29,15 +29,7 @@ export class MyApp {
     splashScreen: SplashScreen,
     public translate: TranslateService,
   ) {
-    const firebaseConfig = {
-      apiKey: "AIzaSyBvTHEcyqfyj4G7qZU0qVBasRIqYd1K3o4",
-      authDomain: "trading-compare-93afb.firebaseapp.com",
-      databaseURL: "https://trading-compare-93afb.firebaseio.com",
-      projectId: "trading-compare-93afb",
-      storageBucket: "trading-compare-93afb.appspot.com",
-      messagingSenderId: "212982281977"
-    }
-    firebase.initializeApp(firebaseConfig),
+
 
 
 

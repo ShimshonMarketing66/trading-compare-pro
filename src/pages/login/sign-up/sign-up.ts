@@ -71,10 +71,8 @@ export class SignUpPage {
     this.authData.loginUserWithProvider(m_provider).then((user: Profile) => {
       console.log(user);
       if (user.verifyData.is_phone_number_verified) {
-        this.splashscreen.show();
-        this.app.getRootNavs()[0].setRoot(MyApp).then(() => {
-          window.location.reload();
-        })
+        // this.splashscreen.show();
+        this.app.getRootNavs()[0].setRoot("main-tabs");
       } else {
         this.app.getRootNavs()[0].setRoot("enter-phone");
       }
