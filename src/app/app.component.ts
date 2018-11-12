@@ -14,7 +14,7 @@ import { Profile } from '../models/profile-model';
 })
 export class MyApp {
   @ViewChild(Nav) navCtrl: Nav;
-  rootPage: any;
+  rootPage: any ;
   isLogin: boolean;
   onAuthStateChangedCalled: boolean = false;
   firstTime: boolean = true;
@@ -29,10 +29,6 @@ export class MyApp {
     splashScreen: SplashScreen,
     public translate: TranslateService,
   ) {
-
-
-
-
     this.loop();
     firebase.auth().onAuthStateChanged(user => {
       this.onAuthStateChangedCalled = true;

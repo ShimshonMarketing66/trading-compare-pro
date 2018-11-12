@@ -15,12 +15,21 @@ export class CryptoProvider {
     this.cryptocurrencies = require('cryptocurrencies');
   }
 
-  getAllCrypto(): Promise<any> {
+  getCrypto(num?:number): Promise<any> {    
     return new Promise((resolve) => {
-      this.http.get("https://crypto.tradingcompare.com/AllPairs").toPromise()
-        .then((data: any[]) => {
-          console.log(data);
-
+      if ( this.arrAllCrypto.length != 0) {
+        if (num == undefined) {
+          resolve( this.arrAllCrypto);
+        }else{
+          let arr = [];
+          for (let index = num; index < this.arrAllCrypto.length && index-num < 50 ; index++) {
+            arr.push(this.arrAllCrypto[index])
+          }
+          resolve(arr);
+        }
+      }else{
+        this.http.get("https://crypto.tradingcompare.com/AllPairs").toPromise()
+        .then((data: any) => {
           let index = 0;
           for (const key in data) {
             if (this.cryptocurrencies[data[key]["fromSymbol"]] != undefined) {
@@ -38,15 +47,25 @@ export class CryptoProvider {
                     data[key]["is_in_watchlist"] = true;
                     break;
                   }
-                }
-                
+                } 
               }
               this.arrAllCrypto.push(data[key]);
               index++;
             } 
           }
-          resolve(this.arrAllCrypto);
+          console.log(this.arrAllCrypto);
+          
+          if (num == undefined) {
+            resolve(this.arrAllCrypto);
+          }else{
+            let arr = [];
+            for (let index = num; index < this.arrAllCrypto.length && index-num < 50 ; index++) {
+              arr.push(this.arrAllCrypto[index])
+            }
+            resolve(arr);
+          }
         })
+      }
     })
   }
 

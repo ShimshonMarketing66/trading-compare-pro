@@ -1,5 +1,5 @@
 import { Component, HostListener, ViewChild, AfterViewInit, NgZone, ElementRef, trigger, transition, animate, keyframes, style } from '@angular/core';
-import { IonicPage, NavController, NavParams, Slides, ModalController, ModalOptions, Platform, Content } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Slides, ModalController, ModalOptions, Platform, Content, AlertController } from 'ionic-angular';
 import { StockProvider } from '../../providers/stock/stock';
 import { IStock } from '../../models/stock';
 import { ForexProvider } from '../../providers/forex/forex';
@@ -62,8 +62,6 @@ export class LiveFeedPage implements AfterViewInit {
 
   watchlists = [];
   /* CRYPTO */
-  cryptoConterSquares: number = 20;
-  cryptoSquares: any[] = [];
   CoinConnectedWSCrypto: any[] = [];
   ScrollFromTopCrypto: number = 0;
   ScrollDoneCrypto: boolean = true;
@@ -72,8 +70,6 @@ export class LiveFeedPage implements AfterViewInit {
   /* END CRYPTO */
 
   /* FOREX */
-  forexConterSquares: number = 20;
-  forexSquares: any[] = [];
   CoinConnectedWSForex: any[] = [];
   ScrollFromTopForex: number = 0;
   forexs: any = [];
@@ -81,8 +77,6 @@ export class LiveFeedPage implements AfterViewInit {
   /* END FOREX */
 
   /* STOCK */
-  stockConterSquares: number = 20;
-  stocksSquares: any[] = [];
   CoinConnectedWSStock: any[] = [];
   ScrollFromTopStock: number = 0;
   socketStock: SocketIOClient.Socket;
@@ -90,17 +84,20 @@ export class LiveFeedPage implements AfterViewInit {
 
 
   /* DEFINITIONS ALL ARRAYS */
-
+  offsetRequested:number=0;
   stocks: IStock[] = [];
   stockOffset: number = 0;
   exchangeStock: string = "united-states-of-america";
   /*  END DEFINITIONS ALL ARRAYS */
 
-  selectedSegment: string = this.STOCK;
   slides: string[];
 
-
+  public selectedSegment: string =  this.STOCK;
+  public Segments: Array<string> = [ this.STOCK, this.FOREX, this.CRYPTO,this.WATCHLIST,this.TRENDING];
+  
+  
   constructor(
+    private alertCtrl: AlertController,
     public authData: AuthDataProvider,
     public toastCtrl: ToastController,
     public globalProvider: GlobalProvider,
@@ -117,7 +114,9 @@ export class LiveFeedPage implements AfterViewInit {
     this.numOfLines = Math.ceil(this.sizeOfBody / this.sizeOfLine);
 
     this.slides = [this.STOCK, this.FOREX, this.CRYPTO, this.WATCHLIST, this.TRENDING];
-    this.buildStocks();
+    this.buildStocks(0).then(()=>{
+      this.offsetRequested = 50; 
+    })
 
   }
 
@@ -133,42 +132,25 @@ export class LiveFeedPage implements AfterViewInit {
     //     },10000)
   }
 
-  onSlideChanged(slider) {
-    if (slider.getActiveIndex() == 5) return;
-
-    const currentSlide = this.slides[slider.getActiveIndex()];
-    if (currentSlide == undefined) return;
-    var prevIndex = this.slides.indexOf(this.selectedSegment)
-    this.changeSegment(currentSlide);
-
-    console.log(this.containerSegment);
-    if (slider.getActiveIndex() > prevIndex) {
-      this.containerSegment.nativeElement.scrollLeft += 80;
-    } else {
-      this.containerSegment.nativeElement.scrollLeft -= 80;
-    }
+    
+  onTabChanged(tabName) {
+    this.changeSegment(tabName); 
   }
 
   changeSegment(segment) {
-
+    this.content.scrollToTop(0);
+    this.offsetRequested = 0;
     if (this.selectedSegment == segment) return;
-    if (this.modeView == "SQUARES") {
-      this.content.scrollToTop();
-    }
+
     this.stopWS(this.selectedSegment);
     switch (this.selectedSegment) {
       case this.STOCK:
-        this.content.scrollToTop();
         this.stocks = [];
-        this.scrolllll = 0;
-        this.stocksSquares = [];
         break;
       case this.FOREX:
         this.forexs = [];
-        this.forexSquares = [];
       case this.CRYPTO:
         this.cryptos = [];
-        this.cryptoSquares = [];
       case this.WATCHLIST:
         break;
       case this.TRENDING:
@@ -181,10 +163,9 @@ export class LiveFeedPage implements AfterViewInit {
       case this.STOCK:
         this.selectedSegment = this.STOCK;
         this.buildStocks(0).then(() => {
+          this.offsetRequested+=50;
           if (this.modeView == "SQUARES") {
-            for (let index = 0; index < 20; index++) {
-              this.stocksSquares.push(this.stocks[index]);
-            }
+           
           }
         });
         break;
@@ -192,9 +173,7 @@ export class LiveFeedPage implements AfterViewInit {
         this.selectedSegment = this.FOREX;
         this.buildForex().then(() => {
           if (this.modeView == "SQUARES") {
-            for (let index = 0; index < 20; index++) {
-              this.forexSquares.push(this.forexs[index]);
-            }
+           
           }
         })
         break;
@@ -202,9 +181,7 @@ export class LiveFeedPage implements AfterViewInit {
         this.selectedSegment = this.CRYPTO;
         this.buildCrypto().then(() => {
           if (this.modeView == "SQUARES") {
-            for (let index = 0; index < 20; index++) {
-              this.cryptoSquares.push(this.cryptos[index]);
-            }
+            
           }
         })
         break;
@@ -220,11 +197,6 @@ export class LiveFeedPage implements AfterViewInit {
       default:
         break;
     }
-
-    const selectedIndex = this.slides.findIndex((slide) => {
-      return slide === segment;
-    });
-    this.slider.slideTo(selectedIndex);
   }
 
   openSearch() {
@@ -264,34 +236,65 @@ export class LiveFeedPage implements AfterViewInit {
       }
 
       this.exchangeStock = data;
-      this.stockProvider.getStocks(0, this.exchangeStock).then((data) => {
+      this.stockProvider.get_stocks(0, this.exchangeStock).then((data) => {
         this.stocks = data;
         this.stockOffset = data.length;
+        this.offsetRequested = 50;
       })
     })
   }
 
-  doInfinite(infiniteScroll?, until?: number, ConterAndIndex?: number) {
-    if (until != undefined) {
-      console.log(until, ConterAndIndex);
-    }
-    console.log('Begin async operation');
-    setTimeout(() => {
-      this.stockProvider.getStocks(this.stockOffset, this.exchangeStock).then((data) => {
-        for (let index = 0; index < data.length; index++) {
-          this.stocks.push(data[index]);
-        }
-        this.stockOffset += data.length;
-        if (infiniteScroll != 1) {
-          infiniteScroll.complete();
-        } else {
-          for (let index = 0; index < until; ConterAndIndex++ , this.stockConterSquares++ , index++) {
-            this.stocksSquares.push(this.stocks[ConterAndIndex]);
+  doInfinite() {
+    console.log("do infinit",this.selectedSegment);
+    return new Promise((resolve)=>{
+    switch (this.selectedSegment) {
+      case this.STOCK:
+        this.stockProvider.get_stocks(this.offsetRequested,this.exchangeStock)
+        .then(data=>{          
+          this.offsetRequested += data.length;
+          for (let index = 0; index < data.length; index++) {
+           this.stocks.push(data[index]);
           }
-        }
-      })
-      console.log('Async operation has ended');
-    }, 500);
+         resolve();
+        })
+        .catch(err=>{
+          console.error(err);
+          resolve();
+        })
+        break;
+        case this.FOREX:
+        this.forexProvider.getForex(this.offsetRequested)
+        .then(data=>{       
+          this.offsetRequested += data.length;
+          for (let index = 0; index < data.length; index++) {
+           this.forexs.push(data[index]);
+          }
+         resolve();
+        })
+        .catch(err=>{
+          console.error(err);
+          resolve();
+        })
+        break;
+        case this.CRYPTO:
+        this.cryptoProvider.getCrypto(this.offsetRequested)
+        .then(data=>{       
+          this.offsetRequested += data.length;
+          for (let index = 0; index < data.length; index++) {
+           this.cryptos.push(data[index]);
+          }
+         resolve();
+        })
+        .catch(err=>{
+          console.error(err);
+          resolve();
+        })
+        break;
+    
+      default:
+        break;
+    }
+  })
   }
 
   goToDetailsStock(i: number) {
@@ -311,16 +314,10 @@ export class LiveFeedPage implements AfterViewInit {
       item: this.cryptos[i]
     })
   }
-
-  watchlist(i: number, ev: any) {
-    ev.stopPropagation();
-  }
-
-
+  
   buildWatchlist(): Promise<any> {
     return new Promise((resolve) => {
-      let promises = [this.forexProvider.getAllForex(),this.cryptoProvider.getAllCrypto()];
-      // var promisesStock = [];
+      let promises = [this.forexProvider.getAllForex(),this.cryptoProvider.getCrypto()];
       for (let index = 0; index < this.authData.user.watchlist.length; index++) {
         if(this.authData.user.watchlist[index].type == this.STOCK){
           promises.push(this.stockProvider.get_stock_by_symbol(this.authData.user.watchlist[index].symbol));
@@ -337,7 +334,6 @@ export class LiveFeedPage implements AfterViewInit {
                }
               }
               break;
-
               case this.CRYPTO:
               for (let j = 0; j < data[1].length; j++) {
                 if (data[1][j].symbol == this.authData.user.watchlist[i].symbol ) {
@@ -346,7 +342,6 @@ export class LiveFeedPage implements AfterViewInit {
                 }
                }
               break;
-
               case this.STOCK:
               for (let j = 2; j < data.length; j++) {
                 if (data[j].symbol == this.authData.user.watchlist[i].symbol ) {
@@ -360,27 +355,24 @@ export class LiveFeedPage implements AfterViewInit {
               break;
           }
         }
-        console.log("watchlist" , this.watchlists);
+        console.log(this.watchlists);
         
       })
-      // var promises = [];
-
     })
   }
 
   buildForex(): Promise<any> {
     return new Promise((resolve) => {
-      this.forexProvider.getAllForex().then(data => {
-        this.forexs = data;
+      this.forexProvider.getForex(0).then(data => {
+        for (let index = 0; index < data.length; index++) {
+          this.forexs.push(data[index]);
+        }
         let arr = [];
         for (let index = 0; index < this.forexs.length; index++) {
           if (index < this.numOfLines) {
             this.CoinConnectedWSForex.push(data[index]);
             arr.push(data[index].pair);
           }
-        }
-        if (this.content != undefined) {
-          this.content.scrollTop = this.ScrollFromTopForex;
         }
         if (this.modeView == "LINES") {
           this.startWS(this.FOREX);
@@ -389,13 +381,14 @@ export class LiveFeedPage implements AfterViewInit {
         resolve();
       })
     })
-
   }
 
   buildCrypto(): Promise<any> {
     return new Promise((resolve) => {
-      this.cryptoProvider.getAllCrypto().then(data => {
-        this.cryptos = data;
+      this.cryptoProvider.getCrypto(0).then(data => {
+        for (let index = 0; index < data.length; index++) {
+          this.cryptos.push(data[index])
+        }
         let arr = [];
         for (let index = 0; index < this.cryptos.length; index++) {
           if (index < this.numOfLines) {
@@ -403,7 +396,6 @@ export class LiveFeedPage implements AfterViewInit {
             arr.push(data[index].pair);
           }
         }
-        this.content.scrollTop = this.ScrollFromTopCrypto;
         if (this.modeView == "LINES") {
           this.startWS(this.CRYPTO);
           this.addCoinWebsocketCrypto(arr);
@@ -415,9 +407,11 @@ export class LiveFeedPage implements AfterViewInit {
 
   buildStocks(stockOffset?: number): Promise<any> {
     return new Promise((resolve) => {
-      this.stockProvider.getStocks(stockOffset, this.exchangeStock).then(async (data) => {
-        this.stocks = data;
-        this.stockOffset = this.stocks.length;
+      this.stockProvider.get_stocks(stockOffset, this.exchangeStock).then(async (data) => {
+        for (let index = 0; index < data.length; index++) {
+          this.stocks.push(data[index]);
+        }
+        this.offsetRequested = this.stocks.length;
         let arr = [];
         for (let index = 0; index < this.stocks.length; index++) {
           this.stocks[index]["index"] = index;
@@ -426,62 +420,38 @@ export class LiveFeedPage implements AfterViewInit {
             arr.push(data[index].symbol);
           }
         }
-        // if (this.content!=undefined) {
-        //   this.content.scrollTop = 0;
-        // }
-
         await this.startWS(this.STOCK);
         this.addCoinWebsocketStock(arr);
         resolve();
       })
     })
   }
+foo(){
+  
+  console.log(this.CoinConnectedWSStock);
+  
+}
 
 
-
-  scrolllll = 1500
   async onScroll(event) {
-
+    console.log("onScroll");
+    
     if (event == undefined) return;
     if (this.modeView == "SQUARES") {
-      if (event.scrollTop > this.scrolllll) {
-        switch (this.selectedSegment) {
-          case this.STOCK:
-            this.doInfiniteSquaresStock();
-            break;
-          case this.FOREX:
-            this.doInfiniteSquaresForex();
-            break;
-          case this.CRYPTO:
-            this.doInfiniteSquaresCrypto();
-            break;
-          case this.WATCHLIST:
-
-            break;
-          case this.TRENDING:
-
-            break;
-          default:
-            break;
-        }
-      }
       return;
     } else {
       switch (this.selectedSegment) {
         case this.CRYPTO:
-          this.ScrollFromTopCrypto = event.scrollTop;
           if (this.socketCrypto != undefined && !this.socketCrypto.disconnected) {
             this.checkWsCrypto(event.scrollTop);
           }
           break;
         case this.FOREX:
-          this.ScrollFromTopForex = event.scrollTop;
           if (this.socketForex != undefined && !this.socketForex.disconnected) {
             this.checkWsForex(event.scrollTop);
           }
           break;
         case this.STOCK:
-          this.ScrollFromTopStock = event.scrollTop;
           if (this.socketStock != undefined && !this.socketStock.disconnected) {
             this.checkWsStock(event.scrollTop);
           }
@@ -633,7 +603,7 @@ export class LiveFeedPage implements AfterViewInit {
   }
 
   addCoinWebsocketStock(arr: string[]) {
-    console.log("addCoinWebsocketStock", arr);
+    // console.log("addCoinWebsocketStock", arr);
     let str = ""
     for (let index = 0; index < arr.length; index++) {
       str += arr[index];
@@ -649,7 +619,7 @@ export class LiveFeedPage implements AfterViewInit {
   }
 
   leaveCoinWebsocketStock(arr: string[]) {
-    console.log("leaveCoinWebsocketStock", arr);
+    // console.log("leaveCoinWebsocketStock", arr);
     let str = "";
     for (let index = 0; index < arr.length; index++) {
       str += arr[index];
@@ -827,51 +797,11 @@ export class LiveFeedPage implements AfterViewInit {
   changeModeView(str: string) {
     if (str == this.modeView)
       return;
-    this.stocksSquares = [];
-    this.forexSquares = [];
-    this.cryptoSquares = [];
     this.modeView = str;
-
     if (this.modeView == "SQUARES") {
       this.stopWS(this.selectedSegment);
-
-      switch (this.selectedSegment) {
-        case this.CRYPTO:
-          for (let index = 0; index < 20; index++) {
-            this.cryptoSquares.push(this.cryptos[index]);
-          }
-          break;
-        case this.FOREX:
-          if (this.forexs.length > 0) {
-            for (let index = 0; index < 20; index++) {
-              this.forexSquares.push(this.forexs[index]);
-            }
-          } else {
-            this.buildForex().then(() => {
-              for (let index = 0; index < 20; index++) {
-                this.forexSquares.push(this.forexs[index]);
-              }
-            })
-          }
-          break;
-        case this.STOCK:
-          if (this.stocks.length > 0) {
-            for (let index = 0; index < 20; index++) {
-              this.stocksSquares.push(this.stocks[index]);
-            }
-          }
-          break;
-        case this.TRENDING:
-        // trending
-        default:
-          // watchlist
-          break;
-      }
-
-
     }
     if (this.modeView == "LINES") {
-
       this.startWS(this.selectedSegment);
       switch (this.selectedSegment) {
         case this.CRYPTO:
@@ -895,81 +825,46 @@ export class LiveFeedPage implements AfterViewInit {
     }
   }
 
-  getImgStock(index: number) {
-    if (this.stocks[index] != null) {
-      return this.stocks[index]["logo"];
-    }
-
-  }
-
-
-  doInfiniteSquaresStock() {
-    this.zone.run(() => {
-      let stocksSquares2 = this.stockConterSquares;
-      for (let index = 0; index < 20; index++ , this.stockConterSquares++) {
-        if (this.stocks[index + stocksSquares2] != undefined) {
-          this.stocksSquares.push(this.stocks[index + stocksSquares2]);
-        } else {
-          console.log("this.stocks[index+stocksSquares2]== undefined");
-
-          this.doInfinite(1, 20 - index, index + stocksSquares2);
-          break;
-        }
-      }
-      this.content.resize();
-      this.scrolllll += 1500;
-    })
-  }
-
-  doInfiniteSquaresForex() {
-    this.zone.run(() => {
-      let forexSquares2 = this.forexConterSquares;
-      for (let index = 0; index < 20; index++ , this.forexConterSquares++) {
-        if ((index + forexSquares2) < this.forexs.length) {
-          this.forexSquares.push(this.forexs[index + forexSquares2]);
-        } else {
-          console.log("done all squares forex");
-          break;
-        }
-      }
-      this.content.resize();
-      this.scrolllll += 1500;
-    })
-  }
-
-  doInfiniteSquaresCrypto() {
-    this.zone.run(() => {
-      let cryptoSquares2 = this.cryptoConterSquares;
-      for (let index = 0; index < 20; index++ , this.cryptoConterSquares++) {
-        if ((index + cryptoSquares2) < this.cryptos.length) {
-          this.cryptoSquares.push(this.cryptos[index + cryptoSquares2]);
-        } else {
-          console.log("done all squares crypto");
-          break;
-        }
-      }
-      this.content.resize();
-      this.scrolllll += 1500;
-    })
-  }
-
   add_to_watchlist(event: any, symbol: string, type: string, i) {
+    event.stopPropagation();
+    if (this.authData.user.watchlist.length+1>10 && this.authData.user.state == "unknown") {
+      let alert = this.alertCtrl.create({
+        title: 'your watchlist is full',
+        subTitle: 'you have to be vip to make your watchlist greaten.',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel'
+          },
+          {
+            text: 'Go to vip',
+            handler: () => {
+              console.log('go to vip.');
+            }
+          }
+        ]
+      })
+      alert.present();
+      return;
+    }
     switch (type) {
       case this.STOCK:
         this.stocks[i].is_in_watchlist = true;
+        this.watchlists.push(this.stocks[i]);
         break;
       case this.FOREX:
         this.forexs[i].is_in_watchlist = true;
+        this.watchlists.push(this.forexs[i]);
         break;
       case this.CRYPTO:
         this.cryptos[i].is_in_watchlist = true;
+        this.watchlists.push(this.cryptos[i]);
         break;
       default:
         console.log("missing params");
         return;
     }
-    event.stopPropagation();
-    this.watchlists=[];
+ 
     let toast = this.toastCtrl.create({
       message: symbol + ' was added successfully',
       duration: 2000,
@@ -985,6 +880,7 @@ export class LiveFeedPage implements AfterViewInit {
   }
 
   remove_from_watchlist(event: any, symbol: string, type: string, i) {
+    event.stopPropagation();
     switch (type) {
       case this.STOCK:
         this.stocks[i].is_in_watchlist = false;
@@ -999,7 +895,11 @@ export class LiveFeedPage implements AfterViewInit {
         console.log("missing params");
         return;
     }
-    event.stopPropagation();
+    for (let index = 0; index < this.watchlists.length; index++) {
+      if ( this.watchlists[index].symbol == symbol) {
+        this.watchlists.splice(index, 1);
+      }
+    }
     let toast = this.toastCtrl.create({
       message: symbol + ' was removed from watchlist successfully',
       duration: 2000,

@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header (click)="foo()">
 
   <ion-navbar>
     <ion-title>live-feed</ion-title>
@@ -19,11 +19,11 @@
       <table>
         <thead>
           <tr>
-            <th class="th-segments" (click)="changeSegment(STOCK)" [ngStyle]="selectedSegment == STOCK && {'border-bottom': '1px solid #12a6f9'}">STOCKS</th>
-            <th class="th-segments" (click)="changeSegment(FOREX)" [ngStyle]="selectedSegment == FOREX && {'border-bottom': '1px solid #12a6f9'}">FOREX</th>
-            <th class="th-segments" (click)="changeSegment(CRYPTO)" [ngStyle]="selectedSegment == CRYPTO && {'border-bottom': '1px solid #12a6f9'}">CRYPTO</th>
-            <th class="th-segments" (click)="changeSegment(WATCHLIST)" [ngStyle]="selectedSegment == WATCHLIST && {'border-bottom': '1px solid #12a6f9'}">WATCHLIST</th>
-            <th class="th-segments" (click)="changeSegment(TRENDING)" [ngStyle]="selectedSegment == TRENDING && {'border-bottom': '1px solid #12a6f9'}">TRENDING</th>
+            <th class="th-segments" (click)="onTabChanged(STOCK)" [ngStyle]="selectedSegment == STOCK && {'border-bottom': '1px solid #12a6f9'}">STOCKS</th>
+            <th class="th-segments" (click)="onTabChanged(FOREX)" [ngStyle]="selectedSegment == FOREX && {'border-bottom': '1px solid #12a6f9'}">FOREX</th>
+            <th class="th-segments" (click)="onTabChanged(CRYPTO)" [ngStyle]="selectedSegment == CRYPTO && {'border-bottom': '1px solid #12a6f9'}">CRYPTO</th>
+            <th class="th-segments" (click)="onTabChanged(WATCHLIST)" [ngStyle]="selectedSegment == WATCHLIST && {'border-bottom': '1px solid #12a6f9'}">WATCHLIST</th>
+            <th class="th-segments" (click)="onTabChanged(TRENDING)" [ngStyle]="selectedSegment == TRENDING && {'border-bottom': '1px solid #12a6f9'}">TRENDING</th>
           </tr>
         </thead>
       </table>
@@ -32,7 +32,7 @@
   </div>
 
 
-  <div style="position: sticky;;padding-top: 5px;z-index: 998;background: #2b2b2b;" [style.top]="selectedSegment == STOCK && '-14px' || selectedSegment != STOCKS && '24px'">
+  <div style="position: sticky;padding-top: 5px;z-index: 998;background: #2b2b2b;" [style.top]="selectedSegment == STOCK && '-14px' || selectedSegment != STOCKS && '24px'">
 
     <ion-grid *ngIf="selectedSegment == STOCK" style="padding-bottom: 10px;padding-left: 16px;padding-right: 16px;"
       (click)="openCountries()">
@@ -109,21 +109,11 @@
 
 
 
+  <div [ngSwitch]="selectedSegment" swipeSegment [tabsList]="Segments" [(currentTab)]="selectedSegment" (tabChanged)="onTabChanged($event)" class="swipe-area">
 
-
-  <ion-slides (ionSlideDidChange)="onSlideChanged($event)" #mySlider [style.padding-top]="selectedSegment != STOCK && '47px' || selectedSegment == STOCK && '77px'">
-
-
-
-
-
-    <ion-slide #slideStock>
-
-
+  <!-- <ion-slides (ionSlideDidChange)="onSlideChanged($event)" #mySlider [style.padding-top]="selectedSegment != STOCK && '47px' || selectedSegment == STOCK && '77px'"> -->
+    <div *ngSwitchCase="STOCK">
       <div *ngIf="modeView=='LINES'">
-
-
-
         <ion-grid>
           <ion-row style="border-bottom: 1px solid #4a4a4a;height: 40px;" *ngFor="let stock of stocks;let i = index;"(click)="goToDetailsStock(i)">
             <ion-col style="margin:auto;text-align: left;white-space: nowrap;" >
@@ -134,21 +124,16 @@
               <span style="font-size:14px;font-weight: 700;white-space: nowrap;">
                 {{stock.symbol | rmPoint}}
               </span>
-
-
             </ion-col>
             <ion-col style="text-align: center;margin:auto;font-size:16px;">
               <div>
                 {{stock.day_high|tofixe}}
               </div>
-
             </ion-col>
-
             <ion-col style="text-align: center;margin:auto;font-size:16px;">
               <div>
                 {{stock.day_low|tofixe}}
               </div>
-
             </ion-col>
             <ion-col style="text-align: right;margin:auto;">
               <div style="font-size:14px;text-align: right;">
@@ -163,16 +148,8 @@
             </ion-col>
             <!-- transition("falling1 => falling, falling => falling1,raising => falling,raising => falling1,raising1 => falling,raising1 => falling1",
             transition("raising1 => raising, raising => raising1,falling => raising,falling => raising1,falling1 => raising,falling1 => raising1", -->
-
           </ion-row>
-
         </ion-grid>
-
-
-        <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
-          <ion-infinite-scroll-content></ion-infinite-scroll-content>
-        </ion-infinite-scroll>
-
       </div>
 
 
@@ -181,8 +158,8 @@
 
         <div style=" overflow: hidden">
 
-          <div style="float:left;padding-top: 12px;width: 45%;height: 170px;margin:2.5%;background: #373737;border-radius: 5px;"
-            *ngFor="let stock of stocksSquares;let i = index;"    (click)="goToDetailsStock(i)">
+          <div style="text-align: center;float:left;padding-top: 12px;width: 45%;height: 170px;margin:2.5%;background: #373737;border-radius: 5px;"
+            *ngFor="let stock of stocks;let i = index;"    (click)="goToDetailsStock(i)">
             <!-- <object [data]="getImgStock(i)" type="image/png" style="width: 37px;height: 37px;border-radius: 50px;">
               <img src="assets/imgs/flags/flag general.png" style="width: 37px;height: 37px;border-radius: 50px;" alt="example">
             </object> -->
@@ -229,10 +206,10 @@
         </div>
 
       </div>
-    </ion-slide>
+    </div>
 
 
-    <ion-slide #slideForex>
+    <div *ngSwitchCase="FOREX">
 
       <div *ngIf="modeView=='LINES'">
 
@@ -240,7 +217,7 @@
         <ion-grid>
           <ion-row style="border-bottom: 1px solid #4a4a4a;height: 40px;" *ngFor="let forex of forexs;let i = index;"
             (click)="goToDetailsForex(i)">
-            <ion-col style="margin:auto;text-align: left;white-space: nowrap;" (click)="watchlist(i,$event)">
+            <ion-col style="margin:auto;text-align: left;white-space: nowrap;">
               <span style="padding-left: 3px;">
                 <ion-icon *ngIf="forex.is_in_watchlist" name="star-active"  (click)="remove_from_watchlist($event,forex.symbol,'FOREX',i)"></ion-icon>
                 <ion-icon *ngIf="!forex.is_in_watchlist" name="star-disable"(click)="add_to_watchlist($event,forex.symbol,'FOREX',i)"></ion-icon>
@@ -294,8 +271,8 @@
 
         <div style="overflow: hidden">
 
-          <div style="float:left;padding-top: 12px;width: 45%;height: 170px;margin:2.5%;background: #373737;border-radius: 5px;"
-            *ngFor="let forex of forexSquares;let i = index;" (click)="goToDetailsForex(i)">
+          <div style="text-align: center;float:left;padding-top: 12px;width: 45%;height: 170px;margin:2.5%;background: #373737;border-radius: 5px;"
+            *ngFor="let forex of forexs;let i = index;" (click)="goToDetailsForex(i)">
             <img src={{forex.logo}} style="width: 37px;height: 37px;border-radius: 50px;">
             <div>
               <span>
@@ -307,6 +284,9 @@
               </span>
             </div>
             <div>
+                <span>
+                    {{forex.price|tofixe}}
+                  </span>
               <span>
                 {{forex.toSymbol|currencySymbol}}
               </span>
@@ -334,9 +314,9 @@
 
       </div>
 
-    </ion-slide>
+    </div>
 
-    <ion-slide #slideCrypto>
+    <div *ngSwitchCase="CRYPTO">
       <div *ngIf="modeView=='LINES'">
         <ion-grid>
           <ion-row style="border-bottom: 1px solid #4a4a4a;height: 40px;" *ngFor="let crypto of cryptos;let i = index;"
@@ -383,8 +363,8 @@
 
         <div style="overflow: hidden">
 
-          <div style="float:left;padding-top: 12px;width: 45%;height: 170px;margin:2.5%;background: #373737;border-radius: 5px;"
-            *ngFor="let crypto of cryptoSquares;let i = index;" (click)="goToDetailsCrypto(i)">
+          <div style="text-align: center;float:left;padding-top: 12px;width: 45%;height: 170px;margin:2.5%;background: #373737;border-radius: 5px;"
+            *ngFor="let crypto of cryptos;let i = index;" (click)="goToDetailsCrypto(i)">
             <img src={{crypto.logo}} style="width: 37px;height: 37px;border-radius: 50px;">
             <div>
               <span>
@@ -423,18 +403,101 @@
 
       </div>
 
-    </ion-slide>
+    </div>
+  
+    <div *ngSwitchCase="WATCHLIST">
+        <div *ngIf="modeView=='LINES'">
+            <ion-grid>
+              <ion-row style="border-bottom: 1px solid #4a4a4a;height: 40px;" *ngFor="let watchlist of watchlists;let i = index;" (click)="goToDetails(i)">
+                <ion-col style="overflow: hidden;margin:auto;text-align: left;white-space: nowrap;" (click)="watchlist(i,$event)">
+                  <span style="padding-left: 3px;">
+                    <ion-icon *ngIf="watchlist.is_in_watchlist" name="star-active"  (click)="remove_from_watchlist($event,watchlist.symbol,watchlist.type,i)"></ion-icon>
+                    <ion-icon *ngIf="!watchlist.is_in_watchlist" name="star-disable" (click)="add_to_watchlist($event,watchlist.symbol,watchlist.type,i)"></ion-icon>
+                  </span>
+                  <span style="font-size:14px;font-weight: 700;white-space: nowrap;" *ngSwitch="watchlist.type" >
+                    {{watchlist?.name}}
+                  </span>
+                </ion-col>
+                <ion-col style="text-align: center;margin:auto;font-size:16px;">
+                  <div>
+                    {{watchlist?.high24|tofixe}}
+                  </div>
+                </ion-col>
+                <ion-col style="text-align: center;margin:auto;font-size:16px;">
+                  <div>
+                    {{watchlist?.low24|tofixe}}
+                  </div>
+                </ion-col>
+                <ion-col style="text-align: right;margin:auto;">
+                  <div style="font-size:14px;text-align: right;">
+                    <span [@changeBackgroundColor]="watchlist.state">
+                      {{watchlist?.price|tofixe}}
+                    </span>
+                  </div>
+                  <div style="font-size:12px;white-space: nowrap;text-align: right;" [ngStyle]="watchlist?.change24 > 0 && {'color': '#91c353'} || watchlist.change24 < 0 && {'color': '#e34c47'}">
+                    <span [@changeBackgroundColor]="watchlist.state">
+                      {{watchlist?.change24|tofixe}}%
+                    </span>
+                  </div>
+                </ion-col>
+    
+              </ion-row>
+    
+            </ion-grid>
+          </div>
+    
+          <div *ngIf="modeView=='SQUARES'">
+    
+    
+            <div style="overflow: hidden">
+    
+              <div style="text-align: center;float:left;padding-top: 12px;width: 45%;height: 170px;margin:2.5%;background: #373737;border-radius: 5px;"*ngFor="let watchlist of watchlists;let i = index;" (click)="goToDetails(i)">
+                <img src={{watchlist?.logo}} style="width: 37px;height: 37px;border-radius: 50px;">
+                <div>
+                  <span>
+                    <ion-icon *ngIf="watchlist?.is_in_watchlist" name="star-active" (click)="remove_from_watchlist($event,watchlist?.symbol,watchlist.type,i)"></ion-icon>
+                    <ion-icon *ngIf="!watchlist?.is_in_watchlist" name="star-disable" (click)="add_to_watchlist($event,watchlist?.symbol,watchlist.type,i)"></ion-icon>
+                  </span>
+                  <span style="font-size: 14px;">
+                    {{watchlist?.shortName}}
+                  </span>
+                </div>
+                <div>
+                  <span>
+                    {{watchlist?.price|tofixe}}
+                  </span>
+                  <span style="font-size: 14px;">
+                    {{watchlist?.change24|tofixe}}%
+                  </span>
+                </div>
+                <div style="text-align: center;;margin-top: 3px;width: 100%;padding-top: unset;margin-bottom: 4px;">
+                  <span style="  white-space: nowrap;  overflow: hidden; display: inline-block;width: 64px;height: 30px;border: 1px solid;text-align: center;border-radius: 2px;font-size: 14px;padding-top: 6px;color: #91c353">
+                    BULLISH
+                  </span>
+                  <span style=" white-space: nowrap;  overflow: hidden; display: inline-block;width: 64px;height: 30px;border: 1px solid;text-align: center;border-radius: 2px;font-size: 14px;padding-top: 6px;color: #e34c47;">
+                    BEARISH
+                  </span>
+                </div>
+                <div>
+                  <progress-bar [progress]="20" [color]="'#e34c47'"></progress-bar>
+                </div>
+              </div>
+            </div>
+            <div style="text-align: center;">
+              <ion-spinner></ion-spinner>
+    
+            </div>
+    
+          </div>
+    </div>
 
-    <ion-slide #slideWATCHLIST>
-      <h1>slideWATCHLIST</h1>
-    </ion-slide>
-
-    <ion-slide #slideTRENDING>
+    <div *ngSwitchCase="TRENDING">
       <h1>slideTRENDING</h1>
-    </ion-slide>
+    </div>
 
-
-  </ion-slides>
+  
+  </div>
+  <!-- </ion-slides> -->
   <!-- <div style="overflow-x:auto;">
     <span style="font-size:20px;">
       STOCKS
@@ -452,6 +515,8 @@
       TRENGING
     </span>
   </div> -->
-
+  <ion-infinite-scroll (ionInfinite)="$event.waitFor(doInfinite())">
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 
 </ion-content>

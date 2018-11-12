@@ -38,6 +38,13 @@ export class GlobalProvider {
   }
 
   remove_from_watchlist(symbol:string,type:string){
+
+    for (let index = 0; index < this.authData.user.watchlist.length; index++) {
+      if (this.authData.user.watchlist[index].symbol == symbol) {
+        this.authData.user.watchlist.splice(index, 1);
+        break;
+      }
+    }
     let dataTOSEND = {
       data:{
         symbol:symbol,

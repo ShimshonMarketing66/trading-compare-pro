@@ -52,7 +52,7 @@ export class AuthDataProvider {
     else if (m_provider == "google") {
       return new Promise((resolve, reject) => {
         this.googlePlus.login({
-          'webClientId': '740803067623-sivifgg69dmiq5r7reo9m0vncnri3ahk.apps.googleusercontent.com',
+          'webClientId': '212982281977-nrar31o20thlvs4k7f3civmhtthcg94i.apps.googleusercontent.com',
         }).then(response => {
           console.log(response);
           const googleCrendential = firebase.auth.GoogleAuthProvider

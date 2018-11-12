@@ -92,7 +92,7 @@ export class StockProvider {
         this.http.get(this.base_url + this.path_getStock + "/" + 0 + "/" + m_country)
           .toPromise()
           .then(data => {
-            console.log("made requeust with offset 0 because never get this stock yet.",this.authData.user.watchlist);
+            console.log("made requeust with offset 0 because never get this stock yet.");
             let data2 = Object["values"](data) as IStock[];
             for (let index = 0; index < data2.length; index++) {
               data2[index]["state"] = "none";
@@ -105,8 +105,6 @@ export class StockProvider {
               for (let index2 = 0; index2 < this.authData.user.watchlist.length; index2++) {
                 if (this.authData.user.watchlist[index2].type == "STOCK") {
                   if (data2[index].symbol == this.authData.user.watchlist[index2].symbol) {
-                    console.log(data2[index].symbol);
-                    
                     data2[index]["is_in_watchlist"] = true;
                     break;
                   }
@@ -137,7 +135,6 @@ export class StockProvider {
             let a = (data[index].symbol).split(".")[0];
             data[index]["logo"] = "https://storage.googleapis.com/iex/api/logos/" + a + ".png";
           }
-
           resolve(data as IStock[]);
         })
         .catch((err) => {
@@ -146,63 +143,96 @@ export class StockProvider {
     })
   }
 
-  // getLogo(m_symbol): Promise<string> {
-  //   console.log(m_symbol);
-    
-  //   return new Promise((resolve) => {
-  //     let flag = false;
-  //     for (let index = 0; index < this.allStocks.length; index++) {
-  //       for (let j = 0; j < this.allStocks[index].data.length; j++) {
-  //         if (m_symbol == this.allStocks[index].data[j].symbol) {
-  //           flag = true;
-  //           console.log("m_symbol == this.allStocks[index].data[j].symbol");
-            
-  //           if (this.allStocks[index].data[j]["logo"] != undefined) {
-  //             resolve(this.allStocks[index].data[j]["logo"].changingThisBreaksApplicationSecurity);
-  //             return;
-
-  //           } else {
-  //             this.http.get("https://api.iextrading.com/1.0/stock/" + m_symbol.toLowerCase() + "/logo")
-  //               .toPromise()
-  //               .then((data: any) => {
-  //                 if (typeof data == "object") {
-  //                   resolve(data.url);
-  //                   return;
-  //                 } else {
-  //                   resolve("assets/imgs/stocks.png");
-  //                   return;
-  //                 }
-  //               })
-  //               .catch((err) => {
-  //                 console.log("das",err);
-  //                 resolve("assets/imgs/stocks.png");
-  //               })
-  //           }
-  //         }
-
-  //       }
-  //     }
-  //     if (!flag) {
-  //       this.http.get("https://api.iextrading.com/1.0/stock/" + m_symbol.toLowerCase() + "/logo")
-  //         .toPromise()
-  //         .then((data: any) => {
-  //           if (typeof data == "object") {
-  //             resolve(data.url);
-  //             return;
-  //           } else {
-  //             resolve("assets/imgs/stocks.png");
-  //             return;
-  //           }
-  //         })
-  //         .catch(() => {
-  //           resolve("assets/imgs/stocks.png");
-  //         })
-  //     }
-  //   })
-  // }
   get_stock_by_symbol(symbol:string) :Promise<any>{
     return this.http.get("https://websocket-stock.herokuapp.com/getStockPrice/" + symbol ).toPromise();
     
+  }
+
+
+  get_stocks(m_offset: number, m_country: string): Promise<IStock[]> {
+    console.log(m_offset);
+    
+    return new Promise((resolve,reject)=>{
+      let isCountry = false;
+      console.log(" this.allStocks.length", this.allStocks.length);
+      
+      for (let i = 0; i < this.allStocks.length; i++) {
+        if (this.allStocks[i].country == m_country) {
+          if (m_offset < this.allStocks[i].offset) {
+            let arr = [];
+            for (let j = m_offset; j <  this.allStocks[i].data.length && j-m_offset < 50; j++) {
+              arr.push(this.allStocks[i].data[j]);
+            }
+            console.log("resolve directly.");
+            resolve(arr);
+          }else{
+            this.http.get(this.base_url + this.path_getStock + "/" + m_offset + "/" + m_country)
+            .toPromise()
+            .then((data:IStock[])=>{
+              console.log("made requeust with offset "+ m_offset+ ".");
+                for (let index = 0; index < data.length; index++) {
+                  data[index]["state"] = "none";
+                  data[index]["index"] = index;
+                  data[index]["shortName"] = data[index]["name"].split(" ")[0];
+                  let a = (data[index].symbol).split(".")[0];
+                  data[index]["logo"] = "https://storage.googleapis.com/iex/api/logos/" + a + ".png";
+                  data[index]["is_in_watchlist"] = false;
+                  data[index]["type"] = "STOCK";
+                  for (let index2 = 0; index2 < this.authData.user.watchlist.length; index2++) {
+                    if (this.authData.user.watchlist[index2].type == "STOCK") {
+                      if (data[index].symbol == this.authData.user.watchlist[index2].symbol) {
+                        data[index]["is_in_watchlist"] = true;
+                        break;
+                      }
+                    }
+                  }
+                  this.allStocks[i].data.push(data[index]);
+                }
+                
+                this.allStocks[i].offset =  this.allStocks[i].offset + data.length;
+                resolve(data);
+            })
+            .catch(err=>{
+              reject(err)
+            })
+          }
+          isCountry = true;
+        }
+      }
+      if (!isCountry) {
+        this.http.get(this.base_url + this.path_getStock + "/" + 0 + "/" + m_country)
+        .toPromise()
+        .then((data:IStock[])=>{
+          console.log("made requeust with offset 0 because never get this stock yet.");
+            for (let index = 0; index < data.length; index++) {
+              data[index]["state"] = "none";
+              data[index]["index"] = index;
+              data[index]["shortName"] = data[index]["name"].split(" ")[0];
+              let a = (data[index].symbol).split(".")[0];
+              data[index]["logo"] = "https://storage.googleapis.com/iex/api/logos/" + a + ".png";
+              data[index]["is_in_watchlist"] = false;
+              data[index]["type"] = "STOCK";
+              for (let index2 = 0; index2 < this.authData.user.watchlist.length; index2++) {
+                if (this.authData.user.watchlist[index2].type == "STOCK") {
+                  if (data[index].symbol == this.authData.user.watchlist[index2].symbol) {                    
+                    data[index]["is_in_watchlist"] = true;
+                    break;
+                  }
+                }
+              }
+            }
+            this.allStocks.push({
+              data: data,
+              offset: data.length,
+              country: m_country
+            })
+            resolve(data);
+        })
+        .catch(err=>{
+          reject(err)
+        })
+      }
+    })
   }
 
 

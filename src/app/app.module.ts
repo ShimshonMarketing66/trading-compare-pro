@@ -27,6 +27,7 @@ import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { Sim } from '@ionic-native/sim';
 import firebase from 'firebase';
 import { GlobalProvider } from '../providers/global/global';
+import { DirectivesModule } from '../directives/directives.module';
 
 
 const firebaseConfig = {
@@ -45,13 +46,12 @@ export function createTranslateLoader(http: HttpClient) {
 @NgModule({
   declarations: [
     MyApp
-  ],
+    ],
   imports: [
     // ChartUI,
     BrowserModule,
     IonicModule.forRoot(MyApp),
     BrowserAnimationsModule,
-    BrowserModule,
     HttpClientModule,
     HttpModule,
     TranslateModule.forRoot({
