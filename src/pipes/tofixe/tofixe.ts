@@ -5,7 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class TofixePipe implements PipeTransform {
 
-  transform(num: number, ...args) {
+  transform(num: number, ...args) {    
     if (num == undefined) return 0
     num = Number(num);
     if (num == 0) return 0
@@ -62,6 +62,6 @@ export class TofixePipe implements PipeTransform {
     if (num > 10000) {
       return isPositive ? Number(num.toFixed(1)) : Number(num.toFixed(1)) * -1
     }
-    return Number(num.toFixed(2))
+    return isPositive ? Number(num.toFixed(2)) : Number(num.toFixed(2)) * -1 
   }
 }

@@ -90,6 +90,11 @@ export class LiveFeedPage implements AfterViewInit {
   exchangeStock: string = "united-states-of-america";
   /*  END DEFINITIONS ALL ARRAYS */
 
+
+  socketCryptoWL: SocketIOClient.Socket;
+  socketForexWL: SocketIOClient.Socket;
+  socketStockWL: SocketIOClient.Socket;
+
   slides: string[];
 
   public selectedSegment: string = this.STOCK;
@@ -114,8 +119,10 @@ export class LiveFeedPage implements AfterViewInit {
     this.numOfLines = Math.ceil(this.sizeOfBody / this.sizeOfLine);
 
     this.slides = [this.STOCK, this.FOREX, this.CRYPTO, this.WATCHLIST];
-    this.buildStocks(0).then(() => {
+    this.buildStocks(0).then((arr) => {
       this.offsetRequested = 50;
+      this.startWS(this.STOCK);
+      this.addCoinWebsocketStock(arr);
     })
 
 
@@ -142,10 +149,6 @@ export class LiveFeedPage implements AfterViewInit {
   }
 
   changeSegment(segment) {
-    console.log(this.containerSegment);
-
-    this.containerSegment.nativeElement.scrollRight = 20;
-
     this.offsetRequested = 0;
     if (this.selectedSegment == segment) {
       this.content.scrollToTop(1000);
@@ -173,25 +176,40 @@ export class LiveFeedPage implements AfterViewInit {
 
     switch (segment) {
       case this.STOCK:
-        this.buildStocks(0).then(() => {
+        this.buildStocks(0).then((arr) => {
           this.offsetRequested += 50;
-          if (this.modeView == "SQUARES") {
-
+          if (this.modeView != "SQUARES") {
+            this.startWS(this.STOCK);
+            this.addCoinWebsocketStock(arr);
           }
         });
         break;
       case this.FOREX:
-        this.buildForex().then(() => {
+        this.buildForex().then((arr) => {
           this.offsetRequested += 50;
+          if (this.modeView != "SQUARES") {
+            console.log("arr",arr);
+            
+            this.startWS(this.FOREX);
+            this.addCoinWebsocketForex(arr);
+          }
         })
         break;
       case this.CRYPTO:
-        this.buildCrypto().then(() => {
+        this.buildCrypto().then((arr) => {
+          if (this.modeView != "SQUARES") {
+            this.startWS(this.CRYPTO);
+          this.addCoinWebsocketCrypto(arr);
+          }
           this.offsetRequested += 50;
         })
         break;
       case this.WATCHLIST:
-        this.buildWatchlist();
+        this.buildWatchlist().then(()=>{
+          if (this.modeView != "SQUARES") {
+            this.startWS(this.WATCHLIST);
+          }
+        });
         break;
       case this.TRENDING:
         break;
@@ -359,12 +377,12 @@ export class LiveFeedPage implements AfterViewInit {
               break;
           }
         }
-        console.log(this.watchlists);
+        resolve();
 
       })
     })
   }
-
+ 
   buildForex(): Promise<any> {
     return new Promise((resolve) => {
       this.forexProvider.getForex(0).then(data => {
@@ -372,17 +390,14 @@ export class LiveFeedPage implements AfterViewInit {
           this.forexs.push(data[index]);
         }
         let arr = [];
-        for (let index = 0; index < this.forexs.length; index++) {
+        this.CoinConnectedWSForex = [];
+        for (let index = 0; index < this.forexs.length; index++) { 
           if (index < this.numOfLines) {
             this.CoinConnectedWSForex.push(data[index]);
             arr.push(data[index].pair);
           }
         }
-        if (this.modeView == "LINES") {
-          this.startWS(this.FOREX);
-          this.addCoinWebsocketForex(arr);
-        }
-        resolve();
+        resolve(arr);
       })
     })
   }
@@ -400,11 +415,7 @@ export class LiveFeedPage implements AfterViewInit {
             arr.push(data[index].pair);
           }
         }
-        if (this.modeView == "LINES") {
-          this.startWS(this.CRYPTO);
-          this.addCoinWebsocketCrypto(arr);
-        }
-        resolve()
+        resolve(arr)
       })
     })
   }
@@ -424,9 +435,7 @@ export class LiveFeedPage implements AfterViewInit {
             arr.push(data[index].symbol);
           }
         }
-        await this.startWS(this.STOCK);
-        this.addCoinWebsocketStock(arr);
-        resolve();
+        resolve(arr);
       })
     })
   }
@@ -498,7 +507,7 @@ export class LiveFeedPage implements AfterViewInit {
     }
   }
 
-  startWS(str: string) {
+  startWS(str: string) {    
     switch (str) {
       case this.CRYPTO:
         this.socketCrypto = io.connect("https://crypto.tradingcompare.com/");
@@ -538,7 +547,6 @@ export class LiveFeedPage implements AfterViewInit {
         this.socketForex = io.connect("https://forex-websocket.herokuapp.com/", {
           path: "/socket/forex/livefeed"
         });
-        console.log(this.socketForex);
         this.socketForex.on("message", (data) => {
           if (this.socketForex.disconnected) {
             return;
@@ -571,8 +579,6 @@ export class LiveFeedPage implements AfterViewInit {
       case this.STOCK:
         this.socketStock = io.connect("https://ws-api.iextrading.com/1.0/last");
         this.socketStock.on("message", (data) => {
-
-
           data = JSON.parse(data);
           let pair = data.symbol;
           for (let index = 0; index < this.CoinConnectedWSStock.length; index++) {
@@ -602,12 +608,121 @@ export class LiveFeedPage implements AfterViewInit {
           }
         })
         break;
-      case this.TRENDING:
+      case this.WATCHLIST:      
+      this.socketStockWL = io.connect("https://ws-api.iextrading.com/1.0/last");
+      this.socketForexWL = io.connect("https://forex-websocket.herokuapp.com/", {
+        path: "/socket/forex/livefeed"
+      });
+      this.socketCryptoWL = io.connect("https://crypto.tradingcompare.com/");
+        this.add_coins_Watchlist_WS();
+        break;
       // trending
       default:
         // watchlist
         break;
     }
+  }
+
+  add_coins_Watchlist_WS(){
+    for (let index = 0; index < this.watchlists.length; index++) {
+     switch (this.watchlists[index]["type"]) {
+       case this.STOCK:
+       
+         this.socketStockWL.emit("subscribe",this.watchlists[index].symbol);
+        
+         break;
+
+         case this.FOREX:
+         console.log(this.watchlists[index].symbol + "_2sec");
+         
+         this.socketForexWL.emit("room",this.watchlists[index].symbol + "_2sec");
+         break;
+
+         case this.CRYPTO:
+         console.log(this.watchlists[index].symbol);
+
+         this.socketCryptoWL.emit("room",this.watchlists[index].symbol);
+         break;
+     
+       default:
+         break;
+     }
+    }
+    this.socketStockWL.on("message", (data) => {
+      data = JSON.parse(data);
+      let pair = data.symbol;
+      for (let index = 0; index < this.watchlists.length; index++) {
+        if (pair == this.watchlists[index].symbol) {
+          
+          if (Number(this.watchlists[index].price) > data.price) {
+            this.watchlists[index]["state"] =this.watchlists[index]["state"] == "falling" ? "falling1" : "falling";
+          } else if (Number(this.watchlists[index].price) < data.price) {
+            this.watchlists[index]["state"] = this.watchlists[index]["state"] == "raising" ? "raising1" : "raising";
+          }
+
+          if (Number(data.price) > Number(this.watchlists[index].day_high)) {
+            this.watchlists[index].day_high = data.price;
+          }
+
+          if (Number(data.price) < Number(this.watchlists[index].day_low)) {
+            this.watchlists[index].day_low = data.price;
+          }
+
+          let original = Number(this.watchlists[index].price_open);
+          let neww = Number(data.price);
+
+          this.watchlists[index].change_pct = (((neww - original) / original) * 100).toString()
+          this.watchlists[index].price = (Number(data.price)).toString();
+          break;
+        }
+      }
+      
+    })
+
+    this.socketForexWL.on("message", (data) => {
+      let pair = data.pair;
+      for (let index = 0; index < this.watchlists.length; index++) {
+        if (pair == this.watchlists[index].pair) {
+          
+          if (this.watchlists[index].price > data.price) {
+            this.watchlists[index].state = this.watchlists[index].state == "falling" ? "falling1" : "falling";
+            this.watchlists[index].price = Number(data.price);
+            this.watchlists[index].high24 = Number(data.high24);
+            this.watchlists[index].low24 = Number(data.low24);
+            this.watchlists[index].change24 = Number(data.change24);
+          } else if (this.watchlists[index].price < data.price) {
+            this.watchlists[index].state = this.watchlists[index].state == "raising" ? "raising1" : "raising";
+            this.watchlists[index].price = Number(data.price);
+            this.watchlists[index].high24 = Number(data.high24);
+            this.watchlists[index].low24 = Number(data.low24);
+            this.watchlists[index].change24 = Number(data.change24);
+          }
+
+          break;
+        }
+      }
+    })
+
+    this.socketCryptoWL.on("message", (data) => {
+         let pair = data.pair;
+          for (let index = 0; index < this.watchlists.length; index++) {
+            if (pair ==  this.watchlists[index].pair) {
+              if ( this.watchlists[index].price > Number(data.price)) {
+                this.watchlists[index].state =  this.watchlists[index].state == "falling" ? "falling1" : "falling";
+                this.watchlists[index].price = Number(data.price);
+                this.watchlists[index].high24 = Number(data.high24);
+                this.watchlists[index].low24 = Number(data.low24);
+                this.watchlists[index].change24 = Number(data.change24);
+              } else if ( this.watchlists[index].price < Number(data.price)) {
+                this.watchlists[index].state =  this.watchlists[index].state == "raising" ? "raising1" : "raising";
+                this.watchlists[index].price = Number(data.price);
+                this.watchlists[index].high24 = Number(data.high24);
+                this.watchlists[index].low24 = Number(data.low24);
+                this.watchlists[index].change24 = Number(data.change24);
+              }
+            }
+          }
+        })
   }
 
   addCoinWebsocketStock(arr: string[]) {
@@ -971,7 +1086,7 @@ export class LiveFeedPage implements AfterViewInit {
       default:
         break;
     }
-
+    
     if (arr[i].sentiment == 'none') {
       arr[i].sentiment = type;
       this.globalProvider.add_sentiment( arr[i].symbol,type,arr[i].type,arr[i].price)

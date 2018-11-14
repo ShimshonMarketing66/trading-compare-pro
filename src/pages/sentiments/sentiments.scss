@@ -3,7 +3,11 @@ page-sentiments {
         padding-left: 0px !important;
         padding-right: 0px  !important;
     }
-    .col{
-        margin: auto;
+    .item-inner{
+        padding-right:0px !important;
+        border-bottom:unset !important;
+    }
+    ion-item-options{
+        border-bottom:unset !important;
     }
 }

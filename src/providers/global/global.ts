@@ -121,14 +121,15 @@ export class GlobalProvider {
   }
 
   
-  remove_sentiment(symbol:string,type:string):Promise<any>{
+  close_sentiment(symbol:string,type:string,close_price:number):Promise<any>{
     return new Promise((resolve,reject)=>{
       var dataToSend = {
         _id:this.authData.user._id,
         symbol:symbol,
         type:type,
+        close_price:close_price
       }
-      this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/remove-sentiment",dataToSend)
+      this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/close-sentiment",dataToSend)
       .toPromise()
       .catch(err=>{
         reject(err)
