@@ -1,4 +1,69 @@
 page-live-feed {
+    ion-col{
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    .bullish-active{
+
+
+           white-space: nowrap;
+           overflow: hidden;
+            display: inline-block;
+            width: 64px;
+            height: 30px;
+            border: none;
+            text-align: center;
+            border-radius: 2px;
+            font-size: 14px;
+            padding-top: 6px;
+            color: white;
+            background: #91c353;
+    }
+    .bullish-disable{
+        white-space: nowrap;
+        overflow: hidden;
+         display: inline-block;
+         width: 64px;
+         height: 30px;
+         border: 1px solid;
+         text-align: center;
+         border-radius: 2px;
+         font-size: 14px;
+         padding-top: 6px;
+         color: #91c353;
+    }
+
+    .bearish-active{
+        white-space: nowrap;
+        overflow: hidden;
+         display: inline-block;
+         width: 64px;
+         height: 30px;
+         border: none;
+         text-align: center;
+         border-radius: 2px;
+         font-size: 14px;
+         padding-top: 6px;
+         color:white;
+         background: #e34c47;
+    }
+    .bearish-disable{
+   
+
+         white-space: nowrap;
+         overflow: hidden;
+          display: inline-block;
+          width: 64px;
+          height: 30px;
+          border: 1px solid;
+          text-align: center;
+          border-radius: 2px;
+          font-size: 14px;
+          padding-top: 6px;
+          color: #e34c47;
+    }
+
     .alert-title {
         color: black;
     }

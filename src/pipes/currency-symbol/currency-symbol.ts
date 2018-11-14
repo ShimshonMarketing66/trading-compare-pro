@@ -22,12 +22,21 @@ export class CurrencySymbolPipe implements PipeTransform {
 
   transform(value: string, ...args) {
         if (this.currency[value] != undefined) {
-          return this.currency[value].symbol
+          return this.currency[value].symbol_native
         }else{
           return '$';
         }
   }
   currency :any = {
+    "ETH": {
+        "symbol": "Ξ",
+        "name": "Ethereum",
+        "symbol_native": "Ξ",
+        "decimal_digits": 2,
+        "rounding": 0,
+        "code": "ETH",
+        "name_plural": "Ethereum"
+    },
     "BTC": {
         "symbol": "Ƀ",
         "name": "Bitcoin",

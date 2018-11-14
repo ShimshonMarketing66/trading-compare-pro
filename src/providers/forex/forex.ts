@@ -12,7 +12,7 @@ export class ForexProvider {
   }
 
 
-  getAllForex(): Promise<any[]> {
+ getAllForex(): Promise<any[]> {
     return new Promise((resolve) => {
       if (this.allForex.length < 1) {
         this.http.get("https://forex-websocket.herokuapp.com/all_data")
@@ -20,11 +20,12 @@ export class ForexProvider {
           .then((data) => {
             let index = 0;
             for (const key in data) {
+              data[key]["sentiment"] = "none";
               data[key]["state"] = "none";
-              data[key]["symbol"] = data[key].pair[0] + data[key].pair[1] + data[key].pair[2];
+              data[key]["name"] = data[key]["pair"];
               data[key]["toSymbol"] = data[key].pair[3] + data[key].pair[4] + data[key].pair[5]
               data[key]["index"] = index;
-              data[key]["logo"] = "https://xosignals.herokuapp.com/api2/sendImgByName/" + (data[key]["symbol"]).toLowerCase() + "%20" + data[key]["toSymbol"].toLowerCase();
+              data[key]["logo"] = "https://xosignals.herokuapp.com/api2/sendImgByName/" + (data[key].pair[0] + data[key].pair[1] + data[key].pair[2]).toLowerCase() + "%20" + data[key]["toSymbol"].toLowerCase();
               data[key]["is_in_watchlist"] = false;
               data[key]["symbol"] = data[key]["pair"];
               data[key]["type"] = "FOREX";
@@ -60,6 +61,7 @@ export class ForexProvider {
             let index = 0;
             for (const key in data) {
               data[key]["state"] = "none";
+              data[key]["sentiment"] = "none";
               data[key]["symbol"] = data[key].pair[0] + data[key].pair[1] + data[key].pair[2];
               data[key]["toSymbol"] = data[key].pair[3] + data[key].pair[4] + data[key].pair[5]
               data[key]["index"] = index;
@@ -106,6 +108,29 @@ export class ForexProvider {
       }
     }    
     return arrToRetrun;
+  }
+
+   get_by_symbol(str):Promise<any>{
+     return new Promise((resolve,reject)=>{
+      if (this.allForex.length == 0) {
+        this.getAllForex().then((data)=>{
+         for (let index = 0; index < data.length; index++) {
+           if (data[index].symbol == str) {
+              resolve(data[index]);
+           }
+          }
+        })
+    
+      
+     }else{
+      for (let index = 0; index < this.allForex.length; index++) {
+        if ( this.allForex[index].symbol == str) {
+          resolve(this.allForex[index]);
+        }
+       }
+     }
+     })
+
   }
 
 }

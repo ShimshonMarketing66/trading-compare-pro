@@ -33,4 +33,8 @@ export class MenuPage {
     })
   }
 
+  open_sentiment(){
+    this.navCtrl.push("sentiments")
+  }
+
 }

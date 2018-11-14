@@ -23,7 +23,7 @@
             <th class="th-segments" (click)="onTabChanged(FOREX)" [ngStyle]="selectedSegment == FOREX && {'border-bottom': '1px solid #12a6f9'}">FOREX</th>
             <th class="th-segments" (click)="onTabChanged(CRYPTO)" [ngStyle]="selectedSegment == CRYPTO && {'border-bottom': '1px solid #12a6f9'}">CRYPTO</th>
             <th class="th-segments" (click)="onTabChanged(WATCHLIST)" [ngStyle]="selectedSegment == WATCHLIST && {'border-bottom': '1px solid #12a6f9'}">WATCHLIST</th>
-            <th class="th-segments" (click)="onTabChanged(TRENDING)" [ngStyle]="selectedSegment == TRENDING && {'border-bottom': '1px solid #12a6f9'}">TRENDING</th>
+            <!-- <th class="th-segments" (click)="onTabChanged(TRENDING)" [ngStyle]="selectedSegment == TRENDING && {'border-bottom': '1px solid #12a6f9'}">TRENDING</th> -->
           </tr>
         </thead>
       </table>
@@ -51,14 +51,14 @@
 
 
 
-    <ion-grid style="padding-bottom: 10px;">
+    <ion-grid style="padding-bottom: 10px;" id="table">
       <ion-row style="height: 30px;">
         <ion-col col-auto style="color:#2b2b2b;"> pp </ion-col>
         <ion-col style="margin:auto;background: #373737;" (tap)="openSearch()">
           <ion-icon style="font-size: 30px;color:#707070;padding-left: 5px;" name="search"></ion-icon>
         </ion-col>
         <ion-col col-auto style="color:#2b2b2b;"> pp </ion-col>
-        <ion-col col-1 style="margin:auto;color:#707070;text-align: center;background: #373737;" [style.opacity]="selectedSegment != 'WATCHLIST' && '0' || selectedSegment == 'WATCHLIST' && '1'">
+        <ion-col col-1 style="margin:auto;color:#707070;text-align: center;background: #373737;" [style.opacity]="selectedSegment != 'WATCHLIST' && '0' || selectedSegment == 'WATCHLIST' && '0'">
           <ion-icon style="font-size: 30px; " name="md-create"></ion-icon>
         </ion-col>
         <ion-col col-auto style="color:#2b2b2b;"> pp </ion-col>
@@ -121,8 +121,8 @@
                 <ion-icon *ngIf="stock.is_in_watchlist" name="star-active" (click)="remove_from_watchlist($event,stock.symbol,'STOCK',i)"></ion-icon>
                 <ion-icon *ngIf="!stock.is_in_watchlist" name="star-disable" (click)="add_to_watchlist($event,stock.symbol,'STOCK',i)"></ion-icon>
               </span>
-              <span style="font-size:14px;font-weight: 700;white-space: nowrap;">
-                {{stock.symbol | rmPoint}}
+              <span style="font-size:14px;font-weight: 700;">
+                  {{stock["display_name"]}}
               </span>
             </ion-col>
             <ion-col style="text-align: center;margin:auto;font-size:16px;">
@@ -183,15 +183,15 @@
               <span>
                 {{stock.currency|currencySymbol}}
               </span>
-              <span style="font-size: 14px;">
+              <span style="font-size: 14px;"  [ngStyle]="stock.change_pct > 0 && {'color': '#91c353'} || stock.change_pct < 0 && {'color': '#e34c47'}">
                 {{stock.change_pct|tofixe}}%
               </span>
             </div>
             <div style="text-align: center;;margin-top: 3px;width: 100%;padding-top: unset;margin-bottom: 4px;">
-              <span style="white-space: nowrap;  overflow: hidden; display: inline-block;width: 64px;height: 30px;border: 1px solid;text-align: center;border-radius: 2px;font-size: 14px;padding-top: 6px;color: #91c353">
+              <span (click)="change_sentiment('BULLISH',i,$event)" [ngClass]="stock.sentiment == 'BULLISH' && 'bullish-active' || stock.sentiment != 'BULLISH' &&' bullish-disable'">
                 BULLISH
               </span>
-              <span style=" white-space: nowrap;  overflow: hidden;display: inline-block;width: 64px;height: 30px;border: 1px solid;text-align: center;border-radius: 2px;font-size: 14px;padding-top: 6px;color: #e34c47;">
+              <span  (click)="change_sentiment('BEARISH',i,$event)" [ngClass]="stock.sentiment == 'BEARISH' && 'bearish-active' || stock.sentiment != 'BEARISH' &&' bearish-disable'">
                 BEARISH
               </span>
             </div>
@@ -200,10 +200,7 @@
             </div>
           </div>
         </div>
-        <div style="text-align: center;">
-          <ion-spinner></ion-spinner>
-
-        </div>
+     
 
       </div>
     </div>
@@ -290,15 +287,15 @@
               <span>
                 {{forex.toSymbol|currencySymbol}}
               </span>
-              <span style="font-size: 14px;">
+              <span style="font-size: 14px;"[ngStyle]="forex.change24 > 0 && {'color': '#91c353'} || forex.change24 < 0 && {'color': '#e34c47'}">
                 {{forex.change24|tofixe}}%
               </span>
             </div>
             <div style="text-align: center;;margin-top: 3px;width: 100%;padding-top: unset;margin-bottom: 4px;">
-              <span style="white-space: nowrap;  overflow: hidden; display: inline-block;width: 64px;height: 30px;border: 1px solid;text-align: center;border-radius: 2px;font-size: 14px;padding-top: 6px;color: #91c353">
+              <span (click)="change_sentiment('BULLISH',i,$event)" [ngClass]="forex.sentiment == 'BULLISH' && 'bullish-active' || forex.sentiment != 'BULLISH' &&' bullish-disable'">
                 BULLISH
               </span>
-              <span style="white-space: nowrap;  overflow: hidden; display: inline-block;width: 64px;height: 30px;border: 1px solid;text-align: center;border-radius: 2px;font-size: 14px;padding-top: 6px;color: #e34c47;">
+              <span  (click)="change_sentiment('BEARISH',i,$event)" [ngClass]="forex.sentiment == 'BEARISH' && 'bearish-active' || forex.sentiment != 'BEARISH' &&' bearish-disable'">
                 BEARISH
               </span>
             </div>
@@ -307,10 +304,7 @@
             </div>
           </div>
         </div>
-        <div style="text-align: center;">
-          <ion-spinner></ion-spinner>
-
-        </div>
+     
 
       </div>
 
@@ -379,15 +373,15 @@
               <span>
                 {{crypto.price|tofixe}}
               </span>
-              <span style="font-size: 14px;">
+              <span style="font-size: 14px;" [ngStyle]="crypto.change24 > 0 && {'color': '#91c353'} || crypto.change24 < 0 && {'color': '#e34c47'}">
                 {{crypto.change24|tofixe}}%
               </span>
             </div>
             <div style="text-align: center;;margin-top: 3px;width: 100%;padding-top: unset;margin-bottom: 4px;">
-              <span style="  white-space: nowrap;  overflow: hidden; display: inline-block;width: 64px;height: 30px;border: 1px solid;text-align: center;border-radius: 2px;font-size: 14px;padding-top: 6px;color: #91c353">
+              <span (click)="change_sentiment('BULLISH',i,$event)" [ngClass]="crypto.sentiment == 'BULLISH' && 'bullish-active' || crypto.sentiment != 'BULLISH' &&' bullish-disable'">
                 BULLISH
               </span>
-              <span style=" white-space: nowrap;  overflow: hidden; display: inline-block;width: 64px;height: 30px;border: 1px solid;text-align: center;border-radius: 2px;font-size: 14px;padding-top: 6px;color: #e34c47;">
+              <span  (click)="change_sentiment('BEARISH',i,$event)" [ngClass]="crypto.sentiment == 'BEARISH' && 'bearish-active' || crypto.sentiment != 'BEARISH' &&' bearish-disable'">
                 BEARISH
               </span>
             </div>
@@ -396,10 +390,7 @@
             </div>
           </div>
         </div>
-        <div style="text-align: center;">
-          <ion-spinner></ion-spinner>
-
-        </div>
+     
 
       </div>
 
@@ -408,24 +399,51 @@
     <div *ngSwitchCase="WATCHLIST">
         <div *ngIf="modeView=='LINES'">
             <ion-grid>
-              <ion-row style="border-bottom: 1px solid #4a4a4a;height: 40px;" *ngFor="let watchlist of watchlists;let i = index;" (click)="goToDetails(i)">
-                <ion-col style="overflow: hidden;margin:auto;text-align: left;white-space: nowrap;" (click)="watchlist(i,$event)">
+              <ion-row style="border-bottom: 1px solid #4a4a4a;height: 40px;" *ngFor="let watchlist of watchlists;let i = index;" (click)="goToDetails(watchlist)">
+                <ion-col style="overflow: hidden;margin:auto;text-align: left;white-space: nowrap;">
                   <span style="padding-left: 3px;">
                     <ion-icon *ngIf="watchlist.is_in_watchlist" name="star-active"  (click)="remove_from_watchlist($event,watchlist.symbol,watchlist.type,i)"></ion-icon>
                     <ion-icon *ngIf="!watchlist.is_in_watchlist" name="star-disable" (click)="add_to_watchlist($event,watchlist.symbol,watchlist.type,i)"></ion-icon>
                   </span>
-                  <span style="font-size:14px;font-weight: 700;white-space: nowrap;" *ngSwitch="watchlist.type" >
-                    {{watchlist?.name}}
+                  <span style="font-size:14px;font-weight: 700;white-space: nowrap;">
+                   <span [ngSwitch]="watchlist.type">
+                     <span *ngSwitchCase="STOCK">
+                        {{watchlist.shortName}}
+                     </span>
+                     <span *ngSwitchCase="CRYPTO">
+                        {{watchlist.name}}
+                     </span>
+                     <span *ngSwitchCase="FOREX">
+                        {{watchlist.symbol}}
+                     </span>
+                    
+                   </span>
                   </span>
                 </ion-col>
                 <ion-col style="text-align: center;margin:auto;font-size:16px;">
                   <div>
-                    {{watchlist?.high24|tofixe}}
+                  
+                    <span [ngSwitch]="watchlist.type">
+                        <span *ngSwitchCase="STOCK">
+                           {{watchlist.day_high|tofixe}}
+                        </span>
+                        <span *ngSwitchDefault>
+                            {{watchlist.high24|tofixe}}
+                        </span>
+                      </span>
                   </div>
                 </ion-col>
                 <ion-col style="text-align: center;margin:auto;font-size:16px;">
                   <div>
-                    {{watchlist?.low24|tofixe}}
+                   
+                    <span [ngSwitch]="watchlist.type">
+                        <span *ngSwitchCase="STOCK">
+                           {{watchlist.day_low|tofixe}}
+                        </span>
+                        <span *ngSwitchDefault>
+                            {{watchlist?.low24|tofixe}}
+                        </span>
+                      </span>
                   </div>
                 </ion-col>
                 <ion-col style="text-align: right;margin:auto;">
@@ -434,11 +452,23 @@
                       {{watchlist?.price|tofixe}}
                     </span>
                   </div>
-                  <div style="font-size:12px;white-space: nowrap;text-align: right;" [ngStyle]="watchlist?.change24 > 0 && {'color': '#91c353'} || watchlist.change24 < 0 && {'color': '#e34c47'}">
-                    <span [@changeBackgroundColor]="watchlist.state">
-                      {{watchlist?.change24|tofixe}}%
-                    </span>
-                  </div>
+
+                  <div [ngSwitch]="watchlist.type">
+                      <span *ngSwitchCase="STOCK">
+                          <div style="font-size:12px;white-space: nowrap;text-align: right;" [ngStyle]="watchlist.change_pct > 0 && {'color': '#91c353'} || watchlist.change_pct < 0 && {'color': '#e34c47'}">
+                            <span [@changeBackgroundColor]="watchlist.state">
+                              {{watchlist.change_pct|tofixe}}%
+                            </span>
+                          </div>
+                      </span>
+                      <span *ngSwitchDefault>
+                          <div style="font-size:12px;white-space: nowrap;text-align: right;" [ngStyle]="watchlist?.change24 > 0 && {'color': '#91c353'} || watchlist.change24 < 0 && {'color': '#e34c47'}">
+                            <span [@changeBackgroundColor]="watchlist.state">
+                              {{watchlist.change24|tofixe}}%
+                            </span>
+                          </div>
+                      </span>
+                    </div>
                 </ion-col>
     
               </ion-row>
@@ -452,29 +482,66 @@
             <div style="overflow: hidden">
     
               <div style="text-align: center;float:left;padding-top: 12px;width: 45%;height: 170px;margin:2.5%;background: #373737;border-radius: 5px;"*ngFor="let watchlist of watchlists;let i = index;" (click)="goToDetails(i)">
-                <img src={{watchlist?.logo}} style="width: 37px;height: 37px;border-radius: 50px;">
+                <img  [src]="watchlist.logo" (error)="errorHandler($event)" style="width: 37px;height: 37px;border-radius: 50px;">
+                
                 <div>
                   <span>
-                    <ion-icon *ngIf="watchlist?.is_in_watchlist" name="star-active" (click)="remove_from_watchlist($event,watchlist?.symbol,watchlist.type,i)"></ion-icon>
+                    <ion-icon *ngIf="watchlist?.is_in_watchlist" name="star-active" (click)="remove_from_watchlist($event,watchlist.symbol,watchlist.type,i)"></ion-icon>
                     <ion-icon *ngIf="!watchlist?.is_in_watchlist" name="star-disable" (click)="add_to_watchlist($event,watchlist?.symbol,watchlist.type,i)"></ion-icon>
                   </span>
                   <span style="font-size: 14px;">
-                    {{watchlist?.shortName}}
+                       
+                      <span [ngSwitch]="watchlist.type">
+                          <span *ngSwitchCase="STOCK">
+                             {{watchlist.shortName}}
+                          </span>
+                          <span *ngSwitchCase="CRYPTO">
+                             {{watchlist.name}}
+                          </span>
+                          <span *ngSwitchCase="FOREX">
+                             {{watchlist.symbol}}
+                          </span>
+                         
+                        </span>
                   </span>
                 </div>
                 <div>
                   <span>
                     {{watchlist?.price|tofixe}}
                   </span>
-                  <span style="font-size: 14px;">
-                    {{watchlist?.change24|tofixe}}%
+                  <span [ngSwitch]="watchlist.type">
+                      <span *ngSwitchCase="STOCK">
+                          {{watchlist.currency|currencySymbol}}
+                       </span>
+                       <span *ngSwitchCase="CRYPTO">
+                          {{watchlist.toSymbol|currencySymbol}}
+                       </span>
+                       <span *ngSwitchCase="FOREX">
+                          {{watchlist.toSymbol|currencySymbol}}
+                       </span>               
                   </span>
+                  <span [ngSwitch]="watchlist.type">
+                      <span *ngSwitchCase="STOCK">
+                          <span style="font-size:14px;white-space: nowrap;text-align: right;" [ngStyle]="watchlist.change_pct > 0 && {'color': '#91c353'} || watchlist.change_pct < 0 && {'color': '#e34c47'}">
+                            <span>
+                              {{watchlist.change_pct|tofixe}}%
+                            </span>
+                          </span>
+                      </span>
+                      <span *ngSwitchDefault>
+                          <span style="font-size:14px;white-space: nowrap;text-align: right;" [ngStyle]="watchlist?.change24 > 0 && {'color': '#91c353'} || watchlist.change24 < 0 && {'color': '#e34c47'}">
+                            <span>
+                              {{watchlist.change24|tofixe}}%
+                            </span>
+                          </span>
+                      </span>
+                    </span>
                 </div>
                 <div style="text-align: center;;margin-top: 3px;width: 100%;padding-top: unset;margin-bottom: 4px;">
-                  <span style="  white-space: nowrap;  overflow: hidden; display: inline-block;width: 64px;height: 30px;border: 1px solid;text-align: center;border-radius: 2px;font-size: 14px;padding-top: 6px;color: #91c353">
+                  <span (click)="change_sentiment('BULLISH',i,$event)" [ngClass]="watchlist.sentiment == 'BULLISH' && 'bullish-active' || watchlist.sentiment != 'BULLISH' &&' bullish-disable'">
                     BULLISH
                   </span>
-                  <span style=" white-space: nowrap;  overflow: hidden; display: inline-block;width: 64px;height: 30px;border: 1px solid;text-align: center;border-radius: 2px;font-size: 14px;padding-top: 6px;color: #e34c47;">
+                  <span (click)="change_sentiment('BEARISH',i,$event)" [ngClass]="watchlist.sentiment == 'BEARISH' && 'bearish-active' || watchlist.sentiment != 'BEARISH' &&' bearish-disable'">
                     BEARISH
                   </span>
                 </div>
@@ -483,17 +550,12 @@
                 </div>
               </div>
             </div>
-            <div style="text-align: center;">
-              <ion-spinner></ion-spinner>
-    
-            </div>
-    
           </div>
     </div>
 
-    <div *ngSwitchCase="TRENDING">
+    <!-- <div *ngSwitchCase="TRENDING">
       <h1>slideTRENDING</h1>
-    </div>
+    </div> -->
 
   
   </div>
@@ -515,7 +577,7 @@
       TRENGING
     </span>
   </div> -->
-  <ion-infinite-scroll (ionInfinite)="$event.waitFor(doInfinite())">
+  <ion-infinite-scroll *ngIf="selectedSegment != WATCHLIST" (ionInfinite)="$event.waitFor(doInfinite())">
     <ion-infinite-scroll-content></ion-infinite-scroll-content>
   </ion-infinite-scroll>
 

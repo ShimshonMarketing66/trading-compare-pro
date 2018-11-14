@@ -10,7 +10,8 @@ export class CryptoProvider {
   cryptocurrencies;
   // private readonly base_url: string = "https://min-api.cryptocompare.com/data/pricemultifull?fsyms="
   // private readonly base_url_CONTINUE: string = "&tsyms="
-  constructor(public http: HttpClient,
+  constructor(
+    public http: HttpClient,
     public authData:AuthDataProvider) {
     this.cryptocurrencies = require('cryptocurrencies');
   }
@@ -34,6 +35,7 @@ export class CryptoProvider {
           for (const key in data) {
             if (this.cryptocurrencies[data[key]["fromSymbol"]] != undefined) {
               data[key]["name"] = this.cryptocurrencies[data[key]["fromSymbol"]];
+              data[key]["sentiment"] = "none";
               data[key]["shortName"] = data[key]["name"].split(" ")[0];
               data[key]["state"] = "none";
               data[key]["index"] = index;
@@ -78,6 +80,17 @@ export class CryptoProvider {
       }
     }
     return arrToRetrun;
+  }
+
+  async get_by_symbol(str){
+    if (this.arrAllCrypto.length == 0) {
+      await this.getCrypto()
+    }
+    for (let index = 0; index < this.arrAllCrypto.length; index++) {
+     if ( this.arrAllCrypto[index].symbol == str) {
+       return  this.arrAllCrypto[index];
+     }
+    }
   }
 
 }

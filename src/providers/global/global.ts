@@ -7,7 +7,7 @@ import { AuthDataProvider } from '../auth-data/auth-data';
 
 @Injectable()
 export class GlobalProvider {
-
+  sentiments=[];
   constructor
   ( public http: HttpClient,
     public cryptoProvider:CryptoProvider,
@@ -37,7 +37,40 @@ export class GlobalProvider {
     })
   }
 
-  remove_from_watchlist(symbol:string,type:string){
+  remove_from_watchlist(symbol:string,type:string,i?:number){
+
+    if (i!=undefined) {
+      switch (type) {
+        case "STOCK":
+          for (let index = 0; index < this.stockProvider.allStocks.length; index++) {
+            for (let j = 0; j < this.stockProvider.allStocks[index].data.length; j++) {
+              if ( this.stockProvider.allStocks[index].data[j].symbol == symbol) {
+                this.stockProvider.allStocks[index].data[j].is_in_watchlist = false;
+              }
+            }
+          }
+          break;
+
+          case "FOREX":
+          for (let index = 0; index < this.forexProvider.allForex.length;index++) {
+            if ( this.forexProvider.allForex[index].symbol == symbol) {
+              this.forexProvider.allForex[index].is_in_watchlist = false;
+            }
+          }
+          break;
+
+          case "CRYPTO":
+          for (let index = 0; index < this.cryptoProvider.arrAllCrypto.length;index++) {
+            if ( this.cryptoProvider.arrAllCrypto[index].symbol == symbol) {
+              this.cryptoProvider.arrAllCrypto[index].is_in_watchlist = false;
+            }
+          }
+          break;
+      
+        default:
+          break;
+      }
+    }
 
     for (let index = 0; index < this.authData.user.watchlist.length; index++) {
       if (this.authData.user.watchlist[index].symbol == symbol) {
@@ -55,13 +88,70 @@ export class GlobalProvider {
     this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/remove-from-watchlist",dataTOSEND)
     .toPromise()
     .then(data=>{
-      console.log(symbol + " removed");
-      this.authData.user.watchlist.push(dataTOSEND.data);
+
     })
     .catch(err=>{
       console.log("err",err);
       
     })
+  }
+
+
+  add_sentiment(symbol:string,type:string,symbol_type:string,price:number):Promise<any>{
+    return new Promise((resolve,reject)=>{
+      var dataToSend = {
+        _id:this.authData.user._id,
+        symbol:symbol,
+        symbol_type:symbol_type,
+        type:type,
+        price:price
+      }
+      this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/add-sentiment",dataToSend)
+      .toPromise()
+      .catch(err=>{
+        reject(err)
+      })
+      .then(()=>{
+        console.log("sentiment added in database succssed .");
+        resolve();
+      })
+     
+    })
+
+  }
+
+  
+  remove_sentiment(symbol:string,type:string):Promise<any>{
+    return new Promise((resolve,reject)=>{
+      var dataToSend = {
+        _id:this.authData.user._id,
+        symbol:symbol,
+        type:type,
+      }
+      this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/remove-sentiment",dataToSend)
+      .toPromise()
+      .catch(err=>{
+        reject(err)
+      })
+      .then(()=>{
+        console.log("sentiment removed in database succssed.");
+        resolve();
+      })
+     
+    })
+
+  }
+
+  get_sentiments():Promise<any>{
+    return new Promise((resolve,reject)=>{
+      this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-sentiments-by-user/"+this.authData.user._id).toPromise().then((data:any)=>{
+        this.sentiments = data;
+        resolve(this.sentiments);
+      }).catch((err)=>{
+        reject(err)
+      })
+    })
+    
   }
 
 }

@@ -1,0 +1,44 @@
+
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Social Sentiment</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+    <ion-list>
+        <ion-item-sliding *ngFor="let sentiment of sentiments">
+          <ion-item>
+        <ion-grid>
+          <ion-row>
+            <ion-col style="text-align:center;">
+                <div style="background:#e34c47;text-align:center;height: 23px;width: 81px;">
+                  BEARISH
+                </div>
+            </ion-col>
+
+            <ion-col>
+                <div>
+                  Apple
+                </div>
+                <div>
+                    voted 11/12/18
+                  </div>
+
+            </ion-col>
+
+            <ion-col>
+              
+              </ion-col>
+          </ion-row>
+        </ion-grid>
+          </ion-item>
+          <ion-item-options side="right">
+            <button ion-button (click)="close(sentiment)">Close</button>
+          </ion-item-options>
+        </ion-item-sliding>
+      </ion-list>
+</ion-content>
