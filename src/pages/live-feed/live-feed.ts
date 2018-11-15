@@ -519,7 +519,7 @@ export class LiveFeedPage implements AfterViewInit {
             return;
           }
           for (let index = 0; index < this.CoinConnectedWSCrypto.length; index++) {
-            let a = this.cryptos[index]["index"];
+            let a = this.CoinConnectedWSCrypto[index]["index"];
             if (pair == this.CoinConnectedWSCrypto[index].pair) {
               if (this.cryptos[a].price > Number(data.price)) {
                 this.cryptos[a].state = this.cryptos[a].state == "falling" ? "falling1" : "falling";

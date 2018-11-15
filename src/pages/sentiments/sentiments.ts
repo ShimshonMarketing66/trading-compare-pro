@@ -51,6 +51,8 @@ export class SentimentsPage {
       }
 
       Promise.all(promises).then((data2) => {
+        let num_gain = 0;
+        let no_pain_no_gain = 0;
         for (let index = 0; index < data2.length; index++) {
           let open_price_sentiment = sentiments_from_server[index]["price"];
           let type_sentiment = sentiments_from_server[index]["type"]
@@ -75,8 +77,15 @@ export class SentimentsPage {
             }
             this.closed_sentiments.push(sentiments_from_server[index])
           }
-          this.total_profit += sentiments_from_server[index]["change_sentiment"];
+         if (sentiments_from_server[index]["change_sentiment"]>0) {
+          num_gain++
+         }
+         if (sentiments_from_server[index]["change_sentiment"]!=0) {
+          no_pain_no_gain++
+         }
+        
         }
+        this.total_profit =(num_gain/no_pain_no_gain)*100;
       })
     })
       .catch((err) => {

@@ -34,23 +34,7 @@ export class SignUpPage {
       }
       this.sim.hasReadPermission().then((info) => {
         if (!info) {
-          this.sim.requestReadPermission().then(() => {
-            console.log('Permission granted');
-            this.sim.getSimInfo().then(
-              (info) => {
-                console.log("info", info);
-                let a = this.authData.user.countryData.dial_code.length
-                this.authData.user.phone_number = info.phoneNumber.substring(a);
-              },
-              (err) => {
-                console.log('Unable to get sim info: ', err);
-              }
-            );
-          },
-            () => {
-              console.log('Permission denied')
-            }
-          );
+       
         } else {
           this.sim.getSimInfo().then(
             (info) => {

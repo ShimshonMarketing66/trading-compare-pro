@@ -8,6 +8,7 @@ import { AndroidPermissions } from '@ionic-native/android-permissions';
 import firebase from 'firebase';
 import { AuthDataProvider } from '../providers/auth-data/auth-data';
 import { Profile } from '../models/profile-model';
+import { Sim } from '@ionic-native/sim';
 
 @Component({
   templateUrl: 'app.html'
@@ -21,12 +22,13 @@ export class MyApp {
   _id: string;
 
   constructor(
+    public sim:Sim,
     public authData: AuthDataProvider,
     private androidPermissions: AndroidPermissions,
     private fcm: FCM,
     public platform: Platform,
-    statusBar: StatusBar,
-    splashScreen: SplashScreen,
+    public statusBar: StatusBar,
+    public splashScreen: SplashScreen,
     public translate: TranslateService,
   ) {
     this.loop();
@@ -38,72 +40,54 @@ export class MyApp {
       } else {
         this.isLogin = false;
       }
-
-      platform.ready().then(() => {
-
-        if (!platform.is("cordova")) {
-          this.authData.platform = "browser";
-        } else if (platform.is("android")) {
-          this.authData.platform = "android";
-        } else if (platform.is("ios")) {
-          this.authData.platform = "ios";
-        }
-        if (!platform.is("cordova")) {
-          return;
-        }
-        statusBar.styleDefault();
-        splashScreen.hide();
-
-        if (this.firstTime) {
-          this.firstTime = false;
-          return;
-        }
-        if (!this.isLogin) {
-          this.checkPermission();
-          return;
-        }
-
-
-        this.fcm.getToken().then(token => {
-          console.log("getToken", token);
-        });
-
-        this.fcm.onNotification().subscribe(data => {
-          console.log(data);
-
-          if (data.wasTapped) {
-            console.log("Received in background");
-          } else {
-            console.log("Received in foreground");
-          };
-        });
-
-        this.fcm.onTokenRefresh().subscribe(token => {
-          console.log("onTokenRefresh", token);
-        });
-      });
     });
     translate.setDefaultLang('english');
-
   }
 
-
-  checkPermission() {
-    this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.READ_SMS)
+  checkPermissionSim() {
+    this.sim.hasReadPermission().then((info) => {
+      if (!info) {
+        this.sim.requestReadPermission().then(() => {
+          console.log('Permission granted')
+          this.sim.getSimInfo().then(
+            (info) => {
+              console.log("info", info);
+            },
+            (err) => {
+              console.log('Unable to get sim info: ', err);
+            });
+        },
+          () => {
+            console.log('Permission denied')
+          }
+        );
+      } 
+    })
+  }
+  checkPermissionREAD_SMS() :Promise<any> {
+    return new Promise((resolve)=>{
+      this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.READ_SMS)
       .then(() => {
-        console.log("permited");
+        console.log("permited checkPermissionREAD_SMS");
+        resolve();
       },
         err => {
-          console.log("not permited");
-
+          console.log("not permited checkPermissionREAD_SMS");
+          resolve();
           this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.READ_SMS)
             .then(() => {
-              console.log("permited");
+              console.log("permited checkPermissionREAD_SMS");
+              resolve();
             },
               err => {
-                alert("cancelled")
+                console.log("not accept checkPermissionREAD_SMS");
+                resolve();
               });
         });
+
+   
+    })
+   
   }
 
 
@@ -111,6 +95,10 @@ export class MyApp {
     setTimeout(() => {
       if (this.onAuthStateChangedCalled) {
         if (this.isLogin) {
+          this.platform.ready().then(() => {
+            this.statusBar.styleDefault();
+            this.splashScreen.hide();
+          })
           this.authData.getProfileFromServer(this._id).then((user:Profile) => {
             this.authData.user = user;
             if (user.verifyData.is_phone_number_verified) {
@@ -118,12 +106,18 @@ export class MyApp {
             }else{
               this.rootPage = "enter-phone";
             }
+            this.initial_app_when_login();
           })
           .catch((err)=>{
             console.log("err this.authData.getProfileFromServer app commponnent"); 
             this.rootPage = "login-tabs";
           })
         } else {
+          this.platform.ready().then(() => {
+            this.statusBar.styleDefault();
+            this.splashScreen.hide();
+            this.initial_app_when_log_out();
+          })
           this.rootPage = "login-tabs";
         }
       } else {
@@ -131,5 +125,40 @@ export class MyApp {
       }
     }, 1000 * 2)
   }
+
+  initial_app_when_login(){
+      if (! this.platform.is("cordova")) {
+        this.authData.platform = "browser";
+      } else if ( this.platform.is("android")) {
+        this.authData.platform = "android";
+      } else if ( this.platform.is("ios")) {
+        this.authData.platform = "ios";
+      }
+      if (! this.platform.is("cordova")) {
+        return;
+      }
+  }
+
+  initial_app_when_log_out(){
+    if (! this.platform.is("cordova")) {
+      this.authData.platform = "browser";
+    } else if ( this.platform.is("android")) {
+      this.authData.platform = "android";
+    } else if ( this.platform.is("ios")) {
+      this.authData.platform = "ios";
+    }
+    if (! this.platform.is("cordova")) {
+      return;
+    }
+    this.checkPermission();   
+}
+
+checkPermission(){
+  this.checkPermissionREAD_SMS().then(()=>{
+    this.checkPermissionREAD_SMS().then(()=>{
+    
+    })
+  })
+}
 }
 
