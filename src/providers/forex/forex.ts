@@ -1,13 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthDataProvider } from '../auth-data/auth-data';
+import { GlobalProvider } from '../global/global';
 
 @Injectable()
 export class ForexProvider {
 
   allForex: any[] = [];
   
-  constructor(public http: HttpClient,public authData:AuthDataProvider) {
+  constructor(   
+    //  public global:GlobalProvider,
+    public http: HttpClient,public authData:AuthDataProvider) {
 
   }
 
@@ -20,6 +23,7 @@ export class ForexProvider {
           .then((data) => {
             let index = 0;
             for (const key in data) {
+              data[key]["status"] = "CLOSE";
               data[key]["sentiment"] = "none";
               data[key]["state"] = "none";
               data[key]["name"] = data[key]["pair"];
@@ -60,6 +64,7 @@ export class ForexProvider {
           .then((data) => {
             let index = 0;
             for (const key in data) {
+              data[key]["status"] = "CLOSE";
               data[key]["state"] = "none";
               data[key]["sentiment"] = "none";
               data[key]["symbol"] = data[key].pair[0] + data[key].pair[1] + data[key].pair[2];
@@ -120,8 +125,6 @@ export class ForexProvider {
            }
           }
         })
-    
-      
      }else{
       for (let index = 0; index < this.allForex.length; index++) {
         if ( this.allForex[index].symbol == str) {

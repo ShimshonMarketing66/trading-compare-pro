@@ -76,7 +76,7 @@
     </ion-grid>
 
 
-    <ion-grid style="background: #373737;" *ngIf="modeView=='LINES'">
+    <!-- <ion-grid style="background: #373737;" *ngIf="modeView=='LINES'">
       <ion-row>
         <ion-col [ngClass]="selectedSegment != STOCK && 'col123'" style="padding-left: 3px;">
           Name
@@ -84,18 +84,8 @@
             <ion-icon name="double-sort"></ion-icon>
           </span>
         </ion-col>
-        <ion-col [ngClass]="selectedSegment != STOCK && col123" style="text-align: center;">
-          high24
-          <span *ngIf="selectedSegment != STOCK">
-            <ion-icon name="double-sort"></ion-icon>
-          </span>
-        </ion-col>
-        <ion-col [ngClass]="selectedSegment != STOCK && col123" style="text-align: center;">
-          low24
-          <span *ngIf="selectedSegment != STOCK">
-            <ion-icon name="double-sort"></ion-icon>
-          </span>
-        </ion-col>
+ 
+
         <ion-col [ngClass]="selectedSegment != STOCK && 'col123'" style="    text-align: right;padding-right: 3px;">
           Price
           <span *ngIf="selectedSegment != STOCK">
@@ -103,7 +93,7 @@
           </span>
         </ion-col>
       </ion-row>
-    </ion-grid>
+    </ion-grid> -->
   </div>
 
 
@@ -121,26 +111,17 @@
                 <ion-icon *ngIf="stock.is_in_watchlist" name="star-active" (click)="remove_from_watchlist($event,stock.symbol,'STOCK',i)"></ion-icon>
                 <ion-icon *ngIf="!stock.is_in_watchlist" name="star-disable" (click)="add_to_watchlist($event,stock.symbol,'STOCK',i)"></ion-icon>
               </span>
-              <span style="font-size:14px;font-weight: 700;">
+              <span style="font-size:16px;font-weight: 700;">
                   {{stock["display_name"]}}
               </span>
             </ion-col>
-            <ion-col style="text-align: center;margin:auto;font-size: 14px;font-weight: 300;">
-              <div>
-                {{stock.day_high|tofixe}}
-              </div>
-            </ion-col>
-            <ion-col style="text-align: center;margin:auto;font-size:16px;font-size: 14px;font-weight: 300;">
-              <div>
-                {{stock.day_low|tofixe}}
-              </div>
-            </ion-col>
+       
             <ion-col style="text-align: right;margin:auto;">
-              <div style="font-size:14px;text-align: right;">
+              <div style="font-size:16px;text-align: right;">
                 <span [@changeBackgroundColor]="stock.state"> {{stock.price |tofixe}} {{stock.currency|currencySymbol}}
                 </span>
               </div>
-              <div style="font-size:12px;white-space: nowrap;text-align: right;" [ngStyle]="stock.change_pct > 0 && {'color': '#91c353'} || stock.change_pct < 0 && {'color': '#e34c47'}">
+              <div style="font-size:14px;white-space: nowrap;text-align: right;" [ngStyle]="stock.change_pct > 0 && {'color': '#91c353'} || stock.change_pct < 0 && {'color': '#e34c47'}">
                 <span [@changeBackgroundColor]="stock.state">
                   {{stock.change_pct|tofixe}}%
                 </span>
@@ -188,10 +169,10 @@
               </span>
             </div>
             <div style="text-align: center;;margin-top: 3px;width: 100%;padding-top: unset;margin-bottom: 4px;">
-              <span (click)="change_sentiment('BULLISH',i,$event)" [ngClass]="stock.sentiment == 'BULLISH' && 'bullish-active' || stock.sentiment != 'BULLISH' &&' bullish-disable'">
+              <span (click)="change_sentiment('BULLISH',i,$event)" [ngClass]="stock.sentiment == 'BULLISH' && stock.status == 'OPEN' ? 'bullish-active' : 'bullish-disable'">
                 BULLISH
               </span>
-              <span  (click)="change_sentiment('BEARISH',i,$event)" [ngClass]="stock.sentiment == 'BEARISH' && 'bearish-active' || stock.sentiment != 'BEARISH' &&' bearish-disable'">
+              <span  (click)="change_sentiment('BEARISH',i,$event)" [ngClass]="stock.sentiment == 'BEARISH' && stock.status == 'OPEN' ? 'bearish-active' :  'bearish-disable'">
                 BEARISH
               </span>
             </div>
@@ -219,7 +200,7 @@
                 <ion-icon *ngIf="forex.is_in_watchlist" name="star-active"  (click)="remove_from_watchlist($event,forex.symbol,'FOREX',i)"></ion-icon>
                 <ion-icon *ngIf="!forex.is_in_watchlist" name="star-disable"(click)="add_to_watchlist($event,forex.symbol,'FOREX',i)"></ion-icon>
               </span>
-              <span style="font-size:14px;font-weight: 700;white-space: nowrap;">
+              <span style="font-size:16px;font-weight: 700;white-space: nowrap;">
                 {{forex.fromSymbol}}
               </span>
 
@@ -228,27 +209,16 @@
 
 
 
-            <ion-col style="text-align: center;margin:auto;font-size: 14px;font-weight: 300;">
-              <div>
-                {{forex.high24|tofixe}}
-              </div>
+         
 
-            </ion-col>
-
-            <ion-col style="text-align: center;margin:auto;font-size: 14px;font-weight: 300;">
-              <div>
-                {{forex.low24|tofixe}}
-              </div>
-
-            </ion-col>
             <ion-col style="text-align: right;margin:auto;">
-              <div style="font-size:14px;text-align: right;">
+              <div style="font-size:16px;text-align: right;">
                 <span [@changeBackgroundColor]="forex.state">
                   {{forex.price|tofixe}}
                 </span>
 
               </div>
-              <div style="font-size:12px;white-space: nowrap;text-align: right;" [ngStyle]="forex.change24 > 0 && {'color': '#91c353'} || forex.change24 < 0 && {'color': '#e34c47'}">
+              <div style="font-size:14px;white-space: nowrap;text-align: right;" [ngStyle]="forex.change24 > 0 && {'color': '#91c353'} || forex.change24 < 0 && {'color': '#e34c47'}">
                 <span [@changeBackgroundColor]="forex.state">
                   {{forex.change24|tofixe}}%
                 </span>
@@ -292,10 +262,10 @@
               </span>
             </div>
             <div style="text-align: center;;margin-top: 3px;width: 100%;padding-top: unset;margin-bottom: 4px;">
-              <span (click)="change_sentiment('BULLISH',i,$event)" [ngClass]="forex.sentiment == 'BULLISH' && 'bullish-active' || forex.sentiment != 'BULLISH' &&' bullish-disable'">
+              <span (click)="change_sentiment('BULLISH',i,$event)" [ngClass]="forex.sentiment == 'BULLISH' && forex.status == 'OPEN' ? 'bullish-active' :  'bullish-disable'">
                 BULLISH
               </span>
-              <span  (click)="change_sentiment('BEARISH',i,$event)" [ngClass]="forex.sentiment == 'BEARISH' && 'bearish-active' || forex.sentiment != 'BEARISH' &&' bearish-disable'">
+              <span  (click)="change_sentiment('BEARISH',i,$event)" [ngClass]="forex.sentiment == 'BEARISH' && forex.status == 'OPEN' ? 'bearish-active' : 'bearish-disable'">
                 BEARISH
               </span>
             </div>
@@ -320,27 +290,19 @@
                 <ion-icon *ngIf="crypto.is_in_watchlist" name="star-active"  (click)="remove_from_watchlist($event,crypto.symbol,'CRYPTO',i)"></ion-icon>
                 <ion-icon *ngIf="!crypto.is_in_watchlist" name="star-disable" (click)="add_to_watchlist($event,crypto.symbol,'CRYPTO',i)"></ion-icon>
               </span>
-              <span style="font-size:14px;font-weight: 700;white-space: nowrap;">
+              <span style="font-size:16px;font-weight: 700;white-space: nowrap;">
                 {{crypto.name}}
               </span>
             </ion-col>
-            <ion-col style="text-align: center;margin:auto;font-size: 14px;font-weight: 300;">
-              <div>
-                {{crypto.high24|tofixe}}
-              </div>
-            </ion-col>
-            <ion-col style="text-align: center;margin:auto;font-size: 14px;font-weight: 300;">
-              <div>
-                {{crypto.low24|tofixe}}
-              </div>
-            </ion-col>
+            
+        
             <ion-col style="text-align: right;margin:auto;">
-              <div style="font-size:14px;text-align: right;">
+              <div style="font-size:16px;text-align: right;">
                 <span [@changeBackgroundColor]="crypto.state">
                   {{crypto.price|tofixe}}
                 </span>
               </div>
-              <div style="font-size:12px;white-space: nowrap;text-align: right;" [ngStyle]="crypto.change24 > 0 && {'color': '#91c353'} || crypto.change24 < 0 && {'color': '#e34c47'}">
+              <div style="font-size:14px;white-space: nowrap;text-align: right;" [ngStyle]="crypto.change24 > 0 && {'color': '#91c353'} || crypto.change24 < 0 && {'color': '#e34c47'}">
                 <span [@changeBackgroundColor]="crypto.state">
                   {{crypto.change24|tofixe}}%
                 </span>
@@ -378,10 +340,10 @@
               </span>
             </div>
             <div style="text-align: center;;margin-top: 3px;width: 100%;padding-top: unset;margin-bottom: 4px;">
-              <span (click)="change_sentiment('BULLISH',i,$event)" [ngClass]="crypto.sentiment == 'BULLISH' && 'bullish-active' || crypto.sentiment != 'BULLISH' &&' bullish-disable'">
+              <span (click)="change_sentiment('BULLISH',i,$event)" [ngClass]="crypto.sentiment == 'BULLISH' && crypto.status == 'OPEN' ? 'bullish-active' : 'bullish-disable'">
                 BULLISH
               </span>
-              <span  (click)="change_sentiment('BEARISH',i,$event)" [ngClass]="crypto.sentiment == 'BEARISH' && 'bearish-active' || crypto.sentiment != 'BEARISH' &&' bearish-disable'">
+              <span  (click)="change_sentiment('BEARISH',i,$event)" [ngClass]="crypto.sentiment == 'BEARISH' && crypto.status == 'OPEN' ? 'bearish-active' : 'bearish-disable'">
                 BEARISH
               </span>
             </div>
@@ -405,7 +367,7 @@
                     <ion-icon *ngIf="watchlist.is_in_watchlist" name="star-active"  (click)="remove_from_watchlist($event,watchlist.symbol,watchlist.type,i)"></ion-icon>
                     <ion-icon *ngIf="!watchlist.is_in_watchlist" name="star-disable" (click)="add_to_watchlist($event,watchlist.symbol,watchlist.type,i)"></ion-icon>
                   </span>
-                  <span style="font-size:14px;font-weight: 700;white-space: nowrap;">
+                  <span style="font-size:16px;font-weight: 700;white-space: nowrap;">
                    <span [ngSwitch]="watchlist.type">
                      <span *ngSwitchCase="STOCK">
                         {{watchlist.shortName}}
@@ -420,34 +382,10 @@
                    </span>
                   </span>
                 </ion-col>
-                <ion-col style="text-align: center;margin:auto;font-size:16px;">
-                  <div>
-                  
-                    <span [ngSwitch]="watchlist.type">
-                        <span *ngSwitchCase="STOCK">
-                           {{watchlist.day_high|tofixe}}
-                        </span>
-                        <span *ngSwitchDefault>
-                            {{watchlist.high24|tofixe}}
-                        </span>
-                      </span>
-                  </div>
-                </ion-col>
-                <ion-col style="text-align: center;margin:auto;font-size: 14px;font-weight: 300;">
-                  <div>
-                   
-                    <span [ngSwitch]="watchlist.type">
-                        <span *ngSwitchCase="STOCK">
-                           {{watchlist.day_low|tofixe}}
-                        </span>
-                        <span *ngSwitchDefault>
-                            {{watchlist?.low24|tofixe}}
-                        </span>
-                      </span>
-                  </div>
-                </ion-col>
+       
+            
                 <ion-col style="text-align: right;margin:auto;">
-                  <div style="font-size:14px;text-align: right;">
+                  <div style="font-size:16px;text-align: right;">
                     <span [@changeBackgroundColor]="watchlist.state">
                       {{watchlist?.price|tofixe}}
                     </span>
@@ -455,7 +393,7 @@
 
                   <div [ngSwitch]="watchlist.type">
                       <span *ngSwitchCase="STOCK">
-                          <div style="font-size:12px;white-space: nowrap;text-align: right;" [ngStyle]="watchlist.change_pct > 0 && {'color': '#91c353'} || watchlist.change_pct < 0 && {'color': '#e34c47'}">
+                          <div style="font-size:14px;white-space: nowrap;text-align: right;" [ngStyle]="watchlist.change_pct > 0 && {'color': '#91c353'} || watchlist.change_pct < 0 && {'color': '#e34c47'}">
                             <span [@changeBackgroundColor]="watchlist.state">
                               {{watchlist.change_pct|tofixe}}%
                             </span>
@@ -489,7 +427,7 @@
                     <ion-icon *ngIf="watchlist?.is_in_watchlist" name="star-active" (click)="remove_from_watchlist($event,watchlist.symbol,watchlist.type,i)"></ion-icon>
                     <ion-icon *ngIf="!watchlist?.is_in_watchlist" name="star-disable" (click)="add_to_watchlist($event,watchlist?.symbol,watchlist.type,i)"></ion-icon>
                   </span>
-                  <span style="font-size: 14px;">
+                  <span style="font-size: 16px;">
                        
                       <span [ngSwitch]="watchlist.type">
                           <span *ngSwitchCase="STOCK">
@@ -538,10 +476,10 @@
                     </span>
                 </div>
                 <div style="text-align: center;;margin-top: 3px;width: 100%;padding-top: unset;margin-bottom: 4px;">
-                  <span (click)="change_sentiment('BULLISH',i,$event)" [ngClass]="watchlist.sentiment == 'BULLISH' && 'bullish-active' || watchlist.sentiment != 'BULLISH' &&' bullish-disable'">
+                  <span (click)="change_sentiment('BULLISH',i,$event)" [ngClass]="watchlist.sentiment == 'BULLISH' && watchlist.status == 'OPEN' ? 'bullish-active' : 'bullish-disable'">
                     BULLISH
                   </span>
-                  <span (click)="change_sentiment('BEARISH',i,$event)" [ngClass]="watchlist.sentiment == 'BEARISH' && 'bearish-active' || watchlist.sentiment != 'BEARISH' &&' bearish-disable'">
+                  <span (click)="change_sentiment('BEARISH',i,$event)" [ngClass]="watchlist.sentiment == 'BEARISH' && watchlist.status == 'OPEN'  ?'bearish-active' : 'bearish-disable'">
                     BEARISH
                   </span>
                 </div>

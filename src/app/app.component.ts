@@ -9,6 +9,7 @@ import firebase from 'firebase';
 import { AuthDataProvider } from '../providers/auth-data/auth-data';
 import { Profile } from '../models/profile-model';
 import { Sim } from '@ionic-native/sim';
+import { GlobalProvider } from '../providers/global/global';
 
 @Component({
   templateUrl: 'app.html'
@@ -22,6 +23,7 @@ export class MyApp {
   _id: string;
 
   constructor(
+    public global:GlobalProvider,
     public sim:Sim,
     public authData: AuthDataProvider,
     private androidPermissions: AndroidPermissions,
@@ -95,18 +97,24 @@ export class MyApp {
     setTimeout(() => {
       if (this.onAuthStateChangedCalled) {
         if (this.isLogin) {
-          this.platform.ready().then(() => {
-            this.statusBar.styleDefault();
-            this.splashScreen.hide();
-          })
           this.authData.getProfileFromServer(this._id).then((user:Profile) => {
             this.authData.user = user;
             if (user.verifyData.is_phone_number_verified) {
-              this.rootPage = "main-tabs";
+              this.global.initialProviders().then(()=>{
+                this.rootPage = "main-tabs";
+                this.platform.ready().then(() => {
+                  this.statusBar.styleDefault();
+                  this.splashScreen.hide();
+                })
+              })
             }else{
               this.rootPage = "enter-phone";
             }
             this.initial_app_when_login();
+            this.platform.ready().then(() => {
+              this.statusBar.styleDefault();
+              this.splashScreen.hide();
+            })
           })
           .catch((err)=>{
             console.log("err this.authData.getProfileFromServer app commponnent"); 

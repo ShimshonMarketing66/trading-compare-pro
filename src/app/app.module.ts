@@ -66,6 +66,7 @@ export function createTranslateLoader(http: HttpClient) {
     MyApp
   ],
   providers: [
+    GlobalProvider,
     Sim,
     FCM,
     Keyboard,
@@ -79,8 +80,8 @@ export function createTranslateLoader(http: HttpClient) {
     Facebook,
     GooglePlus,
     AuthDataProvider,
-    AndroidPermissions,
-    GlobalProvider
+    AndroidPermissions
+    
 
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

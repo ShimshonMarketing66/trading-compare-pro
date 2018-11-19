@@ -1,11 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthDataProvider } from '../auth-data/auth-data';
+import { GlobalProvider } from '../global/global';
+
 declare var require: any;
 
 @Injectable()
 export class CryptoProvider {
-
+  inRequesting:boolean = false;
   arrAllCrypto: any[] = [];
   cryptocurrencies;
   // private readonly base_url: string = "https://min-api.cryptocompare.com/data/pricemultifull?fsyms="
@@ -16,7 +18,9 @@ export class CryptoProvider {
     this.cryptocurrencies = require('cryptocurrencies');
   }
 
-  getCrypto(num?:number): Promise<any> {    
+   getCrypto(num?:number): Promise<any> {   
+     console.log("getCrypto");
+       
     return new Promise((resolve) => {
       if ( this.arrAllCrypto.length != 0) {
         if (num == undefined) {
@@ -36,6 +40,7 @@ export class CryptoProvider {
             if (this.cryptocurrencies[data[key]["fromSymbol"]] != undefined) {
               data[key]["name"] = this.cryptocurrencies[data[key]["fromSymbol"]];
               data[key]["sentiment"] = "none";
+              data[key]["status"] = "CLOSE";
               data[key]["shortName"] = data[key]["name"].split(" ")[0];
               data[key]["state"] = "none";
               data[key]["index"] = index;
@@ -43,6 +48,11 @@ export class CryptoProvider {
               data[key]["is_in_watchlist"] = false;
               data[key]["symbol"] = data[key]["pair"];
               data[key]["type"] = "CRYPTO";
+              
+
+              // await this.global.get_sentiments();
+              // console.log(this.global.sentiments)
+              
               for (let index = 0; index < this.authData.user.watchlist.length; index++) {
                 if (this.authData.user.watchlist[index].type == "CRYPTO") {
                   if ( data[key].symbol == this.authData.user.watchlist[index].symbol) {
@@ -55,7 +65,6 @@ export class CryptoProvider {
               index++;
             } 
           }
-          console.log(this.arrAllCrypto);
           
           if (num == undefined) {
             resolve(this.arrAllCrypto);
@@ -72,6 +81,7 @@ export class CryptoProvider {
   }
 
   search(str: string): any {
+    console.log("search");
     var arrToRetrun = [];
     for (let index = 0; index < this.arrAllCrypto.length; index++) {
       let pair = this.arrAllCrypto[index]["fromSymbol"] + this.arrAllCrypto[index]["toSymbol"];
@@ -82,15 +92,26 @@ export class CryptoProvider {
     return arrToRetrun;
   }
 
-  async get_by_symbol(str){
-    if (this.arrAllCrypto.length == 0) {
-      await this.getCrypto()
-    }
-    for (let index = 0; index < this.arrAllCrypto.length; index++) {
-     if ( this.arrAllCrypto[index].symbol == str) {
-       return  this.arrAllCrypto[index];
-     }
-    }
+  get_by_symbol(str) :Promise<any>{ 
+    console.log("get_by_symbol");
+    return new Promise((resolve)=>{
+      if (this.arrAllCrypto.length == 0) {
+        this.getCrypto().then(()=>{
+          for (let index = 0; index < this.arrAllCrypto.length; index++) {
+            if ( this.arrAllCrypto[index].symbol == str) {
+              resolve(this.arrAllCrypto[index]);
+            }
+           }
+        })
+      }
+      for (let index = 0; index < this.arrAllCrypto.length; index++) {
+       if ( this.arrAllCrypto[index].symbol == str) {
+         resolve(this.arrAllCrypto[index]);
+       }
+      }
+      
+    })
+
   }
 
 }

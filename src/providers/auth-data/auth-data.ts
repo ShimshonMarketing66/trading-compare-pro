@@ -8,6 +8,7 @@ import { InAppPurchase2, IAPProduct } from '@ionic-native/in-app-purchase-2';
 import firebase from 'firebase';
 import { CountryModel } from '../../models/country-model';
 import { Nexmo } from '../../models/nexmo-model';
+import { GlobalProvider } from '../global/global';
 
 
 
@@ -26,7 +27,6 @@ export class AuthDataProvider {
     public plt: Platform
   ) {
     console.log("constructor AuthDataProvider");
-
   }
   /* from here I used these functions */
 
@@ -238,13 +238,18 @@ export class AuthDataProvider {
   }
 
   getProfileFromServer(_id: string): Promise<Profile> {
+    console.log(_id);
+    
     return new Promise((resolve, reject) => {
       this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/getUsersById", { _id: _id })
         .toPromise()
         .then((profile: Profile) => {
           resolve(profile);
+          console.log(profile);
+          
         })
         .catch((err) => {
+          console.error(err);
           if (err.status == 500) {
             reject(err.error);
           } else {

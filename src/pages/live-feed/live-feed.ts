@@ -273,6 +273,11 @@ export class LiveFeedPage implements AfterViewInit {
             .then(data => {
               this.offsetRequested += data.length;
               for (let index = 0; index < data.length; index++) {
+                for (let index2 = 0; index2 < this.globalProvider.sentiments.length; index2++) {
+                 if (this.globalProvider.sentiments[index2].symbol == data[index].symbol) {
+                  data[index]["sentiment"] = this.globalProvider.sentiments[index2].type;
+                 }
+                }
                 this.stocks.push(data[index]);
               }
               resolve();
@@ -441,7 +446,7 @@ export class LiveFeedPage implements AfterViewInit {
   }
   foo() {
 
-    console.log(this.CoinConnectedWSStock);
+    console.log(this.forexs);
 
   }
 
@@ -1087,8 +1092,9 @@ export class LiveFeedPage implements AfterViewInit {
         break;
     }
     
-    if (arr[i].sentiment == 'none') {
+    if (arr[i].status == "CLOSE") {
       arr[i].sentiment = type;
+      arr[i].status = "OPEN";
       this.globalProvider.add_sentiment( arr[i].symbol,type,arr[i].type,arr[i].price)
       .then(()=>{
 

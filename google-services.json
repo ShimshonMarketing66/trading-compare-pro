@@ -1,4 +1,4 @@
-  {
+{
   "project_info": {
     "project_number": "212982281977",
     "firebase_url": "https://trading-compare-93afb.firebaseio.com",
@@ -44,10 +44,10 @@
               "client_type": 3
             },
             {
-              "client_id": "212982281977-kmnlp6tpu8mt49un9ohcp4shbj82360v.apps.googleusercontent.com",
+              "client_id": "212982281977-t5h3289mlao3iu1c5jmi0bm5f0i7prnu.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.tradingcompare.app",
+                "bundle_id": "com.tradingcompare",
                 "app_store_id": "1406118849"
               }
             }
@@ -112,10 +112,10 @@
               "client_type": 3
             },
             {
-              "client_id": "212982281977-kmnlp6tpu8mt49un9ohcp4shbj82360v.apps.googleusercontent.com",
+              "client_id": "212982281977-t5h3289mlao3iu1c5jmi0bm5f0i7prnu.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.tradingcompare.app",
+                "bundle_id": "com.tradingcompare",
                 "app_store_id": "1406118849"
               }
             }

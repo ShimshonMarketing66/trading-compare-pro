@@ -95,6 +95,8 @@ export class StockProvider {
                   data[index]["is_in_watchlist"] = false;
                   data[index]["type"] = "STOCK";
                   data[index]["sentiment"] = "none";
+                  data[index]["status"] = "CLOSE";
+
                   for (let index2 = 0; index2 < this.authData.user.watchlist.length; index2++) {
                     if (this.authData.user.watchlist[index2].type == "STOCK") {
                       if (data[index].symbol == this.authData.user.watchlist[index2].symbol) {
@@ -124,6 +126,7 @@ export class StockProvider {
             for (let index = 0; index < data.length; index++) {
               data[index]["sentiment"] = "none";
               data[index]["state"] = "none";
+              data[index]["status"] = "CLOSE";
               data[index]["index"] = index;
               data[index]["shortName"] = data[index]["name"].split(" ")[0];
               let a = (data[index].symbol).split(".")[0];
