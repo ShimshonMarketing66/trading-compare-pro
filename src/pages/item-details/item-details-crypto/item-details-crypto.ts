@@ -11,35 +11,18 @@ import { CryptoProvider } from '../../../providers/crypto/crypto';
   selector: 'page-item-details-crypto',
   templateUrl: 'item-details-crypto.html',
 })
-export class ItemDetailsCryptoPage implements AfterViewInit {
+export class ItemDetailsCryptoPage {
+  symbol: string;
   item: any;
+  Segments: string[];
   selectedSegment: string = "CHAT";
-  slideNow: string;
-  slides: { id: string; }[];
-  @ViewChild('slideChat') slideChat: any;
-  @ViewChild('slideOverview') slideOverview: any;
-  @ViewChild('slideChart') slideChart: any;
-  @ViewChild('slideSocial') slideSocial: any;
-  @ViewChild('slideNews') slideNews: any;
-  @ViewChild('mySlider') slider: Slides;
   tweetsdata;
   constructor(public http: Http, public navCtrl: NavController, public navParams: NavParams, public cryptoProvider: CryptoProvider) {
     this.item = navParams.get("item");    
     this.tweetCall();
-    this.slides = [
-      {
-        id: "CHAT"
-      },
-      {
-        id: "OVERVIEW"
-      }, {
-        id: "CHART"
-      }, {
-        id: "SOCIAL"
-      }, {
-        id: "NEWS"
-      }
-    ];
+    this.Segments = ["CHAT", "OVERVIEW", "CHART", "SOCIAL", "NEWS"];
+    this.symbol = this.item.symbol;
+
   }
 
 
@@ -61,53 +44,42 @@ export class ItemDetailsCryptoPage implements AfterViewInit {
     });
   }
 
-  ngAfterViewInit(): void {
-    this.slideNow = this.slideChat;
-  }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad ItemDetailsPage');
   }
 
-  onSlideChanged(slider) {
-    if (slider.getActiveIndex() == 5) return;
-    const currentSlide = this.slides[slider.getActiveIndex()];
-    if (currentSlide == undefined) return;
-    this.selectedSegment = currentSlide.id;
-  }
+
 
 
   changeSegment(segment) {
-    if (this.selectedSegment == segment) return;
-    switch (segment) {
-      case "CHAT":
-        console.log("CHAT");
-        this.selectedSegment = "CHAT";
-        break;
-      case "OVERVIEW":
-        console.log("OVERVIEW");
-        this.selectedSegment = "OVERVIEW";
-        break;
-      case "CHART":
-        console.log("CHART");
-        this.selectedSegment = "CHART";
-        break;
-      case "SOCIAL":
-        console.log("SOCIAL");
-        this.selectedSegment = "SOCIAL";
-        break;
-      case "NEWS":
-        console.log("NEWS");
-        this.selectedSegment = "NEWS";
-        break;
-      default:
-        break;
+    this.onTabChanged(segment)
     }
-
-    const selectedIndex = this.slides.findIndex((slide) => {
-      return slide.id === segment;
-    });
-    this.slider.slideTo(selectedIndex);
-  }
-
+    onTabChanged(segment) {
+      if (this.selectedSegment == segment) return;
+      switch (segment) {
+        case "CHAT":
+          console.log("CHAT");
+          this.selectedSegment = "CHAT";
+          break;
+        case "OVERVIEW":
+          console.log("OVERVIEW");
+          this.selectedSegment = "OVERVIEW";
+          break;
+        case "CHART":
+          console.log("CHART");
+          this.selectedSegment = "CHART";
+          break;
+        case "SOCIAL":
+          console.log("SOCIAL");
+          this.selectedSegment = "SOCIAL";
+          break;
+        case "NEWS":
+          console.log("NEWS");
+          this.selectedSegment = "NEWS";
+          break;
+        default:
+          break;
+      }
+    }
 }

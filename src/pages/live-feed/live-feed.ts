@@ -56,7 +56,6 @@ export class LiveFeedPage implements AfterViewInit {
   sizeOfBody: number;
   numOfLines: number;
   @ViewChild('mySlider') slider: Slides;
-  @ViewChild('containerSegment') containerSegment: ElementRef;
   @ViewChild('content') content: Content;
   modeView: string = "LINES"
 
@@ -324,7 +323,10 @@ export class LiveFeedPage implements AfterViewInit {
 
   goToDetailsStock(i: number) {
     this.navCtrl.push("item-details-stock", {
-      item: this.stocks[i]
+      item: this.stocks[i], 
+      change_sentiment:this.change_sentiment,
+      i:i,
+      that:this
     })
   }
 
@@ -370,8 +372,22 @@ export class LiveFeedPage implements AfterViewInit {
               }
               break;
             case this.STOCK:
+            console.log(data,this.globalProvider.sentiments);
+            
               for (let j = 2; j < data.length; j++) {
                 if (data[j].symbol == this.authData.user.watchlist[i].symbol) {
+                  for (let aaa = 0; aaa < this.globalProvider.sentiments.length; aaa++) {
+                   if (this.globalProvider.sentiments[aaa].symbol == data[j].symbol) {
+                     if (this.globalProvider.sentiments[aaa].status == "OPEN") {
+                      data[j]["status"]= "OPEN";
+                      data[j]["sentiment"]= this.globalProvider.sentiments[aaa].type;
+                      break;
+                     }else{
+                      data[j]["status"]= "CLOSE";
+                      data[j]["sentiment"]= this.globalProvider.sentiments[aaa].type;
+                     }
+                   }
+                  }
                   this.watchlists.push(data[j]);
                   break;
                 }
@@ -603,7 +619,14 @@ export class LiveFeedPage implements AfterViewInit {
                 this.stocks[a].day_low = data.price;
               }
 
+              console.log(data.price,pair);
+              
+              
               let original = Number(this.stocks[a].price_open);
+              if (isNaN(original) || original == undefined || original == null ) {
+                original = 0;
+                return;
+              }
               let neww = Number(data.price);
 
               this.stocks[a].change_pct = (((neww - original) / original) * 100).toString()
@@ -1046,7 +1069,6 @@ export class LiveFeedPage implements AfterViewInit {
     } else {
       this.globalProvider.remove_from_watchlist(symbol, type);
     }
-
   }
 
   goToDetails(watchlist: any) {
@@ -1067,35 +1089,44 @@ export class LiveFeedPage implements AfterViewInit {
     }
 
     this.navCtrl.push(page, {
-      item: watchlist
+      item: watchlist,
     })
   }
 
-  change_sentiment(type: string, i: number, event:any) {
-    event.stopPropagation();
+  change_sentiment(type: string, i: number, event?:any,that?) {
+    var that2;
+    if (event != undefined) {
+      event.stopPropagation();
+    }
+    if (that != undefined) {
+      that2 = that;
+    }else{
+      that2 = this;
+    }
     let arr;
-    switch (this.selectedSegment) {
-      case this.STOCK:
-        arr = this.stocks;
+    
+    switch (that2.selectedSegment) {
+      case that2.STOCK:
+        arr = that2.stocks;
         break;
-      case this.FOREX:
-        arr = this.forexs;
+      case that2.FOREX:
+        arr = that2.forexs;
         break;
-      case this.CRYPTO:
-        arr = this.cryptos;
+      case that2.CRYPTO:
+        arr = that2.cryptos;
         break;
-      case this.WATCHLIST:
-        arr = this.watchlists;
+      case that2.WATCHLIST:
+        arr = that2.watchlists;
         break;
 
       default:
         break;
     }
-    
+  
     if (arr[i].status == "CLOSE") {
       arr[i].sentiment = type;
       arr[i].status = "OPEN";
-      this.globalProvider.add_sentiment( arr[i].symbol,type,arr[i].type,arr[i].price)
+      that2.globalProvider.add_sentiment( arr[i].symbol,type,arr[i].type,arr[i].price)
       .then(()=>{
 
       })

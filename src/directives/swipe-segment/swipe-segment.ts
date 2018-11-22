@@ -26,7 +26,10 @@ export class SwipeSegmentDirective implements OnInit {
         })
     }
 
-    swipeHandler(event) {        
+    swipeHandler(event) {  
+        if (this.currentTab=="CHART") {
+             return;       
+        }      
         if (event.direction == '2') {
             // move forward
             const currentIndex = this.tabsList.indexOf(this.currentTab),

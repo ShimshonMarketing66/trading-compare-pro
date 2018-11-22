@@ -254,4 +254,17 @@ export class GlobalProvider {
    })
   }
 
+  get_sentiments_users():Promise<any>{
+    return new Promise((resolve,reject)=>{
+      this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-sentiments-leaderboard")
+      .toPromise()
+      .then((data)=>{
+       resolve(data);
+      })
+      .catch((err)=>{
+        reject(err)
+      })
+    })
+  }
+
 }

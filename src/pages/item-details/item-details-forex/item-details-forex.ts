@@ -11,35 +11,18 @@ import { ForexProvider } from '../../../providers/forex/forex';
   selector: 'page-item-details-forex',
   templateUrl: 'item-details-forex.html',
 })
-export class ItemDetailsForexPage implements AfterViewInit {
+export class ItemDetailsForexPage {
   item: any;
   selectedSegment: string = "CHAT";
-  slideNow: string;
-  slides: { id: string; }[];
-  @ViewChild('slideChat') slideChat: any;
-  @ViewChild('slideOverview') slideOverview: any;
-  @ViewChild('slideChart') slideChart: any;
-  @ViewChild('slideSocial') slideSocial: any;
-  @ViewChild('slideNews') slideNews: any;
-  @ViewChild('mySlider') slider: Slides;
+  Segments: string[];
+  symbol:string;
   tweetsdata;
   constructor(public http: Http, public navCtrl: NavController, public navParams: NavParams, public forexProvider: ForexProvider) {
     this.item = navParams.get("item");
+
+    this.symbol = this.item.symbol.slice(0,3) + "/" + this.item.symbol.slice(3, 6)
     this.tweetCall();
-    this.slides = [
-      {
-        id: "CHAT"
-      },
-      {
-        id: "OVERVIEW"
-      }, {
-        id: "CHART"
-      }, {
-        id: "SOCIAL"
-      }, {
-        id: "NEWS"
-      }
-    ];
+    this.Segments = ["CHAT", "OVERVIEW", "CHART", "SOCIAL", "NEWS"];
   }
 
 
@@ -61,23 +44,17 @@ export class ItemDetailsForexPage implements AfterViewInit {
     });
   }
 
-  ngAfterViewInit(): void {
-    this.slideNow = this.slideChat;
-  }
+
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad ItemDetailsPage');
   }
 
-  onSlideChanged(slider) {
-    if (slider.getActiveIndex() == 5) return;
-    const currentSlide = this.slides[slider.getActiveIndex()];
-    if (currentSlide == undefined) return;
-    this.selectedSegment = currentSlide.id;
+  changeSegment(segment) {
+    this.onTabChanged(segment)
   }
 
-
-  changeSegment(segment) {
+  onTabChanged(segment) {
     if (this.selectedSegment == segment) return;
     switch (segment) {
       case "CHAT":
@@ -103,11 +80,8 @@ export class ItemDetailsForexPage implements AfterViewInit {
       default:
         break;
     }
-
-    const selectedIndex = this.slides.findIndex((slide) => {
-      return slide.id === segment;
-    });
-    this.slider.slideTo(selectedIndex);
   }
+
+
 
 }

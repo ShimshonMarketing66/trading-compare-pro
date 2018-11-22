@@ -4,7 +4,7 @@ import { AuthDataProvider } from '../../../providers/auth-data/auth-data';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { MyApp } from '../../../app/app.component';
 import { Profile } from '../../../models/profile-model';
-declare var navigator
+
 @IonicPage({
   name: "sign-in"
 })
@@ -51,7 +51,9 @@ export class SignInPage {
       this.authData.getProfileFromServer(user.user.uid)
         .then((data) => {
           if (data.verifyData.is_phone_number_verified) {
-            window.location.replace("localhost:8080");
+            this.splashscreen.show();
+            window.location.reload();
+            this.app.getRootNav().setRoot(MyApp);
           } else {
             let alert = this.alertCtrl.create({
               message: "need to complete registration",
@@ -62,7 +64,6 @@ export class SignInPage {
                   handler: () => {
                     this.navCtrl.setRoot("verify-code");
                   }
-
                 }
               ]
             });
@@ -122,7 +123,10 @@ export class SignInPage {
   loginUserWithProvider(m_provider: string) {
     this.authData.loginUserWithProvider(m_provider).then((user: Profile) => {
       if (user.verifyData.is_phone_number_verified) {
-        navigator.app.loadUrl('localhost:8080', { openExternal:false });
+        this.splashscreen.show();
+        this.app.getRootNavs()[0].setRoot(MyApp).then(() => {
+          window.location.reload();
+        })
       } else {
         this.app.getRootNavs()[0].setRoot("enter-phone");
       }

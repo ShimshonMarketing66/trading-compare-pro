@@ -27,6 +27,7 @@ import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { Sim } from '@ionic-native/sim';
 import firebase from 'firebase';
 import { GlobalProvider } from '../providers/global/global';
+import { ComponentsModule } from '../components/components.module';
 
 
 const firebaseConfig = {

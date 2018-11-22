@@ -30,58 +30,121 @@
   .ion-md-#{$arg}:before ,
   .ion-md-#{$arg}-outline:before {
   content: $val;
-  font-size:12px;
+  color: #9b9b9b;
+  font-size:18px;
   }
   }
 
-  .star-disable:before ,
-.ion-ios-star-disable:before ,
-.ion-ios-star-disable-outline:before ,
-.ion-md-star-disable:before ,
-.ion-md-star-disable-outline:before  {
-  content: '\f006';
-  font-size: 18px;
-  color: #4a4a4a;
-}
 
-.star-active:before ,
-.ion-ios-star-active:before ,
-.ion-ios-star-active-outline:before ,
-.ion-md-star-active:before ,
-.ion-md-star-active-outline:before  {
-  content: '\f005';
-  font-size: 18px;
-  color: #12a6f9;
-}
+  @mixin makeIcon_bars_d($arg, $val) {
+    .#{$arg}:before ,
+    .ion-ios-#{$arg}:before ,
+    .ion-ios-#{$arg}-outline:before ,
+    .ion-md-#{$arg}:before ,
+    .ion-md-#{$arg}-outline:before {
+    content: $val;
+    font-size:30px;
+    color: #4a4a4a;
+    }
+    }
+
+    @mixin makeIcon_bars_a($arg, $val) {
+      .#{$arg}:before ,
+      .ion-ios-#{$arg}:before ,
+      .ion-ios-#{$arg}-outline:before ,
+      .ion-md-#{$arg}:before ,
+      .ion-md-#{$arg}-outline:before {
+      content: $val;
+      font-size:30px;
+      color: #12a6f9;
+      }
+      }
   
-  @include makeIcon(double-sort,'\e900');
-  // @include makeIcon(star-active,'\f005');
-  // @include makeIcon(star-disable,'\f006');
 
-// @include makeIcon(paint-format,'\e90c');
-// @include makeIcon(music,'\f001');
-// @include makeIcon(check,'\f00c');
-// @include makeIcon(cog,'\f013');
-// @include makeIcon(gear,'\f013');
-// @include makeIcon(pencil,'\f040');
-// @include makeIcon(heck-circle-o,'\f05d');
-// @include makeIcon(arrow-left,'\f060');
-// @include makeIcon(comment,'\f075');
-// @include makeIcon(unlock,'\f09c');
-// @include makeIcon(arrow-circle-up,'\f0aa');
-// @include makeIcon(users,'\f0c0');
-// @include makeIcon(money,'\f0d6');
-// @include makeIcon(group,'\f0c0');
-// @include makeIcon(caret-down,'\f0d7');
-// @include makeIcon(caret-up,'\f0d8');
-// @include makeIcon(caret-left,'\f0d9');
-// @include makeIcon(caret-right,'\f0da');
-// @include makeIcon(bell,'\f0f3');
-// @include makeIcon(thumbs-up1,'\f164');
-// @include makeIcon(thumbs-down2,'\f165');
-// @include makeIcon(google,'\f1a0');
-// @include makeIcon(trash,'\f1f8');
-// @include makeIcon(google2,'\ea88');
-// @include makeIcon(google3,'\ea8a');
-// @include makeIcon(facebook,'\ea90');
-// @include makeIcon(rss,'\ea9b');
+  @mixin makeIcon_a($arg, $val) {
+    .#{$arg}:before ,
+    .ion-ios-#{$arg}:before ,
+    .ion-ios-#{$arg}-outline:before ,
+    .ion-md-#{$arg}:before ,
+    .ion-md-#{$arg}-outline:before {
+    content: $val;
+    font-size:18px;
+    color: #12a6f9;
+    }
+    }
+    @include makeIcon_bars_a(bars-v-a,"\f0c9");
+    @include makeIcon_bars_d(bars-v-d,"\f0c9");
+
+    @include makeIcon_bars_a(th-v-a,"\f00a");
+    @include makeIcon_bars_d(th-v-d,"\f00a");
+
+  @include makeIcon(double-sort,'\e900');
+
+
+
+@include makeIcon(plus-v,"\f067");
+ 
+@include makeIcon(search-v ,"\f002");
+
+
+@include makeIcon(star-v,"\f005");
+@include makeIcon_a(star-v-a,"\f005");
+ 
+ 
+@include makeIcon(check-v,"\f00c");
+ 
+@include makeIcon(close-v,"\f00d");
+ 
+@include makeIcon(cog-v,"\f013");
+ 
+@include makeIcon(trash-v,"\f014");
+ 
+@include makeIcon(home-v,"\f015");
+ 
+@include makeIcon(flag-v,"\f024");
+ 
+@include makeIcon(pencil-v,"\f040");
+ 
+@include makeIcon(arrow-left-v,"\f060");
+ 
+@include makeIcon(share-v,"\f064");
+ 
+@include makeIcon(eye-v,"\f06e");
+ 
+@include makeIcon(comment-v,"\f075");
+ 
+@include makeIcon(sign-out-v,"\f08b");
+ 
+@include makeIcon(trophy-v,"\f091");
+ 
+@include makeIcon(facebook-v,"\f09a");
+ 
+@include makeIcon(feed-v,"\f09e");
+ 
+@include makeIcon(bullhorn-v,"\f0a1");
+ 
+@include makeIcon(users-v,"\f0c0");
+ 
+
+ 
+@include makeIcon(money-v,"\f0d6");
+ 
+@include makeIcon(sort-v,"\f0dc");
+ 
+@include makeIcon(sort-down-v,"\f0dd");
+ 
+@include makeIcon(sort-up-v,"\f0de");
+ 
+@include makeIcon(envelope-v,"\f0e0");
+ 
+@include makeIcon(bell-v,"\f0f3");
+ 
+@include makeIcon(angle-right-v,"\f105");
+ 
+@include makeIcon(thumbs-up-v,"\f164");
+ 
+@include makeIcon(thumbs-down-v,"\f165");
+ 
+@include makeIcon(google-v,"\f1a0");
+ 
+

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "declaration": false,
     "emitDecoratorMetadata": true,
@@ -16,6 +17,7 @@
   "include": [
     "src/**/*.ts"
   ],
+  "styles":"",
   "exclude": [
     "node_modules",
     "src/**/*.spec.ts",

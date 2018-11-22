@@ -66,6 +66,7 @@ export class MyApp {
       } 
     })
   }
+  
   checkPermissionREAD_SMS() :Promise<any> {
     return new Promise((resolve)=>{
       this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.READ_SMS)
@@ -155,7 +156,7 @@ export class MyApp {
     } else if ( this.platform.is("ios")) {
       this.authData.platform = "ios";
     }
-    if (! this.platform.is("cordova")) {
+    if (!this.platform.is("cordova")) {
       return;
     }
     this.checkPermission();   
@@ -163,8 +164,7 @@ export class MyApp {
 
 checkPermission(){
   this.checkPermissionREAD_SMS().then(()=>{
-    this.checkPermissionREAD_SMS().then(()=>{
-    
+    this.checkPermissionREAD_SMS().then(()=>{  
     })
   })
 }

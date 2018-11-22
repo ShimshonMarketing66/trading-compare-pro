@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { GlobalProvider } from '../../providers/global/global';
 
 
 @IonicPage()
@@ -9,9 +10,13 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class HomePage {
   users: any[] = [];
+  all_users :any[] = [];
   selectedSegmentSocialFeeds: string = "Following";
   AllLeaderboard: boolean = false;
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(
+    public navCtrl: NavController,
+     public navParams: NavParams,
+    public globalProvider:GlobalProvider) {
     this.getUsers();
   }
 
@@ -24,43 +29,12 @@ export class HomePage {
   }
 
   getUsers() {
-    this.users = [{
-      name: "Jaime Lannister",
-      profit: "34%",
-      flag: "france"
-    }, {
-      name: "Jon Snow",
-      profit: "32%",
-      flag: "france"
-    }, {
-      name: "White Walker",
-      profit: "31%",
-      flag: "france"
-    }, {
-      name: "Doran Martell",
-      profit: "29%",
-      flag: "france"
-    }, {
-      name: "Aviho Sasson",
-      profit: "28%",
-      flag: "france"
-    }, {
-      name: "Yossef Azoulay",
-      profit: "26%",
-      flag: "france"
-    }, {
-      name: "Rina Touati",
-      profit: "21%",
-      flag: "france"
-    }, {
-      name: "Tsion",
-      profit: "12%",
-      flag: "cyprus"
-    }, {
-      name: "Sangoku",
-      profit: "10%",
-      flag: "estonia"
-    }]
+   this.globalProvider.get_sentiments_users().then((data)=>{
+    this.all_users = data;
+    for (let index = 0; index < 10 && index < this.all_users.length; index++) {
+      this.users.push(this.all_users[index]);
+    }
+   })
   }
 
 
