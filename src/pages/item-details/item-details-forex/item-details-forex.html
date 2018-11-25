@@ -42,13 +42,14 @@
     </ion-row>
   </ion-grid>
 
+
   <div style="display: inline-flex;padding:16px;width: 100%;padding-top: unset;">
-    <div style="width: 77px;height: 30px;border: 1px solid;text-align: center;border-radius: 2px;font-size: 14px;padding-top: 6px;margin-right: 12px;color: #91c353">
+    <span (click)="change_sentiment('BULLISH')" [ngClass]="item.sentiment == 'BULLISH' && item.status == 'OPEN' ? 'bullish-active' : 'bullish-disable'">
       BULLISH
-    </div>
-    <div style="width: 77px;height: 30px;border: 1px solid;text-align: center;border-radius: 2px;font-size: 14px;padding-top: 6px;color: #e34c47;margin-right: 12px;">
+    </span>
+    <span  (click)="change_sentiment('BEARISH')" [ngClass]="item.sentiment == 'BEARISH' && item.status == 'OPEN' ? 'bearish-active' :  'bearish-disable'">
       BEARISH
-    </div>
+    </span>
 
     <div style="width: 40%;">
       <div style="font-size: 8px;">

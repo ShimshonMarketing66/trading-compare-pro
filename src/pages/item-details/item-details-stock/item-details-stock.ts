@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams, Slides } from 'ionic-angular';
 
 import { Http, Headers } from '@angular/http';
 import { StockProvider } from '../../../providers/stock/stock';
+import { GlobalProvider } from '../../../providers/global/global';
 
 @IonicPage({
   name: "item-details-stock"
@@ -12,8 +13,6 @@ import { StockProvider } from '../../../providers/stock/stock';
   templateUrl: 'item-details-stock.html',
 })
 export class ItemDetailsStockPage {
-  public options: any;
-  private timer: number;
   item: any;
   selectedSegment: string = "CHAT";
   Segments: string[];
@@ -22,6 +21,7 @@ export class ItemDetailsStockPage {
   exchDisp:string;
   group:string;
   constructor(
+    public globalProvider:GlobalProvider,
     public http: Http,
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -124,7 +124,21 @@ export class ItemDetailsStockPage {
 
 
   change_sentiment(type){
-    this.navParams.get("change_sentiment")(type,this.navParams.get("i"),undefined,this.navParams.get('that'))
+    if (this.navParams.get("i") == undefined) {
+      if (this.item.status == "CLOSE") {
+        this.item.sentiment = type;
+        this.item.status = "OPEN";
+        this.globalProvider.add_sentiment( this.item.symbol,type,this.item.type,this.item.price)
+        .then(()=>{
+  
+        })
+        .catch((err)=>{
+          console.error(err);
+        })
+      }
+    }else{
+      this.navParams.get("change_sentiment")(type,this.navParams.get("i"),undefined,this.navParams.get('that'))
+    }
   }
 
 

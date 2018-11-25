@@ -332,13 +332,19 @@ export class LiveFeedPage implements AfterViewInit {
 
   goToDetailsForex(i: number) {
     this.navCtrl.push("item-details-forex", {
-      item: this.forexs[i]
+      item: this.forexs[i],   
+      change_sentiment:this.change_sentiment,
+      i:i,
+      that:this
     })
   }
 
   goToDetailsCrypto(i: number) {
     this.navCtrl.push("item-details-crypto", {
-      item: this.cryptos[i]
+      item: this.cryptos[i],
+      change_sentiment:this.change_sentiment,
+      i:i,
+      that:this
     })
   }
 
@@ -1073,6 +1079,8 @@ export class LiveFeedPage implements AfterViewInit {
 
   goToDetails(watchlist: any) {
     let page: string = ""
+    console.log(watchlist.type);
+    
     switch (watchlist.type) {
       case this.STOCK:
         page = "item-details-stock";

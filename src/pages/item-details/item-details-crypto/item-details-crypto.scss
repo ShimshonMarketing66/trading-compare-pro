@@ -1,4 +1,65 @@
 page-item-details-crypto{
+    .bullish-active{
+        margin-right: 12px;
+        
+        white-space: nowrap;
+        overflow: hidden;
+         display: inline-block;
+         width: 64px;
+         height: 30px;
+         border: none;
+         text-align: center;
+         border-radius: 2px;
+         font-size: 14px;
+         padding-top: 6px;
+         color: white;
+         background: #91c353;
+ }
+ .bullish-disable{
+    margin-right: 12px;
+     white-space: nowrap;
+     overflow: hidden;
+      display: inline-block;
+      width: 64px;
+      height: 30px;
+      border: 1px solid;
+      text-align: center;
+      border-radius: 2px;
+      font-size: 14px;
+      padding-top: 6px;
+      color: #91c353;
+ }
+
+ .bearish-active{
+    margin-right: 12px;
+     white-space: nowrap;
+     overflow: hidden;
+      display: inline-block;
+      width: 64px;
+      height: 30px;
+      border: none;
+      text-align: center;
+      border-radius: 2px;
+      font-size: 14px;
+      padding-top: 6px;
+      color:white;
+      background: #e34c47;
+ }
+ .bearish-disable{
+    margin-right: 12px;
+
+      white-space: nowrap;
+      overflow: hidden;
+       display: inline-block;
+       width: 64px;
+       height: 30px;
+       border: 1px solid;
+       text-align: center;
+       border-radius: 2px;
+       font-size: 14px;
+       padding-top: 6px;
+       color: #e34c47;
+ }
     .toolbar-title {
         text-overflow: unset;
         white-space: unset;
