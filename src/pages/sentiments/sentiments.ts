@@ -124,6 +124,18 @@ export class SentimentsPage {
     this.closed_sentiments.push(item);
     this.opened_sentiments.splice(i, 1);
     this.globalProvider.close_sentiment(item.symbol, item.type, item.price);
+    console.log(item);
+    if (item.type == "STOCK") {
+      for (let index = 0; index < this.stockProvider.allStocks.length; index++) {
+        for (let j = 0; j < this.stockProvider.allStocks[index].data.length; j++) {
+          if (this.stockProvider.allStocks[index].data[j].symbol == item.symbol) {
+            console.log(item);
+            
+           this.stockProvider.allStocks[index].data[j]["status"] = "CLOSE";
+          }
+        }
+       }
+    }
   }
 
   get_percent(open_num, curr_num): Number {

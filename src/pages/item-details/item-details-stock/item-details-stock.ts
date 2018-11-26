@@ -4,6 +4,7 @@ import { IonicPage, NavController, NavParams, Slides } from 'ionic-angular';
 import { Http, Headers } from '@angular/http';
 import { StockProvider } from '../../../providers/stock/stock';
 import { GlobalProvider } from '../../../providers/global/global';
+import * as io from "socket.io-client";
 
 @IonicPage({
   name: "item-details-stock"
@@ -13,6 +14,7 @@ import { GlobalProvider } from '../../../providers/global/global';
   templateUrl: 'item-details-stock.html',
 })
 export class ItemDetailsStockPage {
+  message:string = "";
   item: any;
   selectedSegment: string = "CHAT";
   Segments: string[];
@@ -20,6 +22,8 @@ export class ItemDetailsStockPage {
   symbol:string;
   exchDisp:string;
   group:string;
+  comments: any[];
+  socket :SocketIOClient.Socket;
   constructor(
     public globalProvider:GlobalProvider,
     public http: Http,
@@ -31,7 +35,36 @@ export class ItemDetailsStockPage {
     this.Segments = ["CHAT", "OVERVIEW", "CHART", "SOCIAL", "NEWS"];
     this.symbol = this.item.symbol;
     this.exchDisp = 'none';
-    this.group = "stock"
+    this.group = "stock";
+    this.globalProvider.get_comments(this.symbol).then((data)=>{
+      this.comments = data;
+     
+    })
+    .catch(()=>{
+      this.comments = [];
+    })
+// http://localhost:5000/
+   this.socket =  io.connect("http://localhost:5000/",{path:"/socket/trading-compare-v2/chat"});
+   
+   this.socket.emit("chat_room",{
+     nickname:"shisho",
+     room:this.symbol
+   });
+   this.socket.on("on_typing",(data)=>{
+    if (this.socket.id != data.id ) {
+      console.log(data.nickname); 
+    }
+  
+  });
+
+  this.socket.on("on_message",(data)=>{
+    if (this.socket.id != data.id ) {
+      console.log(data.message); 
+    }
+ 
+ });
+   
+  
   }
 
 
@@ -125,9 +158,17 @@ export class ItemDetailsStockPage {
 
   change_sentiment(type){
     if (this.navParams.get("i") == undefined) {
-      if (this.item.status == "CLOSE") {
+      if (this.item.status == "CLOSE"||this.item.sentiment == 'none') {
         this.item.sentiment = type;
         this.item.status = "OPEN";
+        for (let index = 0; index < this.stockProvider.allStocks.length; index++) {
+         for (let j = 0; j < this.stockProvider.allStocks[index].data.length; j++) {
+           if (this.stockProvider.allStocks[index].data[j].symbol == this.item.symbol) {
+            this.stockProvider.allStocks[index].data[j]["sentiment"] = type;
+            this.stockProvider.allStocks[index].data[j]["status"] = "OPEN";
+           }
+         }
+        }
         this.globalProvider.add_sentiment( this.item.symbol,type,this.item.type,this.item.price)
         .then(()=>{
   
@@ -140,6 +181,33 @@ export class ItemDetailsStockPage {
       this.navParams.get("change_sentiment")(type,this.navParams.get("i"),undefined,this.navParams.get('that'))
     }
   }
+  
 
+  remove_from_watchlist(){
+    this.item.is_in_watchlist = false;
+    this.navParams.get("remove_from_watchlist")(undefined,this.item.symbol,this.item.type,this.navParams.get("i"),this.navParams.get('that'),this.item)
+  }
 
+  add_to_watchlist(){
+    this.item.is_in_watchlist = true;
+    this.navParams.get("add_to_watchlist")(undefined,this.item.symbol,this.item.type,this.navParams.get("i"),this.navParams.get('that'),this.item)
+  }
+
+  typing(){
+    console.log("typing");
+    this.socket.emit("typing",this.symbol);
+  }
+
+  released(){
+    alert("pressed")
+    console.log("released");
+  }
+
+  sendMessage(){
+    // console.log(this.message);
+    // this.socket.emit("typing");
+  }
+  ionViewDidLeave(){
+    this.socket.disconnect();
+  }
 }

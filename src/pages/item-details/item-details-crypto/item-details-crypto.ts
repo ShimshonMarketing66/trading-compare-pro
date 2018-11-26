@@ -52,7 +52,9 @@ export class ItemDetailsCryptoPage {
   }
 
 
-
+  openUrl(i) {
+    window.open("https://twitter.com/i/web/status/" + this.tweetsdata[i].id_str);
+  }
 
   changeSegment(segment) {
     this.onTabChanged(segment)
@@ -86,7 +88,34 @@ export class ItemDetailsCryptoPage {
     }
 
     
-  change_sentiment(type){
-    this.navParams.get("change_sentiment")(type,this.navParams.get("i"),undefined,this.navParams.get('that'))
+    change_sentiment(type){
+      if (this.navParams.get("i") == undefined) {
+        if (this.item.status == "CLOSE"||this.item.sentiment == 'none') {
+          this.item.sentiment = type;
+          this.item.status = "OPEN";
+          this.globalProvider.add_sentiment( this.item.symbol,type,this.item.type,this.item.price)
+          .then(()=>{
+    
+          })
+          .catch((err)=>{
+            console.error(err);
+          })
+        }
+      }else{
+        this.navParams.get("change_sentiment")(type,this.navParams.get("i"),undefined,this.navParams.get('that'))
+      }
+    }
+
+      
+  remove_from_watchlist(){
+    this.navParams.get("remove_from_watchlist")(undefined,this.item.symbol,this.item.type,this.navParams.get("i"),this.navParams.get('that'),this.item)
   }
+
+  add_to_watchlist(){
+    this.navParams.get("add_to_watchlist")(undefined,this.item.symbol,this.item.type,this.navParams.get("i"),this.navParams.get('that'),this.item)
+  }
+
+  
+
+  
 }

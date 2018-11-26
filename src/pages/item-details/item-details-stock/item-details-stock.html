@@ -38,6 +38,12 @@
           </span>
         </div>
       </ion-col>
+      <ion-col col-1>
+        <ion-icon *ngIf="item.is_in_watchlist" name="star-v-a" (click)="remove_from_watchlist()"></ion-icon>
+        <ion-icon *ngIf="!item.is_in_watchlist" name="star-v" (click)="add_to_watchlist()"></ion-icon>
+      </ion-col>
+
+
     </ion-row>
   </ion-grid>
 
@@ -45,7 +51,7 @@
     <span (click)="change_sentiment('BULLISH')" [ngClass]="item.sentiment == 'BULLISH' && item.status == 'OPEN' ? 'bullish-active' : 'bullish-disable'">
       BULLISH
     </span>
-    <span  (click)="change_sentiment('BEARISH')" [ngClass]="item.sentiment == 'BEARISH' && item.status == 'OPEN' ? 'bearish-active' :  'bearish-disable'">
+    <span (click)="change_sentiment('BEARISH')" [ngClass]="item.sentiment == 'BEARISH' && item.status == 'OPEN' ? 'bearish-active' :  'bearish-disable'">
       BEARISH
     </span>
 
@@ -77,7 +83,49 @@
     class="swipe-area">
 
     <div *ngSwitchCase="'CHAT'">
-      cxvcc
+      <ion-grid style="padding: 8px;">
+        <ion-row *ngFor="let comment of comments;"  ion-long-press [interval]="1000" (onPressEnd)="released()">
+          <ion-col col-2 style="text-align: right;">
+            <div>
+              <img alt="logo" height="50" width="50" style="border-radius: 50px;vertical-align:middle;" src="assets/imgs/flags/{{item.country}}.png">
+            </div>
+          </ion-col>
+          <ion-col >
+            <div class="comment">
+              <div style="font-size:14px;font-weight: 800;">
+                shisho
+              </div>
+              <div style="font-size:17px;font-weight: 300;">
+                shlom hello world!
+              </div>
+
+              <div   style="display:-webkit-box;padding-top: 5px;">
+                <div style="width: 50%;">
+                  <ion-icon name="share-v" (click)="share()"></ion-icon>
+                </div>
+                <div style="width: 50%;text-align: end;font-size:14px;font-weight: 800;">
+                  REPLY
+                </div>
+
+              </div>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <ion-footer>
+        <ion-grid style="padding:10px">
+          <ion-row style="padding:10px">
+            <ion-col col-10>
+              <ion-input (ionChange)="typing()" style="background: white;padding-left: 4px;border-radius: 4px;width: 98%;color: black;" type="text" placeholder="Type a message" [(ngModel)]="message" name="message"></ion-input>
+            </ion-col>
+            <ion-col col-2 (click)="sendMessage()" style="text-align: center;padding-top: 12px;background: #12a6f9;border-radius: 3px;">
+              POST
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-footer>
+
     </div>
 
 

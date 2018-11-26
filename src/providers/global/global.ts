@@ -107,9 +107,7 @@ export class GlobalProvider {
         type:type,
         price:price
       }
-      for (let index = 0; index < this.sentiments.length; index++) {
-        console.log( this.sentiments[index]);
-       }
+
       dataToSend["close_date"] = null;
       dataToSend["close_price"] = null;
       dataToSend["status"] = "OPEN"
@@ -265,6 +263,10 @@ export class GlobalProvider {
         reject(err)
       })
     })
+  }
+
+  get_comments(symbol:string) :Promise<any>{
+    return this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-comments/" +symbol ).toPromise()
   }
 
 }

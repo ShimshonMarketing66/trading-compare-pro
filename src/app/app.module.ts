@@ -28,6 +28,14 @@ import { Sim } from '@ionic-native/sim';
 import firebase from 'firebase';
 import { GlobalProvider } from '../providers/global/global';
 import { ComponentsModule } from '../components/components.module';
+import { StudyDialog } from '../components/chartIQ/study_dialog_component/study.dialog.component';
+import { ThemeDialog } from '../components/chartIQ/theme_dialog_component/theme.dialog.component';
+import { TimezoneDialog } from '../components/chartIQ/timezone_dialog_component/timezone.dialog.component';
+import { OverlayMenu } from '../components/chartIQ/overlay_menu_component/overlay.menu';
+import { DrawingToolbar } from '../components/chartIQ/drawing_toolbar_component/drawing.toolbar.component';
+import { TitlecasePipe } from '../components/chartIQ/pipes/title.case.pipe';
+import { Colorpicker } from '../components/chartIQ/colorpicker_component/colorpicker';
+import { MapObjectToArrayPipe } from '../components/chartIQ/pipes/mapObject.pipe';
 
 
 const firebaseConfig = {
@@ -43,9 +51,11 @@ export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
 }
 
+
+
 @NgModule({
   declarations: [
-    MyApp
+    MyApp,StudyDialog,ThemeDialog,TimezoneDialog,OverlayMenu,DrawingToolbar,TitlecasePipe,Colorpicker,MapObjectToArrayPipe
     ],
   imports: [
     // ChartUI,
@@ -64,7 +74,7 @@ export function createTranslateLoader(http: HttpClient) {
   ],
   bootstrap: [IonicApp],
   entryComponents: [
-    MyApp
+    MyApp 
   ],
   providers: [
     GlobalProvider,

@@ -49,7 +49,6 @@ export class StockProvider {
       this.http.get("https://websocket-stock.herokuapp.com/getStockPrice/" + symbol )
       .toPromise()
       .then((data:any)=>{
-
         data["type"] = "STOCK";
         data["state"] = "none";
         data["sentiment"] = "none";

@@ -171,7 +171,7 @@
               </span>
             </div>
             <div style="text-align: center;;margin-top: 3px;width: 100%;padding-top: unset;margin-bottom: 4px;">
-              <span (click)="change_sentiment('STOCK','BULLISH',i,$event)" [ngClass]="stock.sentiment == 'BULLISH' && stock.status == 'OPEN' ? 'bullish-active' : 'bullish-disable'">
+              <span (click)="change_sentiment('BULLISH',i,$event)" [ngClass]="stock.sentiment == 'BULLISH' && stock.status == 'OPEN' ? 'bullish-active' : 'bullish-disable'">
                 BULLISH
               </span>
               <span  (click)="change_sentiment('BEARISH',i,$event)" [ngClass]="stock.sentiment == 'BEARISH' && stock.status == 'OPEN' ? 'bearish-active' :  'bearish-disable'">
@@ -427,7 +427,7 @@
     
             <div style="overflow: hidden">
     
-              <div style="text-align: center;float:left;padding-top: 12px;width: 45%;height: 170px;margin:2.5%;background: #373737;border-radius: 5px;"*ngFor="let watchlist of watchlists;let i = index;" (click)="goToDetails(watchlist)">
+              <div style="text-align: center;float:left;padding-top: 12px;width: 45%;height: 170px;margin:2.5%;background: #373737;border-radius: 5px;"*ngFor="let watchlist of watchlists;let i = index;" (click)="goToDetails(watchlist,i)">
                 <img  [src]="watchlist.logo" (error)="errorHandler($event)" style="width: 37px;height: 37px;border-radius: 50px;">
                 
                 <div style="margin-bottom: 14px;">

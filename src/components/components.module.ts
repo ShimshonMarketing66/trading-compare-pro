@@ -9,8 +9,9 @@ import { OverlayMenu } from './chartIQ/overlay_menu_component/overlay.menu';
 import { DrawingToolbar } from './chartIQ/drawing_toolbar_component/drawing.toolbar.component';
 import { TitlecasePipe } from './chartIQ/pipes/title.case.pipe';
 import { Colorpicker } from './chartIQ/colorpicker_component/colorpicker';
-import { ChartComponent } from './chartIQ/chart_component/chart.component';
 import { MapObjectToArrayPipe } from './chartIQ/pipes/mapObject.pipe';
+import { ChartComponent } from './chartIQ/chart_component/chart.component';
+
 
 @NgModule({
 	declarations: [ProgressBarComponent,ChartUI,ChartComponent],

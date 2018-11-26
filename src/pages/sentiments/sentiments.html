@@ -44,17 +44,17 @@
 
               </span>
             </div>
-            <div style="font-size:12px;color:#9b9b9b;font-weight: 100;">
+            <div style="font-size:12px;color:#9b9b9b;font-weight: 400;">
               {{sentiment.date|time}}
             </div>
           </ion-col>
 
           <ion-col col-4 style="text-align: right;">
-            <div style="font-size:12px;color:#9b9b9b;font-weight: 100;">
+            <div style="font-size:12px;color:#9b9b9b;font-weight: 400;">
               Open Price:
               <span style="color:white;font-weight: 900;">{{sentiment.open_price_sentiment|tofixe}}</span>
             </div>
-            <div style="font-size:12px;color:#9b9b9b;font-weight: 100;">
+            <div style="font-size:12px;color:#9b9b9b;font-weight: 400;">
               Profit:
               <span style="color:white;font-weight: 900;" [style.color]="sentiment.change_sentiment > 0 && '#91c353' || sentiment.change_sentiment < 0 && '#e34c47'"> {{sentiment.change_sentiment|tofixe}}%</span>
             </div>
@@ -96,24 +96,24 @@
 
                 </span>
               </div>
-              <div style="font-size:12px;color:#9b9b9b;font-weight: 100;">
+              <div style="font-size:12px;color:#9b9b9b;font-weight: 400;">
                 voted : {{sentiment.date|time}}
               </div>
-              <div style="font-size:12px;color:#9b9b9b;font-weight: 100;">
+              <div style="font-size:12px;color:#9b9b9b;font-weight: 400;">
                  Closed : {{sentiment.close_date|time}}
                 </div>
             </ion-col>
 
             <ion-col col-4 style="text-align: right;">
-              <div style="font-size:12px;color:#9b9b9b;font-weight: 100;">
+              <div style="font-size:12px;color:#9b9b9b;font-weight: 400;">
                 Open Price:
                 <span style="color:white;font-weight: 900;">{{sentiment.open_price_sentiment|tofixe}}</span>
               </div>
-              <div style="font-size:12px;color:#9b9b9b;font-weight: 100;">
+              <div style="font-size:12px;color:#9b9b9b;font-weight: 400;">
                 Profit:
                 <span style="color:white;font-weight: 900;" [style.color]="sentiment.change_sentiment > 0 && '#91c353' || sentiment.change_sentiment < 0 && '#e34c47'"> {{sentiment.change_sentiment|tofixe}}%</span>
               </div>
-              <div style="font-size:12px;color:#9b9b9b;font-weight: 100;">
+              <div style="font-size:12px;color:#9b9b9b;font-weight: 400;">
                   Closed Price:
                   <span style="color:white;font-weight: 900;"> {{sentiment.close_price|tofixe}}</span>
                 </div>

@@ -39,6 +39,10 @@
           </span>
         </div>
       </ion-col>
+      <ion-col col-1>
+        <ion-icon *ngIf="item.is_in_watchlist" name="star-v-a" (click)="remove_from_watchlist()"></ion-icon>
+        <ion-icon *ngIf="!item.is_in_watchlist" name="star-v" (click)="add_to_watchlist()"></ion-icon>
+    </ion-col>
     </ion-row>
   </ion-grid>
 
