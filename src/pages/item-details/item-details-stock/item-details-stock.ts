@@ -5,6 +5,7 @@ import { Http, Headers } from '@angular/http';
 import { StockProvider } from '../../../providers/stock/stock';
 import { GlobalProvider } from '../../../providers/global/global';
 import * as io from "socket.io-client";
+import { AuthDataProvider } from '../../../providers/auth-data/auth-data';
 
 @IonicPage({
   name: "item-details-stock"
@@ -24,7 +25,9 @@ export class ItemDetailsStockPage {
   group:string;
   comments: any[];
   socket :SocketIOClient.Socket;
+  is_typing:string="nobodyyy";
   constructor(
+    public authData:AuthDataProvider,
     public globalProvider:GlobalProvider,
     public http: Http,
     public navCtrl: NavController,
@@ -44,22 +47,29 @@ export class ItemDetailsStockPage {
       this.comments = [];
     })
 // http://localhost:5000/
-   this.socket =  io.connect("http://localhost:5000/",{path:"/socket/trading-compare-v2/chat"});
+// https://xosignals.herokuapp.com/
+   this.socket =  io.connect("https://xosignals.herokuapp.com/",{path:"/socket/trading-compare-v2/chat"});
    
    this.socket.emit("chat_room",{
-     nickname:"shisho",
+     nickname:this.authData.user.nickname,
      room:this.symbol
    });
    this.socket.on("on_typing",(data)=>{
     if (this.socket.id != data.id ) {
-      console.log(data.nickname); 
+      if (this.is_typing == "nobodyyy") {
+        this.is_typing = data.nickname;
+        setTimeout(()=>{
+          this.is_typing = "nobodyyy";
+        },3000)
+      }
+     
     }
   
   });
 
   this.socket.on("on_message",(data)=>{
     if (this.socket.id != data.id ) {
-      console.log(data.message); 
+      this.comments.push(data);
     }
  
  });
@@ -204,8 +214,15 @@ export class ItemDetailsStockPage {
   }
 
   sendMessage(){
-    // console.log(this.message);
-    // this.socket.emit("typing");
+    var data = {
+      nickname : this.authData.user.nickname,
+      txt:this.message,
+      symbol:this.symbol,
+      user_id:this.authData.user._id,
+      country:this.authData.user.countryData.country.toLowerCase(),
+    }
+    this.socket.emit("message",data);
+    this.comments.push(data);
   }
   ionViewDidLeave(){
     this.socket.disconnect();

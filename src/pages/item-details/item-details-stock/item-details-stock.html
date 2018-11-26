@@ -84,19 +84,19 @@
 
     <div *ngSwitchCase="'CHAT'">
       <ion-grid style="padding: 8px;">
-        <ion-row *ngFor="let comment of comments;"  ion-long-press [interval]="1000" (onPressEnd)="released()">
+        <ion-row *ngFor="let comment of comments;" style="margin-bottom: 19px;" ion-long-press [interval]="1000" (onPressEnd)="released()">
           <ion-col col-2 style="text-align: right;">
             <div>
-              <img alt="logo" height="50" width="50" style="border-radius: 50px;vertical-align:middle;" src="assets/imgs/flags/{{item.country}}.png">
+              <img alt="logo" height="50" width="50" style="border-radius: 50px;vertical-align:middle;" src="assets/imgs/flags/{{comment.country}}.png">
             </div>
           </ion-col>
           <ion-col >
             <div class="comment">
               <div style="font-size:14px;font-weight: 800;">
-                shisho
+               {{comment.nickname}}
               </div>
               <div style="font-size:17px;font-weight: 300;">
-                shlom hello world!
+                {{comment.txt}}
               </div>
 
               <div   style="display:-webkit-box;padding-top: 5px;">
@@ -113,7 +113,11 @@
         </ion-row>
       </ion-grid>
 
+    
       <ion-footer>
+          <div *ngIf="is_typing != 'nobodyyy'" style="text-align: center;font-family: cursive;font-weight: 100;color: #ababab;">
+              shisho is typing ...
+            </div>      
         <ion-grid style="padding:10px">
           <ion-row style="padding:10px">
             <ion-col col-10>

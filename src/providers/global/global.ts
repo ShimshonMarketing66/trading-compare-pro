@@ -10,7 +10,7 @@ export class GlobalProvider {
   sentiments=[];
   constructor
   (
-     public http: HttpClient,
+    public http: HttpClient,
     public cryptoProvider:CryptoProvider,
     public stockProvider:StockProvider,
     public forexProvider:ForexProvider,
