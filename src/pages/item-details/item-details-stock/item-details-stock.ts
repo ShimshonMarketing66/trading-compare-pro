@@ -1,5 +1,5 @@
-import { Component, ViewChild, AfterViewInit, OnInit } from '@angular/core';
-import { IonicPage, NavController, NavParams, Slides } from 'ionic-angular';
+import { Component, ViewChild, AfterViewInit, OnInit, NgZone } from '@angular/core';
+import { IonicPage, NavController, NavParams, Slides, Content } from 'ionic-angular';
 
 import { Http, Headers } from '@angular/http';
 import { StockProvider } from '../../../providers/stock/stock';
@@ -15,6 +15,9 @@ import { AuthDataProvider } from '../../../providers/auth-data/auth-data';
   templateUrl: 'item-details-stock.html',
 })
 export class ItemDetailsStockPage {
+  @ViewChild("content_detail") content_detail: Content;
+
+ 
   message:string = "";
   item: any;
   selectedSegment: string = "CHAT";
@@ -26,7 +29,9 @@ export class ItemDetailsStockPage {
   comments: any[];
   socket :SocketIOClient.Socket;
   is_typing:string="nobodyyy";
+  height: number;
   constructor(
+    public zone:NgZone,
     public authData:AuthDataProvider,
     public globalProvider:GlobalProvider,
     public http: Http,
@@ -39,6 +44,7 @@ export class ItemDetailsStockPage {
     this.symbol = this.item.symbol;
     this.exchDisp = 'none';
     this.group = "stock";
+    this.height = window.screen.height;
     this.globalProvider.get_comments(this.symbol).then((data)=>{
       this.comments = data;
      
@@ -68,9 +74,13 @@ export class ItemDetailsStockPage {
   });
 
   this.socket.on("on_message",(data)=>{
-    if (this.socket.id != data.id ) {
-      this.comments.push(data);
-    }
+
+    zone.run(()=>{
+      if (this.socket.id != data.id ) {
+        this.comments.push(data);
+        this.content_detail.scrollToBottom(2000);
+      }
+    })
  
  });
    
@@ -104,7 +114,7 @@ export class ItemDetailsStockPage {
   }
 
   changeSegment(segment) {
-    this.onTabChanged(segment)
+    this.onTabChanged(segment);
   }
 
    
@@ -113,6 +123,7 @@ export class ItemDetailsStockPage {
     switch (segment) {
       case "CHAT":
         console.log("CHAT");
+        this.content_detail.scrollToBottom(1000);
         this.selectedSegment = "CHAT";
         break;
       case "OVERVIEW":
@@ -214,6 +225,9 @@ export class ItemDetailsStockPage {
   }
 
   sendMessage(){
+    if (this.message === '') {
+      return;
+    }
     var data = {
       nickname : this.authData.user.nickname,
       txt:this.message,
@@ -222,8 +236,10 @@ export class ItemDetailsStockPage {
       country:this.authData.user.countryData.country.toLowerCase(),
     }
     this.socket.emit("message",data);
-    this.comments.push(data);
-  }
+      this.comments.push(data);
+      this.content_detail.scrollTo(0, 5000000, 200);  
+      this.message = '';
+    }
   ionViewDidLeave(){
     this.socket.disconnect();
   }
