@@ -104,7 +104,9 @@ export class AuthDataProvider {
       loading.setContent("create user with email and password...");
       firebase.auth().createUserWithEmailAndPassword(profile.email, profile.password)
         .then((newUser) => {
-          profile._id = newUser.user.uid;
+          console.log("new User", newUser);
+          
+          profile._id = newUser.uid;
           profile.platform = (this.plt.is('ios')) ? "ios" : "android";
           profile.provider = "password";
           profile.createAccountDate = new Date().toLocaleDateString();

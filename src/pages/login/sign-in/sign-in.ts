@@ -48,7 +48,7 @@ export class SignInPage {
 
     this.authData.loginUserViaEmail(this.email, this.password).then((user) => {
       console.log(user, "user");
-      this.authData.getProfileFromServer(user.user.uid)
+      this.authData.getProfileFromServer(user.uid)
         .then((data) => {
           if (data.verifyData.is_phone_number_verified) {
             this.splashscreen.show();

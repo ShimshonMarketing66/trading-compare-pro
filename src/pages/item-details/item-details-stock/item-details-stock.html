@@ -99,11 +99,9 @@
                 {{comment.txt}}
               </div>
 
-              <div   style="display:-webkit-box;padding-top: 5px;">
-                <div style="width: 50%;">
-                  <ion-icon name="share-v" (click)="share()"></ion-icon>
-                </div>
-                <div style="width: 50%;text-align: end;font-size:14px;font-weight: 800;">
+              <div   style="padding-top: 5px;text-align: end;">
+                
+                <div (click)="reply(comment)" style="font-size:14px;font-weight: 500;color:#6ae5f5">
                   REPLY
                 </div>
 
@@ -115,11 +113,14 @@
 
      
 
-      <div  *ngIf="is_typing != 'nobodyyy'" style="text-align: center;font-family: cursive;font-weight: 100;color: #ababab;">
-          {{is_typing}} is typing ...
+      <div  *ngIf="is_typing != 'nobodyyy'" style="text-align: center;font-weight: 100;color: #ababab;">
+          Someone is typing ...
         </div>  
-    </div>
 
+       
+
+    </div>
+   
 
     <div *ngSwitchCase="'OVERVIEW'" style="padding: 16px;">
       <button ion-button style="background: #12a6f9;height: 30px;" block>Trade Now</button>
@@ -190,15 +191,26 @@
   <ion-grid>
     <ion-row style="padding:10px">
       <ion-col col-10>
-        <ion-input (keydown.enter)="sendMessage()" (ionChange)="typing()" style="background: white;padding-left: 4px;border-radius: 4px;width: 98%;color: black;" type="text" placeholder="Type a message" [(ngModel)]="message" name="message"></ion-input>
+        <ion-input #myInput (keydown.enter)="sendMessage()" (ionChange)="typing()" style="background: white;padding-left: 4px;border-radius: 4px;width: 98%;color: black;" type="text" placeholder="Type a message" [(ngModel)]="message" name="message">
+       </ion-input>
       </ion-col>
-      <ion-col [style.background]="message === ''?'#6c6c6c':'#12a6f9'" col-2 (click)="sendMessage()" style="text-align: center;padding-top: 12px;border-radius: 3px;">
+      <ion-col  [style.background]="message === ''?'#6c6c6c':'#12a6f9'" col-2 (click)="sendMessage()" style="text-align: center;padding-top: 12px;border-radius: 3px;">
         POST
       </ion-col>
     </ion-row>
   </ion-grid>
+  <!-- <div class="sender">
+      <label for="inputID" class="send-chat">send</label>
+    
+      <input id="inputID" type="text" ng-model="..." class="...">
+      <div class="button-send">
+     
+      </div>
+      </div> -->
   </div>
-
+  <ion-fab (tap)="scroll_down()" *ngIf="showScrollButton && selectedSegment == 'CHAT'" right bottom>
+      <button style="background: #12a6f9;width: 35px;height: 35px;color: white;" ion-fab color="light" click><ion-icon name="md-arrow-round-down"></ion-icon></button>
+    </ion-fab>
 <!-- 
   <div class="msg">
       <input type="text" placeholder="Message ..." [(ngModel)]="msg" (keydown.enter)="sendMessage()">
@@ -207,3 +219,5 @@
         Send
       </button>  
     </div> -->
+
+   

@@ -16,8 +16,9 @@ import { AuthDataProvider } from '../../../providers/auth-data/auth-data';
 })
 export class ItemDetailsStockPage {
   @ViewChild("content_detail") content_detail: Content;
+  @ViewChild("myInput") myInput;
 
- 
+  is_on_bottom = true;
   message:string = "";
   item: any;
   selectedSegment: string = "CHAT";
@@ -30,6 +31,8 @@ export class ItemDetailsStockPage {
   socket :SocketIOClient.Socket;
   is_typing:string="nobodyyy";
   height: number;
+  shouldScrollDown: boolean;
+  showScrollButton: boolean;
   constructor(
     public zone:NgZone,
     public authData:AuthDataProvider,
@@ -46,8 +49,10 @@ export class ItemDetailsStockPage {
     this.group = "stock";
     this.height = window.screen.height;
     this.globalProvider.get_comments(this.symbol).then((data)=>{
+      for (let index = 0; index < data.length; index++) {
+        data.country = data.country.replace("-"," ");
+      }
       this.comments = data;
-     
     })
     .catch(()=>{
       this.comments = [];
@@ -74,14 +79,10 @@ export class ItemDetailsStockPage {
   });
 
   this.socket.on("on_message",(data)=>{
-
-    zone.run(()=>{
       if (this.socket.id != data.id ) {
+        data.country = data.country.replace("-"," ");
         this.comments.push(data);
-        this.content_detail.scrollToBottom(2000);
       }
-    })
- 
  });
    
   
@@ -243,4 +244,39 @@ export class ItemDetailsStockPage {
   ionViewDidLeave(){
     this.socket.disconnect();
   }
+
+  
+ ionViewDidEnter() {
+  this.content_detail.ionScrollEnd.subscribe((data)=>{
+
+    let dimensions = this.content_detail.getContentDimensions();
+
+    let scrollTop = this.content_detail.scrollTop;
+    let contentHeight = dimensions.contentHeight;
+    let scrollHeight = dimensions.scrollHeight;
+    this.zone.run(()=>{
+      if ( (scrollTop + contentHeight + 20) > scrollHeight) {
+        this.shouldScrollDown = true;
+        this.showScrollButton = false;
+      } else {
+        this.shouldScrollDown = false;
+        this.showScrollButton = true;
+      }
+    })
+   
+    console.log( this.shouldScrollDown,this.showScrollButton);
+    
+  });
+}
+
+scroll_down(){
+  this.content_detail.scrollToBottom(1000);
+}
+
+reply(comment){
+  this.message = "@" + comment.nickname  + " ";
+    this.myInput.setFocus();
+}
+
+
 }

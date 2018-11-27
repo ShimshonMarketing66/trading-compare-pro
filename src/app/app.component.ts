@@ -111,10 +111,11 @@ export class MyApp {
             }else{
               this.rootPage = "enter-phone";
             }
-            this.initial_app_when_login();
+           
             this.platform.ready().then(() => {
               this.statusBar.styleDefault();
               this.splashScreen.hide();
+              this.initial_app_when_login();
             })
           })
           .catch((err)=>{
@@ -136,6 +137,8 @@ export class MyApp {
   }
 
   initial_app_when_login(){
+    console.log("initial_app_when_login avi1");
+    
       if (! this.platform.is("cordova")) {
         this.authData.platform = "browser";
       } else if ( this.platform.is("android")) {
@@ -146,6 +149,45 @@ export class MyApp {
       if (! this.platform.is("cordova")) {
         return;
       }
+      console.log("initial_app_when_login avi2");
+      this.fcm.onNotification().subscribe(data => {
+        if(data.wasTapped){
+          console.log("Received in background");
+        } else {
+          console.log("Received in foreground");
+        };
+      });
+      var x = this.authData.user.token_notification;
+      console.log("x",x);
+      
+      if (x  == undefined || x  == null || x  == null ) {
+        this.fcm.getToken().then(token => {
+          this.authData.updateFields({
+            token_notification:token
+           }).then(()=>{
+             "token_notification updated";
+           })
+           .catch(()=>{
+            "token_notification field to update";
+           })
+          });
+      }
+
+     
+
+      this.fcm.onTokenRefresh().subscribe(token => {
+       this.authData.updateFields({
+        token_notification:token
+       }).then(()=>{
+         console.log("token_notification updated");
+
+       })
+       .catch(()=>{
+        console.log("token_notification field to update");
+
+        ;
+       })
+      });
   }
 
   initial_app_when_log_out(){
@@ -163,6 +205,8 @@ export class MyApp {
 }
 
 checkPermission(){
+  console.log("checkPermission");
+  
   this.checkPermissionREAD_SMS().then(()=>{
     this.checkPermissionREAD_SMS().then(()=>{  
     })

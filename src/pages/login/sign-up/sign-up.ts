@@ -126,6 +126,7 @@ export class SignUpPage {
     })
     loading.present();
     this.authData.signupUser(this.authData.user, loading).then(() => {
+      
       this.authData.sendVerifyCode(loading).then(() => {
         loading.dismiss();
         this.app.getRootNav().setRoot("verify-code");
