@@ -99,7 +99,9 @@ export class MyApp {
       if (this.onAuthStateChangedCalled) {
         if (this.isLogin) {
           this.authData.getProfileFromServer(this._id).then((user:Profile) => {
+            user.countryData.country =  user.countryData.country.toLowerCase().replace("-"," ");
             this.authData.user = user;
+            
             if (user.verifyData.is_phone_number_verified) {
               this.global.initialProviders().then(()=>{
                 this.rootPage = "main-tabs";
@@ -158,19 +160,21 @@ export class MyApp {
         };
       });
       var x = this.authData.user.token_notification;
-      console.log("x",x);
       
-      if (x  == undefined || x  == null || x  == null ) {
+      if (x  == undefined || x  == null || x  === '' ) {        
         this.fcm.getToken().then(token => {
           this.authData.updateFields({
             token_notification:token
            }).then(()=>{
-             "token_notification updated";
+             console.log( "token_notification updated");
            })
            .catch(()=>{
-            "token_notification field to update";
+            console.log( "token_notification field to update");
            })
-          });
+          }).catch((err)=>{
+            console.log("errrrr",err);
+            
+          })
       }
 
      

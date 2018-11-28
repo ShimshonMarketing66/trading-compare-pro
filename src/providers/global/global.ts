@@ -34,7 +34,6 @@ export class GlobalProvider {
     })
     .catch(err=>{
       console.log("err",err);
-      
     })
   }
 

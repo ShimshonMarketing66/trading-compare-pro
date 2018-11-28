@@ -19,24 +19,25 @@ export class ItemDetailsStockPage {
   @ViewChild("myInput") myInput;
 
   is_on_bottom = true;
-  message:string = "";
+  message: string = "";
   item: any;
-  selectedSegment: string = "CHAT";
+  selectedSegment: string = "CHART";
   Segments: string[];
   tweetsdata;
-  symbol:string;
-  exchDisp:string;
-  group:string;
-  comments: any[];
-  socket :SocketIOClient.Socket;
-  is_typing:string="nobodyyy";
+  symbol: string;
+  exchDisp: string;
+  group: string;
+  comments: any[] = [];
+  socket: SocketIOClient.Socket;
+  is_typing: string = "nobodyyy";
   height: number;
   shouldScrollDown: boolean;
   showScrollButton: boolean;
+
   constructor(
-    public zone:NgZone,
-    public authData:AuthDataProvider,
-    public globalProvider:GlobalProvider,
+    public zone: NgZone,
+    public authData: AuthDataProvider,
+    public globalProvider: GlobalProvider,
     public http: Http,
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -48,51 +49,56 @@ export class ItemDetailsStockPage {
     this.exchDisp = 'none';
     this.group = "stock";
     this.height = window.screen.height;
-    this.globalProvider.get_comments(this.symbol).then((data)=>{
-      for (let index = 0; index < data.length; index++) {
-        data.country = data.country.replace("-"," ");
-      }
-      this.comments = data;
-    })
-    .catch(()=>{
-      this.comments = [];
-    })
-// http://localhost:5000/
-// https://xosignals.herokuapp.com/
-   this.socket =  io.connect("https://xosignals.herokuapp.com/",{path:"/socket/trading-compare-v2/chat"});
-   
-   this.socket.emit("chat_room",{
-     nickname:this.authData.user.nickname,
-     room:this.symbol
-   });
-   this.socket.on("on_typing",(data)=>{
-    if (this.socket.id != data.id ) {
-      if (this.is_typing == "nobodyyy") {
-        this.is_typing = data.nickname;
-        setTimeout(()=>{
-          this.is_typing = "nobodyyy";
-        },3000)
-      }
-     
-    }
-  
-  });
+    this.globalProvider.get_comments(this.symbol).then((data) => {
+      console.log(data);
 
-  this.socket.on("on_message",(data)=>{
-      if (this.socket.id != data.id ) {
-        data.country = data.country.replace("-"," ");
-        this.comments.push(data);
+      for (let index = 0; index < data.length; index++) {
+        data[index].country = data[index].country.replace("-", " ");
+        this.comments.unshift(data[index]);
       }
- });
-   
-  
+    })
+      .catch((err) => {
+        console.log("catch");
+        
+        this.comments = [];
+      })
+    // http://localhost:5000/
+    // https://xosignals.herokuapp.com/
+    this.socket = io.connect("https://xosignals.herokuapp.com/", { path: "/socket/trading-compare-v2/chat" });
+
+    this.socket.emit("chat_room", {
+      nickname: this.authData.user.nickname,
+      room: this.symbol
+    });
+    this.socket.on("on_typing", (data) => {
+      if (this.socket.id != data.id) {
+        if (this.is_typing == "nobodyyy") {
+          this.is_typing = data.nickname;
+          setTimeout(() => {
+            this.is_typing = "nobodyyy";
+          }, 3000)
+        }
+      }
+    });
+
+    this.socket.on("on_message", (data) => {
+      if (this.socket.id != data.id) {
+        data.country = data.country.replace("-", " ");
+        this.comments.unshift(data);
+      }
+    });
+
+
   }
 
+  foo() {
+    console.log(this.comments);
 
+  }
   tweetCall() {
     this.http.get('https://xosignals.herokuapp.com/search/' + this.item.symbol + "/en").toPromise().then((res) => {
       console.log(res);
-      
+
       this.tweetsdata = res.json().data.statuses;
       for (let index = 0; index < this.tweetsdata.length; index++) {
         let str = this.tweetsdata[index].created_at.split(" ");
@@ -118,7 +124,7 @@ export class ItemDetailsStockPage {
     this.onTabChanged(segment);
   }
 
-   
+
   onTabChanged(segment) {
     if (this.selectedSegment == segment) return;
     switch (segment) {
@@ -178,105 +184,98 @@ export class ItemDetailsStockPage {
   }
 
 
-  change_sentiment(type){
+  change_sentiment(type) {
     if (this.navParams.get("i") == undefined) {
-      if (this.item.status == "CLOSE"||this.item.sentiment == 'none') {
+      if (this.item.status == "CLOSE" || this.item.sentiment == 'none') {
         this.item.sentiment = type;
         this.item.status = "OPEN";
         for (let index = 0; index < this.stockProvider.allStocks.length; index++) {
-         for (let j = 0; j < this.stockProvider.allStocks[index].data.length; j++) {
-           if (this.stockProvider.allStocks[index].data[j].symbol == this.item.symbol) {
-            this.stockProvider.allStocks[index].data[j]["sentiment"] = type;
-            this.stockProvider.allStocks[index].data[j]["status"] = "OPEN";
-           }
-         }
+          for (let j = 0; j < this.stockProvider.allStocks[index].data.length; j++) {
+            if (this.stockProvider.allStocks[index].data[j].symbol == this.item.symbol) {
+              this.stockProvider.allStocks[index].data[j]["sentiment"] = type;
+              this.stockProvider.allStocks[index].data[j]["status"] = "OPEN";
+            }
+          }
         }
-        this.globalProvider.add_sentiment( this.item.symbol,type,this.item.type,this.item.price)
-        .then(()=>{
-  
-        })
-        .catch((err)=>{
-          console.error(err);
-        })
+        this.globalProvider.add_sentiment(this.item.symbol, type, this.item.type, this.item.price)
+          .then(() => {
+
+          })
+          .catch((err) => {
+            console.error(err);
+          })
       }
-    }else{
-      this.navParams.get("change_sentiment")(type,this.navParams.get("i"),undefined,this.navParams.get('that'))
+    } else {
+      this.navParams.get("change_sentiment")(type, this.navParams.get("i"), undefined, this.navParams.get('that'))
     }
   }
-  
 
-  remove_from_watchlist(){
+
+  remove_from_watchlist() {
     this.item.is_in_watchlist = false;
-    this.navParams.get("remove_from_watchlist")(undefined,this.item.symbol,this.item.type,this.navParams.get("i"),this.navParams.get('that'),this.item)
+    this.navParams.get("remove_from_watchlist")(undefined, this.item.symbol, this.item.type, this.navParams.get("i"), this.navParams.get('that'), this.item)
   }
 
-  add_to_watchlist(){
+  add_to_watchlist() {
     this.item.is_in_watchlist = true;
-    this.navParams.get("add_to_watchlist")(undefined,this.item.symbol,this.item.type,this.navParams.get("i"),this.navParams.get('that'),this.item)
+    this.navParams.get("add_to_watchlist")(undefined, this.item.symbol, this.item.type, this.navParams.get("i"), this.navParams.get('that'), this.item)
   }
 
-  typing(){
+  typing() {
     console.log("typing");
-    this.socket.emit("typing",this.symbol);
+    this.socket.emit("typing", this.symbol);
   }
 
-  released(){
+  released() {
     alert("pressed")
     console.log("released");
   }
 
-  sendMessage(){
+  sendMessage() {
     if (this.message === '') {
       return;
     }
     var data = {
-      nickname : this.authData.user.nickname,
-      txt:this.message,
-      symbol:this.symbol,
-      user_id:this.authData.user._id,
-      country:this.authData.user.countryData.country.toLowerCase(),
+      nickname: this.authData.user.nickname,
+      txt: this.message,
+      symbol: this.symbol,
+      user_id: this.authData.user._id,
+      country: this.authData.user.countryData.country.toLowerCase(),
     }
-    this.socket.emit("message",data);
-      this.comments.push(data);
-      this.content_detail.scrollTo(0, 5000000, 200);  
-      this.message = '';
-    }
-  ionViewDidLeave(){
+    this.socket.emit("message", data);
+    this.comments.unshift(data);
+    this.content_detail.scrollToTop(1000);
+    this.message = '';
+  }
+  ionViewDidLeave() {
     this.socket.disconnect();
   }
 
-  
- ionViewDidEnter() {
-  this.content_detail.ionScrollEnd.subscribe((data)=>{
 
-    let dimensions = this.content_detail.getContentDimensions();
+  ionViewDidEnter() {
+    this.content_detail.ionScrollEnd.subscribe((data) => {
+      let scrollTop = this.content_detail.scrollTop;
+      this.zone.run(() => {
+        
+        if (scrollTop < 300) {
+          this.shouldScrollDown = true;
+          this.showScrollButton = false;
+        } else {
+          this.shouldScrollDown = false;
+          this.showScrollButton = true;
+        }
+      })
+    });
+  }
 
-    let scrollTop = this.content_detail.scrollTop;
-    let contentHeight = dimensions.contentHeight;
-    let scrollHeight = dimensions.scrollHeight;
-    this.zone.run(()=>{
-      if ( (scrollTop + contentHeight + 20) > scrollHeight) {
-        this.shouldScrollDown = true;
-        this.showScrollButton = false;
-      } else {
-        this.shouldScrollDown = false;
-        this.showScrollButton = true;
-      }
-    })
-   
-    console.log( this.shouldScrollDown,this.showScrollButton);
-    
-  });
-}
+  scroll_up() {
+    this.content_detail.scrollToTop(1000);
+  }
 
-scroll_down(){
-  this.content_detail.scrollToBottom(1000);
-}
-
-reply(comment){
-  this.message = "@" + comment.nickname  + " ";
+  reply(comment) {
+    this.message = "@" + comment.nickname + " ";
     this.myInput.setFocus();
-}
+  }
 
 
 }

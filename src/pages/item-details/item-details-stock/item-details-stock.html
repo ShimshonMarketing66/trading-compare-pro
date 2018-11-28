@@ -1,5 +1,5 @@
-<ion-header>
-
+<ion-header (click)="foo()">
+ 
   <ion-navbar>
     <ion-title>{{item.name}}</ion-title>
     <ion-buttons end>
@@ -12,6 +12,9 @@
 
 
 <ion-content #content_detail>
+ 
+
+
   <ion-grid style="padding:16px;">
     <ion-row>
       <ion-col col-3>
@@ -65,7 +68,7 @@
     </div>
   </div>
 
-  <div class="container">
+  <div class="container" style="position: sticky;top: 0;z-index:1000;background: #2b2b2b;">
     <table>
       <thead>
         <tr>
@@ -83,7 +86,7 @@
     class="swipe-area">
 
     <div *ngSwitchCase="'CHAT'" style="padding-bottom: 70px;">
-      <ion-grid style="padding: 8px;" [style.min-height.px]="height - 350">
+      <ion-grid style="padding: 8px;padding-bottom: unset;" [style.min-height.px]="height - 350">
         <ion-row *ngFor="let comment of comments;" style="margin-bottom: 19px;">
           <ion-col col-2 style="text-align: right;">
             <div>
@@ -92,17 +95,27 @@
           </ion-col>
           <ion-col col-10>
             <div class="comment">
-              <div style="font-size:14px;font-weight: 800;">
-               {{comment.nickname}}
+              <div style="display: inline">
+                <ion-grid>
+                  <ion-row>
+                    <ion-col style="font-size:14px;font-weight: 800;">
+                        {{comment.nickname}}
+                    </ion-col>
+                    <ion-col style="font-size: 12px;font-weight: 400;color: #9b9b9b;text-align: right;">
+                        {{comment.date_from_now}}
+                    </ion-col>
+                  </ion-row>
+                </ion-grid>
+                   
               </div>
-              <div style="font-size:17px;font-weight: 300;">
+              <div style="font-size:14px;font-weight: 300;">
                 {{comment.txt}}
               </div>
 
               <div   style="padding-top: 5px;text-align: end;">
                 
-                <div (click)="reply(comment)" style="font-size:14px;font-weight: 500;color:#6ae5f5">
-                  REPLY
+                <div *ngIf="comment.user_id != authData.user._id" (click)="reply(comment)" style="font-size:14px;font-weight: 500;color:#6ae5f5">
+                  Reply
                 </div>
 
               </div>
@@ -113,7 +126,7 @@
 
      
 
-      <div  *ngIf="is_typing != 'nobodyyy'" style="text-align: center;font-weight: 100;color: #ababab;">
+      <div  [style.opacity]="is_typing == 'nobodyyy'?'0':'1'" style="height:30px;text-align: center;font-weight: 100;color: #ababab;">
           Someone is typing ...
         </div>  
 
@@ -208,8 +221,8 @@
       </div>
       </div> -->
   </div>
-  <ion-fab (tap)="scroll_down()" *ngIf="showScrollButton && selectedSegment == 'CHAT'" right bottom>
-      <button style="background: #12a6f9;width: 35px;height: 35px;color: white;" ion-fab color="light" click><ion-icon name="md-arrow-round-down"></ion-icon></button>
+  <ion-fab (tap)="scroll_up()" *ngIf="showScrollButton && selectedSegment == 'CHAT'" right bottom>
+      <button style="background: #12a6f9;width: 35px;height: 35px;color: white;" ion-fab color="light" click><ion-icon name="md-arrow-round-up"></ion-icon></button>
     </ion-fab>
 <!-- 
   <div class="msg">

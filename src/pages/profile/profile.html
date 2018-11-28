@@ -1,18 +1,117 @@
-<!--
-  Generated template for the ProfilePage page.
-
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header>
 
   <ion-navbar>
-    <ion-title>profile</ion-title>
+    <ion-title>
+      Profile
+    </ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
-<ion-content padding>
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col col-3 style="text-align: center;">
+        <img alt="logo" height="70" width="70" style="border-radius: 50px;vertical-align:middle;" src="assets/imgs/flags/{{user_profile.countryData.country}}.png">
+      </ion-col>
+      <ion-col style="margin:auto;">
+       
+            <div style="font-size: 16px;font-weight: 900;letter-spacing: 0.5px;text-align: center;">
+              {{user_profile.nickname}}
+            </div>
+            <div style="font-size: 12px;letter-spacing: 0.5px;text-align: center;color: #9b9b9b">
+              Joined {{user_profile.createAccountDate}}
+            </div>
+            <div style="font-size: 12px;letter-spacing: 0.5px;text-align: center;color: #9b9b9b">
+              45 messages sent
+            </div>
+   
+        
+      </ion-col>
+      <ion-col col-3>
+    </ion-col >
 
+    </ion-row>
+  </ion-grid>
+<div style="margin-top: 22px;text-align: center;margin-bottom: 35px;">
+    <button ion-button style="background: #12a6f9;font-size: 14px;">UPGRADE TO PREMIUM</button>
+</div>
+ 
+
+  <ion-grid style="border-top: 1px solid;border-top: 1px solid #12a6f9;border-bottom: 1px solid #12a6f9;">
+    <ion-row>
+      <ion-col style="text-align: center;padding-top: 10px;padding-bottom: 10px;"  (click)="change_segment('POSTS')"  [style.background]="selected_segment =='POSTS'?'#12a6f9':'transparent'" >
+          <span  [style.color]="true?'white':'#12a6f9'">
+              Posts
+           </span> 
+            <br>
+        <b [style.color]="selected_segment =='POSTS'?'white':'#12a6f9'">
+            3
+        </b> 
+      </ion-col>
+      <ion-col style="text-align: center;padding-top: 10px;padding-bottom: 10px;" (click)="change_segment('WATCHLIST')"  [style.background]="selected_segment =='WATCHLIST'?'#12a6f9':'transparent'">
+       <span  [style.color]="true?'white':'#12a6f9'">
+          Watchlist
+       </span> <br>
+        <b  [style.color]="selected_segment =='WATCHLIST'?'white':'#12a6f9'">
+            3
+        </b>
+      </ion-col>
+      <ion-col style="text-align: center;padding-top: 10px;padding-bottom: 10px;" (click)="change_segment('FOLLOWING')"  [style.background]="selected_segment =='FOLLOWING'?'#12a6f9':'transparent'">
+      
+          <span [style.color]="true?'white':'#12a6f9'">
+              Following
+           </span>
+             <br>
+        <b [style.color]="selected_segment =='FOLLOWING'?'white':'#12a6f9'">
+            3
+        </b>
+      </ion-col>
+      <ion-col style="text-align: center;padding-top: 10px;padding-bottom: 10px;" (click)="change_segment('FOLLOWERS')"  [style.background]="selected_segment =='FOLLOWERS'?'#12a6f9':'transparent'">
+          
+          <span [style.color]="true?'white':'#12a6f9'">
+              Followers
+           </span> <br>
+        <b [style.color]="selected_segment =='FOLLOWERS'?'white':'#12a6f9'">
+            3
+        </b>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+
+  
+  <div [ngSwitch]="selected_segment">
+
+    <div *ngSwitchCase="'POSTS'" style="padding-bottom: 70px;">
+  
+        Someone is typing ...POSTS
+       
+
+    </div>
+   
+    <div *ngSwitchCase="'WATCHLIST'" style="padding-bottom: 70px;">
+  
+        Someone is typing ...WATCHLIST
+       
+
+    </div>
+
+      
+    <div *ngSwitchCase="'FOLLOWING'" style="padding-bottom: 70px;">
+  
+        Someone is typing ...FOLLOWING
+       
+
+    </div>
+
+      
+    <div *ngSwitchCase="'FOLLOWERS'" style="padding-bottom: 70px;">
+  
+        Someone is typing ...FOLLOWERS
+       
+
+    </div>
+  </div>
 </ion-content>

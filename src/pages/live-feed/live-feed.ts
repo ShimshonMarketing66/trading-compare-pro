@@ -995,7 +995,6 @@ export class LiveFeedPage implements AfterViewInit {
       that=that2;
     }
     
-
     if (that.authData.user.watchlist.length + 1 > 10 && that.authData.user.state == "unknown") {
       if (item != undefined) {
         item.is_in_watchlist = false;
