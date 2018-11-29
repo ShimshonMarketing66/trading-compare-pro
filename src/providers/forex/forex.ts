@@ -5,7 +5,7 @@ import { GlobalProvider } from '../global/global';
 
 @Injectable()
 export class ForexProvider {
-
+  forexs: any = [];
   allForex: any[] = [];
   
   constructor(   

@@ -64,14 +64,12 @@ export class LiveFeedPage implements AfterViewInit {
   CoinConnectedWSCrypto: any[] = [];
   ScrollFromTopCrypto: number = 0;
   ScrollDoneCrypto: boolean = true;
-  cryptos: any = [];
   socketCrypto: SocketIOClient.Socket;
   /* END CRYPTO */
 
   /* FOREX */
   CoinConnectedWSForex: any[] = [];
   ScrollFromTopForex: number = 0;
-  forexs: any = [];
   socketForex: SocketIOClient.Socket;
   /* END FOREX */
 
@@ -160,9 +158,9 @@ export class LiveFeedPage implements AfterViewInit {
         this.stockProvider.stocks = [];
         break;
       case this.FOREX:
-        this.forexs = [];
+        this.forexProvider.forexs = [];
       case this.CRYPTO:
-        this.cryptos = [];
+        this.cryptoProvider.cryptos = [];
       case this.WATCHLIST:
         // this.globalProvider.watchlists = [];
         break;
@@ -286,7 +284,7 @@ export class LiveFeedPage implements AfterViewInit {
             .then(data => {
               this.offsetRequested += data.length;
               for (let index = 0; index < data.length; index++) {
-                this.forexs.push(data[index]);
+                this.forexProvider.forexs.push(data[index]);
               }
               resolve();
             })
@@ -300,7 +298,7 @@ export class LiveFeedPage implements AfterViewInit {
             .then(data => {
               this.offsetRequested += data.length;
               for (let index = 0; index < data.length; index++) {
-                this.cryptos.push(data[index]);
+                this.cryptoProvider.cryptos.push(data[index]);
               }
               resolve();
             })
@@ -328,7 +326,7 @@ export class LiveFeedPage implements AfterViewInit {
 
   goToDetailsForex(i: number) {
     this.navCtrl.push("item-details-forex", {
-      item: this.forexs[i],   
+      item: this.forexProvider.forexs[i],   
       remove_from_watchlist:this.remove_from_watchlist,
       change_sentiment:this.change_sentiment,
       add_to_watchlist:this.add_to_watchlist,
@@ -339,7 +337,7 @@ export class LiveFeedPage implements AfterViewInit {
 
   goToDetailsCrypto(i: number) {
     this.navCtrl.push("item-details-crypto", {
-      item: this.cryptos[i],
+      item: this.cryptoProvider.cryptos[i],
       remove_from_watchlist:this.remove_from_watchlist,
       change_sentiment:this.change_sentiment,
       add_to_watchlist:this.add_to_watchlist,
@@ -414,11 +412,11 @@ export class LiveFeedPage implements AfterViewInit {
     return new Promise((resolve) => {
       this.forexProvider.getForex(0).then(data => {
         for (let index = 0; index < data.length; index++) {
-          this.forexs.push(data[index]);
+          this.forexProvider.forexs.push(data[index]);
         }
         let arr = [];
         this.CoinConnectedWSForex = [];
-        for (let index = 0; index < this.forexs.length; index++) { 
+        for (let index = 0; index < this.forexProvider.forexs.length; index++) { 
           if (index < this.numOfLines) {
             this.CoinConnectedWSForex.push(data[index]);
             arr.push(data[index].pair);
@@ -433,10 +431,10 @@ export class LiveFeedPage implements AfterViewInit {
     return new Promise((resolve) => {
       this.cryptoProvider.getCrypto(0).then(data => {
         for (let index = 0; index < data.length; index++) {
-          this.cryptos.push(data[index])
+          this.cryptoProvider.cryptos.push(data[index]);
         }
         let arr = [];
-        for (let index = 0; index < this.cryptos.length; index++) {
+        for (let index = 0; index < this.cryptoProvider.cryptos.length; index++) {
           if (index < this.numOfLines) {
             this.CoinConnectedWSCrypto.push(data[index]);
             arr.push(data[index].pair);
@@ -541,25 +539,25 @@ export class LiveFeedPage implements AfterViewInit {
 
         this.socketCrypto.on("message", (data) => {
           let pair = data.pair;
-          if (this.cryptos.length == 0) {
+          if (this.cryptoProvider.cryptos.length == 0) {
             this.socketCrypto.disconnect();
             return;
           }
           for (let index = 0; index < this.CoinConnectedWSCrypto.length; index++) {
             let a = this.CoinConnectedWSCrypto[index]["index"];
             if (pair == this.CoinConnectedWSCrypto[index].pair) {
-              if (this.cryptos[a].price > Number(data.price)) {
-                this.cryptos[a].state = this.cryptos[a].state == "falling" ? "falling1" : "falling";
-                this.cryptos[a].price = Number(data.price);
-                this.cryptos[a].high24 = Number(data.high24);
-                this.cryptos[a].low24 = Number(data.low24);
-                this.cryptos[a].change24 = Number(data.change24);
-              } else if (this.cryptos[a].price < Number(data.price)) {
-                this.cryptos[a].state = this.cryptos[a].state == "raising" ? "raising1" : "raising";
-                this.cryptos[a].price = Number(data.price);
-                this.cryptos[a].high24 = Number(data.high24);
-                this.cryptos[a].low24 = Number(data.low24);
-                this.cryptos[a].change24 = Number(data.change24);
+              if (this.cryptoProvider.cryptos[a].price > Number(data.price)) {
+                this.cryptoProvider.cryptos[a].state = this.cryptoProvider.cryptos[a].state == "falling" ? "falling1" : "falling";
+                this.cryptoProvider.cryptos[a].price = Number(data.price);
+                this.cryptoProvider.cryptos[a].high24 = Number(data.high24);
+                this.cryptoProvider.cryptos[a].low24 = Number(data.low24);
+                this.cryptoProvider.cryptos[a].change24 = Number(data.change24);
+              } else if (this.cryptoProvider.cryptos[a].price < Number(data.price)) {
+                this.cryptoProvider.cryptos[a].state = this.cryptoProvider.cryptos[a].state == "raising" ? "raising1" : "raising";
+                this.cryptoProvider.cryptos[a].price = Number(data.price);
+                this.cryptoProvider.cryptos[a].high24 = Number(data.high24);
+                this.cryptoProvider.cryptos[a].low24 = Number(data.low24);
+                this.cryptoProvider.cryptos[a].change24 = Number(data.change24);
               }
 
               break;
@@ -582,18 +580,18 @@ export class LiveFeedPage implements AfterViewInit {
           for (let index = 0; index < this.CoinConnectedWSForex.length; index++) {
             if (pair == this.CoinConnectedWSForex[index].pair) {
               let a = this.CoinConnectedWSForex[index].index;
-              if (this.forexs[a].price > data.price) {
-                this.forexs[a].state = this.forexs[a].state == "falling" ? "falling1" : "falling";
-                this.forexs[a].price = Number(data.price);
-                this.forexs[a].high24 = Number(data.high24);
-                this.forexs[a].low24 = Number(data.low24);
-                this.forexs[a].change24 = Number(data.change24);
-              } else if (this.forexs[a].price < data.price) {
-                this.forexs[a].state = this.forexs[a].state == "raising" ? "raising1" : "raising";
-                this.forexs[a].price = Number(data.price);
-                this.forexs[a].high24 = Number(data.high24);
-                this.forexs[a].low24 = Number(data.low24);
-                this.forexs[a].change24 = Number(data.change24);
+              if (this.forexProvider.forexs[a].price > data.price) {
+                this.forexProvider.forexs[a].state = this.forexProvider.forexs[a].state == "falling" ? "falling1" : "falling";
+                this.forexProvider.forexs[a].price = Number(data.price);
+                this.forexProvider.forexs[a].high24 = Number(data.high24);
+                this.forexProvider.forexs[a].low24 = Number(data.low24);
+                this.forexProvider.forexs[a].change24 = Number(data.change24);
+              } else if (this.forexProvider.forexs[a].price < data.price) {
+                this.forexProvider.forexs[a].state = this.forexProvider.forexs[a].state == "raising" ? "raising1" : "raising";
+                this.forexProvider.forexs[a].price = Number(data.price);
+                this.forexProvider.forexs[a].high24 = Number(data.high24);
+                this.forexProvider.forexs[a].low24 = Number(data.low24);
+                this.forexProvider.forexs[a].change24 = Number(data.change24);
               }
 
               break;
@@ -819,8 +817,8 @@ export class LiveFeedPage implements AfterViewInit {
     var Toconect = [];
     let a = Math.ceil(scrollPx / this.sizeOfLine) - 2;
     for (let j = 0; j < this.numOfLines; j++) {
-      if (a + j > -1 && this.cryptos[a + j] != undefined) {
-        SuposedToBe.push(this.cryptos[a + j]);
+      if (a + j > -1 && this.cryptoProvider.cryptos[a + j] != undefined) {
+        SuposedToBe.push(this.cryptoProvider.cryptos[a + j]);
       }
     }
     for (let j1 = 0; j1 < SuposedToBe.length; j1++) {
@@ -864,8 +862,8 @@ export class LiveFeedPage implements AfterViewInit {
     var Toconect = [];
     let a = Math.ceil(scrollPx / this.sizeOfLine) - 2;
     for (let j = 0; j < this.numOfLines; j++) {
-      if (a + j > -1 && this.forexs[a + j] != undefined) {
-        SuposedToBe.push(this.forexs[a + j]);
+      if (a + j > -1 && this.forexProvider.forexs[a + j] != undefined) {
+        SuposedToBe.push(this.forexProvider.forexs[a + j]);
       }
     }
 
@@ -1023,15 +1021,15 @@ export class LiveFeedPage implements AfterViewInit {
         break;
       case that.FOREX:
         if (that.globalProvider.watchlists.length != 0) {
-          that.globalProvider.watchlists.push(that.forexs[i]);
+          that.globalProvider.watchlists.push(that.forexProvider.forexs[i]);
         }
-        that.forexs[i].is_in_watchlist = true;
+        that.forexProvider.forexs[i].is_in_watchlist = true;
         break;
       case that.CRYPTO:
         if (that.globalProvider.watchlists.length != 0) {
-          that.globalProvider.watchlists.push(that.cryptos[i]);
+          that.globalProvider.watchlists.push(that.cryptoProvider.cryptos[i]);
         }
-        that.cryptos[i].is_in_watchlist = true;
+        that.cryptoProvider.cryptos[i].is_in_watchlist = true;
         break;
       default:
         console.log("missing params");
@@ -1066,10 +1064,10 @@ export class LiveFeedPage implements AfterViewInit {
         that.stockProvider.stocks[i].is_in_watchlist = false;
           break;
         case that.FOREX:
-        that.forexs[i].is_in_watchlist = false;
+        that.forexProvider.forexs[i].is_in_watchlist = false;
           break;
         case that.CRYPTO:
-        that.cryptos[i].is_in_watchlist = false;
+        that.cryptoProvider.cryptos[i].is_in_watchlist = false;
           break;
         default:
           console.log("missing params");
@@ -1141,10 +1139,10 @@ export class LiveFeedPage implements AfterViewInit {
         arr = that2.stocks;
         break;
       case that2.FOREX:
-        arr = that2.forexs;
+        arr = that2.forexProvider.forexs;
         break;
       case that2.CRYPTO:
-        arr = that2.cryptos;
+        arr = that2.cryptoProvider.cryptos;
         break;
       case that2.WATCHLIST:
         arr = that2.watchlists;

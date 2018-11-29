@@ -7,6 +7,7 @@ declare var require: any;
 
 @Injectable()
 export class CryptoProvider {
+  cryptos : any[] = [];
   inRequesting:boolean = false;
   arrAllCrypto: any[] = [];
   cryptocurrencies;

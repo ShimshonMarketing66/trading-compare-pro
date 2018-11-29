@@ -323,4 +323,6 @@ export class GlobalProvider {
     return this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-comments/" +symbol ).toPromise()
   }
 
+  
+
 }
