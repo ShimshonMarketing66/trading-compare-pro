@@ -84,7 +84,6 @@ export class LiveFeedPage implements AfterViewInit {
 
   /* DEFINITIONS ALL ARRAYS */
   offsetRequested: number = 0;
-  stocks: IStock[] = [];
   stockOffset: number = 0;
   exchangeStock: string = "united-states-of-america";
   /*  END DEFINITIONS ALL ARRAYS */
@@ -158,14 +157,14 @@ export class LiveFeedPage implements AfterViewInit {
     this.stopWS(this.selectedSegment);
     switch (this.selectedSegment) {
       case this.STOCK:
-        this.stocks = [];
+        this.stockProvider.stocks = [];
         break;
       case this.FOREX:
         this.forexs = [];
       case this.CRYPTO:
         this.cryptos = [];
       case this.WATCHLIST:
-        this.watchlists = [];
+        // this.globalProvider.watchlists = [];
         break;
       case this.TRENDING:
         break;
@@ -204,11 +203,7 @@ export class LiveFeedPage implements AfterViewInit {
         })
         break;
       case this.WATCHLIST:
-        this.buildWatchlist().then(()=>{
-          if (this.modeView != "SQUARES") {
-            this.startWS(this.WATCHLIST);
-          }
-        });
+         this.startWS(this.WATCHLIST);
         break;
       case this.TRENDING:
         break;
@@ -256,7 +251,7 @@ export class LiveFeedPage implements AfterViewInit {
 
       this.exchangeStock = data;
       this.stockProvider.get_stocks(0, this.exchangeStock).then((data) => {
-        this.stocks = data;
+        this.stockProvider.stocks = data;
         this.stockOffset = data.length;
         this.offsetRequested = 50;
       })
@@ -277,7 +272,7 @@ export class LiveFeedPage implements AfterViewInit {
                   data[index]["sentiment"] = this.globalProvider.sentiments[index2].type;
                  }
                 }
-                this.stocks.push(data[index]);
+                this.stockProvider.stocks.push(data[index]);
               }
               resolve();
             })
@@ -323,7 +318,7 @@ export class LiveFeedPage implements AfterViewInit {
 
   goToDetailsStock(i: number) {
     this.navCtrl.push("item-details-stock", {
-      item: this.stocks[i], 
+      item: this.stockProvider.stocks[i], 
       remove_from_watchlist:this.remove_from_watchlist,
       change_sentiment:this.change_sentiment,
       add_to_watchlist:this.add_to_watchlist,
@@ -369,7 +364,7 @@ export class LiveFeedPage implements AfterViewInit {
             case this.FOREX:
               for (let j = 0; j < data[0].length; j++) {
                 if (data[0][j].symbol == this.authData.user.watchlist[i].symbol) {
-                  this.watchlists.push(data[0][j]);
+                  this.globalProvider.watchlists.push(data[0][j]);
                   break;
                 }
               }
@@ -377,7 +372,7 @@ export class LiveFeedPage implements AfterViewInit {
             case this.CRYPTO:
               for (let j = 0; j < data[1].length; j++) {
                 if (data[1][j].symbol == this.authData.user.watchlist[i].symbol) {
-                  this.watchlists.push(data[1][j]);
+                  this.globalProvider.watchlists.push(data[1][j]);
                   break;
                 }
               }
@@ -399,7 +394,7 @@ export class LiveFeedPage implements AfterViewInit {
                      }
                    }
                   }
-                  this.watchlists.push(data[j]);
+                  this.globalProvider.watchlists.push(data[j]);
                   break;
                 }
               }
@@ -456,12 +451,12 @@ export class LiveFeedPage implements AfterViewInit {
     return new Promise((resolve) => {
       this.stockProvider.get_stocks(stockOffset, this.exchangeStock).then(async (data) => {
         for (let index = 0; index < data.length; index++) {
-          this.stocks.push(data[index]);
+          this.stockProvider.stocks.push(data[index]);
         }
-        this.offsetRequested = this.stocks.length;
+        this.offsetRequested = this.stockProvider.stocks.length;
         let arr = [];
-        for (let index = 0; index < this.stocks.length; index++) {
-          this.stocks[index]["index"] = index;
+        for (let index = 0; index < this.stockProvider.stocks.length; index++) {
+          this.stockProvider.stocks[index]["index"] = index;
           if (index < this.numOfLines) {
             this.CoinConnectedWSStock.push(data[index]);
             arr.push(data[index].symbol);
@@ -473,7 +468,7 @@ export class LiveFeedPage implements AfterViewInit {
   }
   foo() {
 
-    console.log(this.stocks);
+    console.log(this.globalProvider.watchlists);
 
   }
 
@@ -616,32 +611,32 @@ export class LiveFeedPage implements AfterViewInit {
           for (let index = 0; index < this.CoinConnectedWSStock.length; index++) {
             if (pair == this.CoinConnectedWSStock[index].symbol) {
               let a = this.CoinConnectedWSStock[index].index;
-              if (Number(this.stocks[a].price) > data.price) {
-                this.stocks[a]["state"] = this.stocks[a]["state"] == "falling" ? "falling1" : "falling";
-              } else if (Number(this.stocks[a].price) < data.price) {
-                this.stocks[a]["state"] = this.stocks[a]["state"] == "raising" ? "raising1" : "raising";
+              if (Number(this.stockProvider.stocks[a].price) > data.price) {
+                this.stockProvider.stocks[a]["state"] = this.stockProvider.stocks[a]["state"] == "falling" ? "falling1" : "falling";
+              } else if (Number(this.stockProvider.stocks[a].price) < data.price) {
+                this.stockProvider.stocks[a]["state"] = this.stockProvider.stocks[a]["state"] == "raising" ? "raising1" : "raising";
               }
 
-              if (Number(data.price) > Number(this.stocks[a].day_high)) {
-                this.stocks[a].day_high = data.price;
+              if (Number(data.price) > Number(this.stockProvider.stocks[a].day_high)) {
+                this.stockProvider.stocks[a].day_high = data.price;
               }
 
-              if (Number(data.price) < Number(this.stocks[a].day_low)) {
-                this.stocks[a].day_low = data.price;
+              if (Number(data.price) < Number(this.stockProvider.stocks[a].day_low)) {
+                this.stockProvider.stocks[a].day_low = data.price;
               }
 
               console.log(data.price,pair);
               
               
-              let original = Number(this.stocks[a].price_open);
+              let original = Number(this.stockProvider.stocks[a].price_open);
               if (isNaN(original) || original == undefined || original == null ) {
                 original = 0;
                 return;
               }
               let neww = Number(data.price);
 
-              this.stocks[a].change_pct = (((neww - original) / original) * 100).toString()
-              this.stocks[a].price = (Number(data.price)).toString();
+              this.stockProvider.stocks[a].change_pct = (((neww - original) / original) * 100).toString()
+              this.stockProvider.stocks[a].price = (Number(data.price)).toString();
               break;
             }
           }
@@ -663,24 +658,24 @@ export class LiveFeedPage implements AfterViewInit {
   }
 
   add_coins_Watchlist_WS(){
-    for (let index = 0; index < this.watchlists.length; index++) {
-     switch (this.watchlists[index]["type"]) {
+    for (let index = 0; index < this.globalProvider.watchlists.length; index++) {
+     switch (this.globalProvider.watchlists[index]["type"]) {
        case this.STOCK:
        
-         this.socketStockWL.emit("subscribe",this.watchlists[index].symbol);
+         this.socketStockWL.emit("subscribe",this.globalProvider.watchlists[index].symbol);
         
          break;
 
          case this.FOREX:
-         console.log(this.watchlists[index].symbol + "_2sec");
+         console.log(this.globalProvider.watchlists[index].symbol + "_2sec");
          
-         this.socketForexWL.emit("room",this.watchlists[index].symbol + "_2sec");
+         this.socketForexWL.emit("room",this.globalProvider.watchlists[index].symbol + "_2sec");
          break;
 
          case this.CRYPTO:
-         console.log(this.watchlists[index].symbol);
+         console.log(this.globalProvider.watchlists[index].symbol);
 
-         this.socketCryptoWL.emit("room",this.watchlists[index].symbol);
+         this.socketCryptoWL.emit("room",this.globalProvider.watchlists[index].symbol);
          break;
      
        default:
@@ -690,28 +685,28 @@ export class LiveFeedPage implements AfterViewInit {
     this.socketStockWL.on("message", (data) => {
       data = JSON.parse(data);
       let pair = data.symbol;
-      for (let index = 0; index < this.watchlists.length; index++) {
-        if (pair == this.watchlists[index].symbol) {
+      for (let index = 0; index < this.globalProvider.watchlists.length; index++) {
+        if (pair == this.globalProvider.watchlists[index].symbol) {
           
-          if (Number(this.watchlists[index].price) > data.price) {
-            this.watchlists[index]["state"] =this.watchlists[index]["state"] == "falling" ? "falling1" : "falling";
-          } else if (Number(this.watchlists[index].price) < data.price) {
-            this.watchlists[index]["state"] = this.watchlists[index]["state"] == "raising" ? "raising1" : "raising";
+          if (Number(this.globalProvider.watchlists[index].price) > data.price) {
+            this.globalProvider.watchlists[index]["state"] =this.globalProvider.watchlists[index]["state"] == "falling" ? "falling1" : "falling";
+          } else if (Number(this.globalProvider.watchlists[index].price) < data.price) {
+            this.globalProvider.watchlists[index]["state"] = this.globalProvider.watchlists[index]["state"] == "raising" ? "raising1" : "raising";
           }
 
-          if (Number(data.price) > Number(this.watchlists[index].day_high)) {
-            this.watchlists[index].day_high = data.price;
+          if (Number(data.price) > Number(this.globalProvider.watchlists[index].day_high)) {
+            this.globalProvider.watchlists[index].day_high = data.price;
           }
 
-          if (Number(data.price) < Number(this.watchlists[index].day_low)) {
-            this.watchlists[index].day_low = data.price;
+          if (Number(data.price) < Number(this.globalProvider.watchlists[index].day_low)) {
+            this.globalProvider.watchlists[index].day_low = data.price;
           }
 
-          let original = Number(this.watchlists[index].price_open);
+          let original = Number(this.globalProvider.watchlists[index].price_open);
           let neww = Number(data.price);
 
-          this.watchlists[index].change_pct = (((neww - original) / original) * 100).toString()
-          this.watchlists[index].price = (Number(data.price)).toString();
+          this.globalProvider.watchlists[index].change_pct = (((neww - original) / original) * 100).toString()
+          this.globalProvider.watchlists[index].price = (Number(data.price)).toString();
           break;
         }
       }
@@ -720,21 +715,21 @@ export class LiveFeedPage implements AfterViewInit {
 
     this.socketForexWL.on("message", (data) => {
       let pair = data.pair;
-      for (let index = 0; index < this.watchlists.length; index++) {
-        if (pair == this.watchlists[index].pair) {
+      for (let index = 0; index < this.globalProvider.watchlists.length; index++) {
+        if (pair == this.globalProvider.watchlists[index].pair) {
           
-          if (this.watchlists[index].price > data.price) {
-            this.watchlists[index].state = this.watchlists[index].state == "falling" ? "falling1" : "falling";
-            this.watchlists[index].price = Number(data.price);
-            this.watchlists[index].high24 = Number(data.high24);
-            this.watchlists[index].low24 = Number(data.low24);
-            this.watchlists[index].change24 = Number(data.change24);
-          } else if (this.watchlists[index].price < data.price) {
-            this.watchlists[index].state = this.watchlists[index].state == "raising" ? "raising1" : "raising";
-            this.watchlists[index].price = Number(data.price);
-            this.watchlists[index].high24 = Number(data.high24);
-            this.watchlists[index].low24 = Number(data.low24);
-            this.watchlists[index].change24 = Number(data.change24);
+          if (this.globalProvider.watchlists[index].price > data.price) {
+            this.globalProvider.watchlists[index].state = this.globalProvider.watchlists[index].state == "falling" ? "falling1" : "falling";
+            this.globalProvider.watchlists[index].price = Number(data.price);
+            this.globalProvider.watchlists[index].high24 = Number(data.high24);
+            this.globalProvider.watchlists[index].low24 = Number(data.low24);
+            this.globalProvider.watchlists[index].change24 = Number(data.change24);
+          } else if (this.globalProvider.watchlists[index].price < data.price) {
+            this.globalProvider.watchlists[index].state = this.globalProvider.watchlists[index].state == "raising" ? "raising1" : "raising";
+            this.globalProvider.watchlists[index].price = Number(data.price);
+            this.globalProvider.watchlists[index].high24 = Number(data.high24);
+            this.globalProvider.watchlists[index].low24 = Number(data.low24);
+            this.globalProvider.watchlists[index].change24 = Number(data.change24);
           }
 
           break;
@@ -744,20 +739,20 @@ export class LiveFeedPage implements AfterViewInit {
 
     this.socketCryptoWL.on("message", (data) => {
          let pair = data.pair;
-          for (let index = 0; index < this.watchlists.length; index++) {
-            if (pair ==  this.watchlists[index].pair) {
-              if ( this.watchlists[index].price > Number(data.price)) {
-                this.watchlists[index].state =  this.watchlists[index].state == "falling" ? "falling1" : "falling";
-                this.watchlists[index].price = Number(data.price);
-                this.watchlists[index].high24 = Number(data.high24);
-                this.watchlists[index].low24 = Number(data.low24);
-                this.watchlists[index].change24 = Number(data.change24);
-              } else if ( this.watchlists[index].price < Number(data.price)) {
-                this.watchlists[index].state =  this.watchlists[index].state == "raising" ? "raising1" : "raising";
-                this.watchlists[index].price = Number(data.price);
-                this.watchlists[index].high24 = Number(data.high24);
-                this.watchlists[index].low24 = Number(data.low24);
-                this.watchlists[index].change24 = Number(data.change24);
+          for (let index = 0; index < this.globalProvider.watchlists.length; index++) {
+            if (pair ==  this.globalProvider.watchlists[index].pair) {
+              if ( this.globalProvider.watchlists[index].price > Number(data.price)) {
+                this.globalProvider.watchlists[index].state =  this.globalProvider.watchlists[index].state == "falling" ? "falling1" : "falling";
+                this.globalProvider.watchlists[index].price = Number(data.price);
+                this.globalProvider.watchlists[index].high24 = Number(data.high24);
+                this.globalProvider.watchlists[index].low24 = Number(data.low24);
+                this.globalProvider.watchlists[index].change24 = Number(data.change24);
+              } else if ( this.globalProvider.watchlists[index].price < Number(data.price)) {
+                this.globalProvider.watchlists[index].state =  this.globalProvider.watchlists[index].state == "raising" ? "raising1" : "raising";
+                this.globalProvider.watchlists[index].price = Number(data.price);
+                this.globalProvider.watchlists[index].high24 = Number(data.high24);
+                this.globalProvider.watchlists[index].low24 = Number(data.low24);
+                this.globalProvider.watchlists[index].change24 = Number(data.change24);
               }
             }
           }
@@ -914,8 +909,8 @@ export class LiveFeedPage implements AfterViewInit {
     var Toconect = [];
     let a = Math.ceil(scrollPx / this.sizeOfLine) - 2;
     for (let j = 0; j < this.numOfLines; j++) {
-      if (a + j > -1 && this.stocks[a + j] != undefined) {
-        SuposedToBe.push(this.stocks[a + j]);
+      if (a + j > -1 && this.stockProvider.stocks[a + j] != undefined) {
+        SuposedToBe.push(this.stockProvider.stocks[a + j]);
       }
     }
     // console.log("SuposedToBe",SuposedToBe);
@@ -1021,20 +1016,20 @@ export class LiveFeedPage implements AfterViewInit {
 
     switch (type) {
       case that.STOCK:
-        if (that.watchlists.length != 0) {
-          that.watchlists.push(that.stocks[i]);
+        if (that.globalProvider.watchlists.length != 0) {
+          that.globalProvider.watchlists.push(that.stockProvider.stocks[i]);
         }
-        that.stocks[i].is_in_watchlist = true;
+        that.stockProvider.stocks[i].is_in_watchlist = true;
         break;
       case that.FOREX:
-        if (that.watchlists.length != 0) {
-          that.watchlists.push(that.forexs[i]);
+        if (that.globalProvider.watchlists.length != 0) {
+          that.globalProvider.watchlists.push(that.forexs[i]);
         }
         that.forexs[i].is_in_watchlist = true;
         break;
       case that.CRYPTO:
-        if (that.watchlists.length != 0) {
-          that.watchlists.push(that.cryptos[i]);
+        if (that.globalProvider.watchlists.length != 0) {
+          that.globalProvider.watchlists.push(that.cryptos[i]);
         }
         that.cryptos[i].is_in_watchlist = true;
         break;
@@ -1068,7 +1063,7 @@ export class LiveFeedPage implements AfterViewInit {
     if (that.selectedSegment != that.WATCHLIST) {
       switch (type) {
         case that.STOCK:
-        that.stocks[i].is_in_watchlist = false;
+        that.stockProvider.stocks[i].is_in_watchlist = false;
           break;
         case that.FOREX:
         that.forexs[i].is_in_watchlist = false;
@@ -1084,12 +1079,13 @@ export class LiveFeedPage implements AfterViewInit {
     if (item != undefined) {
       item.is_in_watchlist = false;
     }
-
-    for (let index = 0; index < that.watchlists.length; index++) {
-      if (that.watchlists[index].symbol == symbol) {
-        that.watchlists.splice(index, 1);
+    
+    for (let index = 0; index < that.globalProvider.watchlists.length; index++) {
+      if (that.globalProvider.watchlists[index].symbol == symbol) {
+        that.globalProvider.watchlists.splice(index, 1);
       }
     }
+
     let toast = that.toastCtrl.create({
       message: symbol + ' was removed from watchlist successfully',
       duration: 2000,
@@ -1104,9 +1100,7 @@ export class LiveFeedPage implements AfterViewInit {
   }
 
   goToDetails(watchlist: any) {
-    let page: string = ""
-    console.log(watchlist.type);
-    
+    let page: string = ""    
     switch (watchlist.type) {
       case this.STOCK:
         page = "item-details-stock";
@@ -1130,9 +1124,7 @@ export class LiveFeedPage implements AfterViewInit {
     })
   }
 
-  change_sentiment(type: string, i: number, event?:any,that?) {
-    console.log(type);
-    
+  change_sentiment(type: string, i: number, event?:any,that?) {    
     var that2;
     if (event != undefined) {
       event.stopPropagation();

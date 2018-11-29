@@ -8,6 +8,7 @@ import { AuthDataProvider } from '../auth-data/auth-data';
 @Injectable()
 export class GlobalProvider {
   sentiments=[];
+  watchlists=[];
   constructor
   (
     public http: HttpClient,
@@ -211,7 +212,7 @@ export class GlobalProvider {
   })
   }
   
-  initialProviders() :Promise<any>{
+  initialProviders() :Promise<any>{    
    return new Promise((resolve)=>{
     var promises = [this.forexProvider.getAllForex(),this.cryptoProvider.getCrypto(),this.stockProvider.get_stocks(0,"united-states-of-america"),this.get_sentiments()]
     Promise.all(promises).then((data)=>{
@@ -246,6 +247,60 @@ export class GlobalProvider {
           }
         }
       }
+
+      let promises11 = [this.forexProvider.getAllForex(), this.cryptoProvider.getCrypto()];
+      for (let index = 0; index < this.authData.user.watchlist.length; index++) {
+        if (this.authData.user.watchlist[index].type == "STOCK") {
+          promises11.push(this.stockProvider.get_stock_by_symbol(this.authData.user.watchlist[index].symbol));
+        }
+      }
+
+      Promise.all(promises11).then((data: any[]) => {
+        for (let i = 0; i < this.authData.user.watchlist.length; i++) {
+          switch (this.authData.user.watchlist[i].type) {
+            case "FOREX":
+              for (let j = 0; j < data[0].length; j++) {
+                if (data[0][j].symbol == this.authData.user.watchlist[i].symbol) {
+                  this.watchlists.push(data[0][j]);
+                  break;
+                }
+              }
+              break;
+            case "CRYPTO":
+              for (let j = 0; j < data[1].length; j++) {
+                if (data[1][j].symbol == this.authData.user.watchlist[i].symbol) {
+                  this.watchlists.push(data[1][j]);
+                  break;
+                }
+              }
+              break;
+            case "STOCK":            
+              for (let j = 2; j < data.length; j++) {
+                if (data[j].symbol == this.authData.user.watchlist[i].symbol) {
+                  for (let aaa = 0; aaa < this.sentiments.length; aaa++) {
+                   if (this.sentiments[aaa].symbol == data[j].symbol) {
+                     if (this.sentiments[aaa].status == "OPEN") {
+                      data[j]["status"]= "OPEN";
+                      data[j]["sentiment"]= this.sentiments[aaa].type;
+                      break;
+                     }else{
+                      data[j]["status"]= "CLOSE";
+                      data[j]["sentiment"]= this.sentiments[aaa].type;
+                     }
+                   }
+                  }
+                  this.watchlists.push(data[j]);
+                  break;
+                }
+              }
+              break;
+            default:
+              break;
+          }
+        }
+        resolve();
+
+      })
       resolve();
     })
    })

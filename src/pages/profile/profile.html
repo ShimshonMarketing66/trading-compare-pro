@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header (click)="foo()">
 
   <ion-navbar>
     <ion-title>
@@ -89,11 +89,62 @@
         Someone is typing ...POSTS
        
 
-    </div>
+    </div> 
    
     <div *ngSwitchCase="'WATCHLIST'" style="padding-bottom: 70px;">
   
-        Someone is typing ...WATCHLIST
+        <ion-grid>
+            <ion-row style="border-bottom: 1px solid #4a4a4a;height: 40px;" *ngFor="let watchlist of globalProvider.watchlists;let i = index;" (click)="goToDetails(watchlist)">
+              <ion-col style="overflow: hidden;margin:auto;text-align: left;white-space: nowrap;">
+                <span style="padding-left: 3px;">
+                  <ion-icon *ngIf="watchlist.is_in_watchlist" name="star-v-a"  (click)="remove_from_watchlist($event,watchlist.symbol,watchlist.type,i)"></ion-icon>
+                  <ion-icon *ngIf="!watchlist.is_in_watchlist" name="star-v" (click)="add_to_watchlist($event,watchlist.symbol,watchlist.type,i)"></ion-icon>
+                </span>
+                <span style="font-size:16px;font-weight: 700;white-space: nowrap;">
+                 <span [ngSwitch]="watchlist.type">
+                   <span *ngSwitchCase="'STOCK'">
+                      {{watchlist.shortName}}
+                   </span>
+                   <span *ngSwitchCase="'CRYPTO'">
+                      {{watchlist.name}}
+                   </span>
+                   <span *ngSwitchCase="'FOREX'">
+                      {{watchlist.symbol}}
+                   </span>
+                  
+                 </span>
+                </span>
+              </ion-col>
+     
+          
+              <ion-col style="text-align: right;margin:auto;">
+                <div style="font-size:16px;text-align: right;">
+                  <span [@changeBackgroundColor]="watchlist.state">
+                    {{watchlist?.price|tofixe}}
+                  </span>
+                </div>
+
+                <div [ngSwitch]="watchlist.type">
+                    <span *ngSwitchCase="'STOCK'">
+                        <div style="font-size:14px;white-space: nowrap;text-align: right;" [ngStyle]="watchlist.change_pct > 0 && {'color': '#91c353'} || watchlist.change_pct < 0 && {'color': '#e34c47'}">
+                          <span [@changeBackgroundColor]="watchlist.state">
+                            {{watchlist.change_pct|tofixe}}%
+                          </span>
+                        </div>
+                    </span>
+                    <span *ngSwitchDefault>
+                        <div style="font-size:12px;white-space: nowrap;text-align: right;" [ngStyle]="watchlist?.change24 > 0 && {'color': '#91c353'} || watchlist.change24 < 0 && {'color': '#e34c47'}">
+                          <span [@changeBackgroundColor]="watchlist.state">
+                            {{watchlist.change24|tofixe}}%
+                          </span>
+                        </div>
+                    </span>
+                  </div>
+              </ion-col> 
+  
+            </ion-row>
+  
+          </ion-grid>
        
 
     </div>

@@ -7,6 +7,7 @@ import { AuthDataProvider } from '../auth-data/auth-data';
 
 @Injectable()
 export class StockProvider {
+  stocks: IStock[] = [];
 
   public allStocks: {
     country: string;

@@ -106,7 +106,7 @@
     <div *ngSwitchCase="STOCK">
       <div *ngIf="modeView=='LINES'">
         <ion-grid>
-          <ion-row style="border-bottom: 1px solid #4a4a4a;height: 40px;" *ngFor="let stock of stocks;let i = index;"(click)="goToDetailsStock(i)">
+          <ion-row style="border-bottom: 1px solid #4a4a4a;height: 40px;" *ngFor="let stock of stockProvider.stocks;let i = index;"(click)="goToDetailsStock(i)">
             <ion-col style="margin:auto;text-align: left;white-space: nowrap;" >
               <span style="padding-left: 3px;">
                 <ion-icon *ngIf="stock.is_in_watchlist" name="star-v-a" (click)="remove_from_watchlist($event,stock.symbol,'STOCK',i)"></ion-icon>
@@ -141,7 +141,7 @@
         <div style=" overflow: hidden">
 
           <div style="text-align: center;float:left;padding-top: 12px;width: 45%;height: 170px;margin:2.5%;background: #373737;border-radius: 5px;"
-            *ngFor="let stock of stocks;let i = index;"    (click)="goToDetailsStock(i)">
+            *ngFor="let stock of stockProvider.stocks;let i = index;"    (click)="goToDetailsStock(i)">
             <!-- <object [data]="getImgStock(i)" type="image/png" style="width: 37px;height: 37px;border-radius: 50px;">
               <img src="assets/imgs/flags/flag general.png" style="width: 37px;height: 37px;border-radius: 50px;" alt="example">
             </object> -->
@@ -369,7 +369,7 @@
     <div *ngSwitchCase="WATCHLIST">
         <div *ngIf="modeView=='LINES'">
             <ion-grid>
-              <ion-row style="border-bottom: 1px solid #4a4a4a;height: 40px;" *ngFor="let watchlist of watchlists;let i = index;" (click)="goToDetails(watchlist)">
+              <ion-row style="border-bottom: 1px solid #4a4a4a;height: 40px;" *ngFor="let watchlist of globalProvider.watchlists;let i = index;" (click)="goToDetails(watchlist)">
                 <ion-col style="overflow: hidden;margin:auto;text-align: left;white-space: nowrap;">
                   <span style="padding-left: 3px;">
                     <ion-icon *ngIf="watchlist.is_in_watchlist" name="star-v-a"  (click)="remove_from_watchlist($event,watchlist.symbol,watchlist.type,i)"></ion-icon>
@@ -427,7 +427,7 @@
     
             <div style="overflow: hidden">
     
-              <div style="text-align: center;float:left;padding-top: 12px;width: 45%;height: 170px;margin:2.5%;background: #373737;border-radius: 5px;"*ngFor="let watchlist of watchlists;let i = index;" (click)="goToDetails(watchlist,i)">
+              <div style="text-align: center;float:left;padding-top: 12px;width: 45%;height: 170px;margin:2.5%;background: #373737;border-radius: 5px;"*ngFor="let watchlist of globalProvider.watchlists;let i = index;" (click)="goToDetails(watchlist,i)">
                 <img  [src]="watchlist.logo" (error)="errorHandler($event)" style="width: 37px;height: 37px;border-radius: 50px;">
                 
                 <div style="margin-bottom: 14px;">
