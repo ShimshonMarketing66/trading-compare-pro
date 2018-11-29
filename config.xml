@@ -21,6 +21,8 @@
     <preference name="SplashScreenDelay" value="3000" />
     <preference name="KeyboardDisplayRequiresUserAction" value="false" />
     <platform name="android">
+     <replace-string file="project.properties" find="com.google.android.gms:play-services-auth:11.8.0" replace="com.google.android.gms:play-services-auth:10.+" />
+      <replace-string file="project.properties" find="com.google.android.gms:play-services-identity:11.8.0" replace="com.google.android.gms:play-services-identity:10.+" />
         <config-file parent="/resources" target="./res/values/strings.xml">
             <string name="fb_app_id">164062087767906</string>
             <string name="fb_app_name">Trading Compare</string>
@@ -102,4 +104,5 @@
     </plugin>
     <engine name="ios" spec="4.5.5" />
     <engine name="android" spec="7.1.1" />
+    <plugin name="cordova-plugin-platform-replace" spec="1.0.0" />
 </widget>
