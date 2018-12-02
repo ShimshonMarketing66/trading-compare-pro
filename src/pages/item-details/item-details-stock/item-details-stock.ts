@@ -97,9 +97,11 @@ export class ItemDetailsStockPage {
   }
   tweetCall() {
     this.http.get('https://xosignals.herokuapp.com/search/' + this.item.symbol + "/en").toPromise().then((res) => {
-      console.log(res);
+ 
 
       this.tweetsdata = res.json().data.statuses;
+      console.log(this.tweetsdata);
+      
       for (let index = 0; index < this.tweetsdata.length; index++) {
         let str = this.tweetsdata[index].created_at.split(" ");
         this.tweetsdata[index].created_at = str[1] + " " + str[2] + " " + " " + str[3].substring(0, 5);
@@ -157,6 +159,7 @@ export class ItemDetailsStockPage {
 
   openUrl(i) {
     window.open("https://twitter.com/i/web/status/" + this.tweetsdata[i].id_str);
+    
   }
 
   getImgStock() {
@@ -210,16 +213,6 @@ export class ItemDetailsStockPage {
     }
   }
 
-
-  remove_from_watchlist() {
-    this.item.is_in_watchlist = false;
-    this.navParams.get("remove_from_watchlist")(undefined, this.item.symbol, this.item.type, this.navParams.get("i"), this.navParams.get('that'), this.item)
-  }
-
-  add_to_watchlist() {
-    this.item.is_in_watchlist = true;
-    this.navParams.get("add_to_watchlist")(undefined, this.item.symbol, this.item.type, this.navParams.get("i"), this.navParams.get('that'), this.item)
-  }
 
   typing() {
     console.log("typing");

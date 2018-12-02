@@ -317,32 +317,21 @@ export class LiveFeedPage implements AfterViewInit {
   goToDetailsStock(i: number) {
     this.navCtrl.push("item-details-stock", {
       item: this.stockProvider.stocks[i], 
-      remove_from_watchlist:this.remove_from_watchlist,
-      change_sentiment:this.change_sentiment,
-      add_to_watchlist:this.add_to_watchlist,
-      that:this
+      change_sentiment:this.change_sentiment
     })
   }
 
   goToDetailsForex(i: number) {
     this.navCtrl.push("item-details-forex", {
       item: this.forexProvider.forexs[i],   
-      remove_from_watchlist:this.remove_from_watchlist,
-      change_sentiment:this.change_sentiment,
-      add_to_watchlist:this.add_to_watchlist,
-      i:i,
-      that:this
+      change_sentiment:this.change_sentiment
     })
   }
 
   goToDetailsCrypto(i: number) {
     this.navCtrl.push("item-details-crypto", {
       item: this.cryptoProvider.cryptos[i],
-      remove_from_watchlist:this.remove_from_watchlist,
-      change_sentiment:this.change_sentiment,
-      add_to_watchlist:this.add_to_watchlist,
-      i:i,
-      that:this
+      change_sentiment:this.change_sentiment
     })
   }
 
@@ -979,123 +968,12 @@ export class LiveFeedPage implements AfterViewInit {
     }
   }
 
-  add_to_watchlist(event: any, symbol: string, type: string, i,that2?:any,item?:any) {
-    if (event!=undefined) {
-      event.stopPropagation();
-    }
-    var that = this;
-    if (that2!=undefined) {
-      that=that2;
-    }
-    
-    if (that.authData.user.watchlist.length + 1 > 10 && that.authData.user.state == "unknown") {
-      if (item != undefined) {
-        item.is_in_watchlist = false;
-      }
-      let alert = that.alertCtrl.create({
-        title: 'your watchlist is full',
-        subTitle: 'you have to be vip to make your watchlist greaten.',
-        buttons: [
-          {
-            text: 'Cancel',
-            role: 'cancel'
-          },
-          {
-            text: 'Go to vip',
-            handler: () => {
-              console.log('go to vip.');
-            }
-          }
-        ]
-      })
-      alert.present();
-      return;
-    }
-
-    switch (type) {
-      case that.STOCK:
-        if (that.globalProvider.watchlists.length != 0) {
-          that.globalProvider.watchlists.push(that.stockProvider.stocks[i]);
-        }
-        that.stockProvider.stocks[i].is_in_watchlist = true;
-        break;
-      case that.FOREX:
-        if (that.globalProvider.watchlists.length != 0) {
-          that.globalProvider.watchlists.push(that.forexProvider.forexs[i]);
-        }
-        that.forexProvider.forexs[i].is_in_watchlist = true;
-        break;
-      case that.CRYPTO:
-        if (that.globalProvider.watchlists.length != 0) {
-          that.globalProvider.watchlists.push(that.cryptoProvider.cryptos[i]);
-        }
-        that.cryptoProvider.cryptos[i].is_in_watchlist = true;
-        break;
-      default:
-        console.log("missing params");
-        return;
-    }
-    let toast = that.toastCtrl.create({
-      message: symbol + ' was added successfully',
-      duration: 2000,
-      position: 'bottom'
-    });
-    toast.present();
-    that.globalProvider.add_to_watchlist(symbol, type)
-  }
 
   errorHandler(event) {
     console.debug(event);
     event.target.src = "assets/imgs/stocks.png";
   }
 
-  remove_from_watchlist(event: any, symbol: string, type: string, i,that2?:any,item?:any) {
-    if (event !=undefined) {
-      event.stopPropagation();
-    }
-    var that = this;
-    if (that2!= undefined) {
-      that = that2;
-    }
-
-    if (that.selectedSegment != that.WATCHLIST) {
-      switch (type) {
-        case that.STOCK:
-        that.stockProvider.stocks[i].is_in_watchlist = false;
-          break;
-        case that.FOREX:
-        that.forexProvider.forexs[i].is_in_watchlist = false;
-          break;
-        case that.CRYPTO:
-        that.cryptoProvider.cryptos[i].is_in_watchlist = false;
-          break;
-        default:
-          console.log("missing params");
-          return;
-      }
-    }
-    if (item != undefined) {
-      item.is_in_watchlist = false;
-    }
-    
-    for (let index = 0; index < that.globalProvider.watchlists.length; index++) {
-      if (that.globalProvider.watchlists[index].symbol == symbol) {
-        that.globalProvider.watchlists.splice(index, 1);
-      }
-    }
-
-    let toast = that.toastCtrl.create({
-      message: symbol + ' was removed from watchlist successfully',
-      duration: 2000,
-      position: 'bottom'
-    });
-    toast.present();
-    if (that.selectedSegment == that.WATCHLIST) {
-      that.globalProvider.remove_from_watchlist(symbol, type, i);
-    } else {
-      that.globalProvider.remove_from_watchlist(symbol, type);
-    }
-  }
 
   goToDetails(watchlist: any) {
     let page: string = ""    
@@ -1116,9 +994,6 @@ export class LiveFeedPage implements AfterViewInit {
 
     this.navCtrl.push(page, {
       item: watchlist,
-      remove_from_watchlist:this.remove_from_watchlist,
-      add_to_watchlist:this.add_to_watchlist,
-      that:this
     })
   }
 

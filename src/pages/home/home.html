@@ -1,7 +1,7 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>Home</ion-title>
+    <ion-title>{{authData.user.nickname}}</ion-title>
     <ion-buttons end>
       <button class="button-comment-header" (click)="openComments()">
         <ion-icon style="color: white;" name="ios-chatbubbles-outline"></ion-icon>
@@ -38,7 +38,7 @@
 
   <div [ngStyle]="AllLeaderboard && {'overflow-y': 'unset','height':'unset'} || !AllLeaderboard && {'overflow-y': 'hidden','height': '35%'}">
     <ion-grid style="padding-top: 10px;">
-      <ion-row *ngFor="let user of users;let i = index;" style="padding: 6px;">
+      <ion-row *ngFor="let user of users;let i = index;" style="padding: 6px;" (click)="navCtrl.push('profile',{user:user})">
         <ion-col col-1 style="text-align: center;margin:auto;">
           {{i+1}}
         </ion-col>

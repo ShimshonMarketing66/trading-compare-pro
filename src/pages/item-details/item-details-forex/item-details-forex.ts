@@ -107,14 +107,8 @@ export class ItemDetailsForexPage {
   openUrl(i) {
     window.open("https://twitter.com/i/web/status/" + this.tweetsdata[i].id_str);
   }
-  
-  remove_from_watchlist(){
-    this.navParams.get("remove_from_watchlist")(undefined,this.item.symbol,this.item.type,this.navParams.get("i"),this.navParams.get('that'),this.item)
-  }
 
-  add_to_watchlist(){
-    this.navParams.get("add_to_watchlist")(undefined,this.item.symbol,this.item.type,this.navParams.get("i"),this.navParams.get('that'),this.item)
-  }
+  
 
 
 

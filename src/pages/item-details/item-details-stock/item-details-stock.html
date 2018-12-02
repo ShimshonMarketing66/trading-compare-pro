@@ -42,8 +42,8 @@
         </div>
       </ion-col>
       <ion-col col-1>
-        <ion-icon *ngIf="item.is_in_watchlist" name="star-v-a" (click)="remove_from_watchlist()"></ion-icon>
-        <ion-icon *ngIf="!item.is_in_watchlist" name="star-v" (click)="add_to_watchlist()"></ion-icon>
+        <ion-icon *ngIf="item.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist(undefined,item)"></ion-icon>
+        <ion-icon *ngIf="!item.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist(undefined,item)"></ion-icon>
       </ion-col>
 
 
@@ -184,7 +184,7 @@
             </ion-row>
             <ion-row>
               <ion-col style="text-align: left;font-size:12px;color:#9b9b9b">
-                {{item1.retweet_count}} Retweets {{item1.retweet_count}} Likes
+                {{item1.retweet_count}} Retweets {{item1.favorite_count}} Likes
               </ion-col>
             </ion-row>
           </ion-grid>

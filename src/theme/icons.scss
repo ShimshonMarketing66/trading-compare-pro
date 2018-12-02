@@ -72,6 +72,20 @@
     color: #12a6f9;
     }
     }
+
+    @mixin makeIcon_white($arg, $val) {
+      .#{$arg}:before ,
+      .ion-ios-#{$arg}:before ,
+      .ion-ios-#{$arg}-outline:before ,
+      .ion-md-#{$arg}:before ,
+      .ion-md-#{$arg}-outline:before {
+      content: $val;
+      font-size:18px;
+      color: white;
+      }
+      }
+
+
     @include makeIcon_bars_a(bars-v-a,"\f0c9");
     @include makeIcon_bars_d(bars-v-d,"\f0c9");
 
@@ -91,7 +105,7 @@
 @include makeIcon_a(star-v-a,"\f005");
  
  
-@include makeIcon(check-v,"\f00c");
+@include makeIcon_white(check-v,"\f00c");
  
 @include makeIcon(close-v,"\f00d");
  

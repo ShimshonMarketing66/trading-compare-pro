@@ -14,6 +14,7 @@ import { GlobalProvider } from '../global/global';
 
 @Injectable()
 export class AuthDataProvider {
+ 
   localCountry: CountryModel = new CountryModel();
   isAuth: boolean = false
   user: Profile = new Profile();
@@ -330,6 +331,42 @@ export class AuthDataProvider {
       })
     }
   }
+
+  getFollowers(_id): Promise<any>{
+    return this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-following/" + _id).toPromise()
+  }
+
+  getFollowing(_id): Promise<any>{
+    return this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-followers/" + _id).toPromise()
+   
+  }
+  getPost(_id): Promise<any>{
+    return new Promise((resolve)=>{
+      this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-comments-by-id/" + _id).toPromise().then((data:any)=>{
+
+      var dd=[];
+        for (let index = 0; index < data.length; index++) {
+          data[index].country = data[index].country.replace("-", " ");
+          dd.unshift(data[index]);
+        }
+        resolve(dd)
+    })
+
+    })
+  }
+
+  add_follow(followed,following){
+    this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/add-follow/" + followed + "/"+ following).toPromise().then
+    ((das)=>{
+      console.log(das);
+      
+    }).catch((dasasd)=>{
+      console.log(dasasd);
+      
+    })
+  }
+
+ 
 
 
   /* until here I used these functions */

@@ -4,6 +4,7 @@ import { StockProvider } from '../stock/stock';
 import { CryptoProvider } from '../crypto/crypto';
 import { ForexProvider } from '../forex/forex';
 import { AuthDataProvider } from '../auth-data/auth-data';
+import { ToastController, AlertController } from 'ionic-angular';
 
 @Injectable()
 export class GlobalProvider {
@@ -11,6 +12,8 @@ export class GlobalProvider {
   watchlists=[];
   constructor
   (
+    public alertCtrl:AlertController,
+    public toastCtrl:ToastController,
     public http: HttpClient,
     public cryptoProvider:CryptoProvider,
     public stockProvider:StockProvider,
@@ -19,84 +22,8 @@ export class GlobalProvider {
   ) {
    
   }
-  add_to_watchlist(symbol:string,type:string){
-    let dataTOSEND = {
-      data:{
-        symbol:symbol,
-        type:type
-      },
-      _id:this.authData.user._id
-    }
-    this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/add-to-watchlist",dataTOSEND)
-    .toPromise()
-    .then(data=>{
-      console.log(symbol + " added");
-      this.authData.user.watchlist.push(dataTOSEND.data);
-    })
-    .catch(err=>{
-      console.log("err",err);
-    })
-  }
 
-  remove_from_watchlist(symbol:string,type:string,i?:number){
-
-    if (i!=undefined) {
-      switch (type) {
-        case "STOCK":
-          for (let index = 0; index < this.stockProvider.allStocks.length; index++) {
-            for (let j = 0; j < this.stockProvider.allStocks[index].data.length; j++) {
-              if ( this.stockProvider.allStocks[index].data[j].symbol == symbol) {
-                this.stockProvider.allStocks[index].data[j].is_in_watchlist = false;
-              }
-            }
-          }
-          break;
-
-          case "FOREX":
-          for (let index = 0; index < this.forexProvider.allForex.length;index++) {
-            if ( this.forexProvider.allForex[index].symbol == symbol) {
-              this.forexProvider.allForex[index].is_in_watchlist = false;
-            }
-          }
-          break;
-
-          case "CRYPTO":
-          for (let index = 0; index < this.cryptoProvider.arrAllCrypto.length;index++) {
-            if ( this.cryptoProvider.arrAllCrypto[index].symbol == symbol) {
-              this.cryptoProvider.arrAllCrypto[index].is_in_watchlist = false;
-            }
-          }
-          break;
-      
-        default:
-          break;
-      }
-    }
-
-    for (let index = 0; index < this.authData.user.watchlist.length; index++) {
-      if (this.authData.user.watchlist[index].symbol == symbol) {
-        this.authData.user.watchlist.splice(index, 1);
-        break;
-      }
-    }
-    let dataTOSEND = {
-      data:{
-        symbol:symbol,
-        type:type
-      },
-      _id:this.authData.user._id
-    }
-    this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/remove-from-watchlist",dataTOSEND)
-    .toPromise()
-    .then(data=>{
-
-    })
-    .catch(err=>{
-      console.log("err",err);
-      
-    })
-  }
-
+  
 
   add_sentiment(symbol:string,type:string,symbol_type:string,price:number):Promise<any>{
     return new Promise((resolve,reject)=>{
@@ -323,6 +250,281 @@ export class GlobalProvider {
     return this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-comments/" +symbol ).toPromise()
   }
 
+
+    add_to_watchlist(event: any,item) {
+      console.log(item);
+      
+    if (event!=undefined) {
+      event.stopPropagation();
+    }
+   
+    if (this.authData.user.watchlist.length + 1 > 10 && this.authData.user.state == "unknown") {
+     
+      let alert = this.alertCtrl.create({
+        title: 'your watchlist is full',
+        subTitle: 'you have to be vip to make your watchlist greaten.',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel'
+          },
+          {
+            text: 'Go to vip',
+            handler: () => {
+              console.log('go to vip.');
+            }
+          }
+        ]
+      })
+      alert.present();
+      return;
+    }
+
+    if (this.watchlists.length != 0) {
+      this.watchlists.push(item);
+    }
+    item.is_in_watchlist = true;
+
+    let toast = this.toastCtrl.create({
+      message: item.symbol + ' was added successfully',
+      duration: 2000,
+      position: 'bottom'
+    });
+    toast.present();
+    this.add_to_watchlist_backend(item.symbol, item.type);
+  }
+
+  add_to_watchlist_backend(symbol:string,type:string){
+    let dataTOSEND = {
+      data:{
+        symbol:symbol,
+        type:type
+      },
+      _id:this.authData.user._id
+    }
+    this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/add-to-watchlist",dataTOSEND)
+    .toPromise()
+    .then(data=>{
+      console.log(symbol + " added");
+      this.authData.user.watchlist.push(dataTOSEND.data);
+    })
+    .catch(err=>{
+      console.log("err",err);
+    })
+  }
+
+
+  remove_from_watchlist(event: any, item:any) {
+    if (event !=undefined) {
+      event.stopPropagation();
+    }
   
+    item.is_in_watchlist = false;
+
+    for (let index = 0; index < this.watchlists.length; index++) {
+      if (this.watchlists[index].symbol == item.symbol) {
+        this.watchlists.splice(index, 1);
+      }
+    }
+
+    let toast = this.toastCtrl.create({
+      message: item.symbol + ' was removed from watchlist successfully',
+      duration: 2000,
+      position: 'bottom'
+    });
+    toast.present();
+
+  
+    for (let index = 0; index < this.authData.user.watchlist.length; index++) {
+      if (this.authData.user.watchlist[index].symbol == item.symbol) {
+        this.authData.user.watchlist.splice(index, 1);
+        break;
+      }
+    }
+
+    this.remove_from_watchlist_backend(item.symbol, item.type);
+  }
+  
+
+  remove_from_watchlist_backend(symbol:string,type:string){
+    let dataTOSEND = {
+      data:{
+        symbol:symbol,
+        type:type
+      },
+      _id:this.authData.user._id
+    }
+    this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/remove-from-watchlist",dataTOSEND)
+    .toPromise()
+    .then(data=>{
+
+    })
+    .catch(err=>{
+      console.log("err",err);
+    })
+  }
+
+  get_all_information(_id): Promise<any> {
+    
+    return new Promise((resolve,reject)=>{
+      var promises = [];
+      promises.push(this.authData.getProfileFromServer(_id));
+      promises.push(this.authData.getFollowing(_id));
+      promises.push(this.authData.getFollowers(_id));
+      promises.push(this.authData.getPost(_id));
+
+      Promise.all(promises).then((data)=>{
+        console.log(data);
+        
+       this.get_watchlist(data[0].watchlist).then((WATCH)=>{
+         console.log(WATCH);
+         
+        var a = data[0];
+        a["following"] = data[1];
+        a["followers"] = data[2];
+        a["posts"]= data[3];
+        a["watchlist"]= WATCH;
+         resolve(a);
+       })
+      
+      })
+    })
+  }
+
+  get_watchlist(watchlist_to_return):Promise<any>{
+    console.log(watchlist_to_return);
+    
+    return new Promise((resolve)=>{
+      var promises =[];
+
+      for (let index = 0; index < watchlist_to_return.length; index++) {
+       switch (watchlist_to_return[index].type) {
+         case "STOCK":
+           promises.push(this.stockProvider.get_stock_by_symbol(watchlist_to_return[index].symbol))
+           break;
+
+           case "FOREX":
+           promises.push(this.forexProvider.get_by_symbol(watchlist_to_return[index].symbol))
+
+           break;
+
+           case "CRYPTO":
+           promises.push(this.cryptoProvider.get_by_symbol(watchlist_to_return[index].symbol))
+           break;
+       
+         default:
+           break;
+       }
+       
+        
+      }
+      Promise.all(promises).then((data)=>{
+       for (let index = 0; index < data.length; index++) {
+         let flag = false;
+         for (let j = 0; j < this.watchlists.length; j++) {
+          if (this.watchlists[j].symbol == data[index].symbol ) {
+            data[index]["is_in_watchlist"] = true;
+            break;
+          }
+            data[index]["is_in_watchlist"] = flag;
+         }
+         
+       }
+
+       resolve(data)
+        
+      })
+
+      // Promise.all(promises).then((data)=>{
+      //   for (let index1 = 0; index1 < data.length; index1++) {
+      //     for (let index2 = 0; index2 < data[0].length; index2++) {
+      //       for (let i = 0; i < data[3].length; i++) {
+      //         if (data[0][index2].symbol == data[3][i].symbol &&  data[3][i].status == "OPEN") {
+      //           data[0][index2]["sentiment"] = data[3][i].type;
+      //           data[0][index2]["status"] = "OPEN";
+      //           break;
+      //         }
+      //       }
+      //     }
+  
+      //     for (let index2 = 0; index2 < data[1].length; index2++) {
+      //       for (let i = 0; i < data[3].length; i++) {
+      //         if (data[1][index2].symbol == data[3][i].symbol &&  data[3][i].status == "OPEN") {
+      //           data[1][index2]["sentiment"] = data[3][i].type;
+      //           data[1][index2]["status"] = "OPEN";
+      //           break;
+      //         }
+      //       }
+      //     }
+  
+      //     for (let index2 = 0; index2 < data[2].length; index2++) {
+      //       for (let i = 0; i < data[3].length; i++) {
+      //         if (data[2][index2].symbol == data[3][i].symbol && data[3][i].status == "OPEN") {
+      //           data[2][index2]["sentiment"] = data[3][i].type;
+      //           data[2][index2]["status"] = "OPEN";
+      //           break;
+      //         }
+      //       }
+      //     }
+      //   }
+  
+      //   let promises11 = [this.forexProvider.getAllForex(), this.cryptoProvider.getCrypto()];
+      //   for (let index = 0; index < this.authData.user.watchlist.length; index++) {
+      //     if (this.authData.user.watchlist[index].type == "STOCK") {
+      //       promises11.push(this.stockProvider.get_stock_by_symbol(this.authData.user.watchlist[index].symbol));
+      //     }
+      //   }
+  
+      //   Promise.all(promises11).then((data: any[]) => {
+      //     for (let i = 0; i < this.authData.user.watchlist.length; i++) {
+      //       switch (this.authData.user.watchlist[i].type) {
+      //         case "FOREX":
+      //           for (let j = 0; j < data[0].length; j++) {
+      //             if (data[0][j].symbol == this.authData.user.watchlist[i].symbol) {
+      //               this.watchlists.push(data[0][j]);
+      //               break;
+      //             }
+      //           }
+      //           break;
+      //         case "CRYPTO":
+      //           for (let j = 0; j < data[1].length; j++) {
+      //             if (data[1][j].symbol == this.authData.user.watchlist[i].symbol) {
+      //               this.watchlists.push(data[1][j]);
+      //               break;
+      //             }
+      //           }
+      //           break;
+      //         case "STOCK":            
+      //           for (let j = 2; j < data.length; j++) {
+      //             if (data[j].symbol == this.authData.user.watchlist[i].symbol) {
+      //               for (let aaa = 0; aaa < this.sentiments.length; aaa++) {
+      //                if (this.sentiments[aaa].symbol == data[j].symbol) {
+      //                  if (this.sentiments[aaa].status == "OPEN") {
+      //                   data[j]["status"]= "OPEN";
+      //                   data[j]["sentiment"]= this.sentiments[aaa].type;
+      //                   break;
+      //                  }else{
+      //                   data[j]["status"]= "CLOSE";
+      //                   data[j]["sentiment"]= this.sentiments[aaa].type;
+      //                  }
+      //                }
+      //               }
+      //               this.watchlists.push(data[j]);
+      //               break;
+      //             }
+      //           }
+      //           break;
+      //         default:
+      //           break;
+      //       }
+      //     }
+      //     resolve();
+  
+      //   })
+      //   resolve();
+      // })
+     })
+  }
+
 
 }

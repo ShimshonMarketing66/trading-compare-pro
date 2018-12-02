@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { GlobalProvider } from '../../providers/global/global';
+import { AuthDataProvider } from '../../providers/auth-data/auth-data';
 
 
 @IonicPage()
@@ -14,8 +15,9 @@ export class HomePage {
   selectedSegmentSocialFeeds: string = "Following";
   AllLeaderboard: boolean = false;
   constructor(
+    public authData : AuthDataProvider,
     public navCtrl: NavController,
-     public navParams: NavParams,
+    public navParams: NavParams,
     public globalProvider:GlobalProvider) {
     this.getUsers();
   }

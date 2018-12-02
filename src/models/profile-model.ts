@@ -22,4 +22,5 @@ export class Profile {
     createAccountDate: string = "";
     version: string = "";
     countryData: CountryModel = new CountryModel();
+    description:string="";
 }

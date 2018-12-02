@@ -15,7 +15,7 @@ export class MainTabsPage {
   liveFeedRoot = 'live-feed'
   alertsRoot = 'AlertsPage'
   menuRoot = 'menu'
-  profileRoot = 'ProfilePage'
+  profileRoot = 'my-profile'
 
 
   constructor(public navCtrl: NavController) {

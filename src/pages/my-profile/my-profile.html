@@ -13,28 +13,24 @@
   <ion-grid style="margin-top: 15px;">
     <ion-row>
       <ion-col col-3 style="text-align: center;">
-        <img  alt="logo" height="70" width="70" style="border-radius: 50px;vertical-align:middle;" src="assets/imgs/flags/{{profile?.countryData?.country}}.png">
+        <img alt="logo" height="70" width="70" style="border-radius: 50px;vertical-align:middle;" src="assets/imgs/flags/{{user_profile.countryData.country}}.png">
       </ion-col>
       <ion-col style="margin:auto;">
        
             <div style="font-size: 16px;font-weight: 900;letter-spacing: 0.5px;text-align: center;">
-              {{profile?.nickname}}
+              {{user_profile.nickname}}
             </div>
             <div style="font-size: 12px;letter-spacing: 0.5px;text-align: center;color: #9b9b9b">
-              Joined {{profile?.createAccountDate}}
+              Joined {{user_profile.createAccountDate}}
             </div>
             <div style="font-size: 12px;letter-spacing: 0.5px;text-align: center;color: #9b9b9b">
               45 messages sent
             </div>
+   
+        
       </ion-col>
       <ion-col col-3 style="padding-right: 15px;">
-        <button *ngIf="is_follow" (tap)="is_follow = false" ion-button style="width: 35px;background: #12a6f9;height: 30px;">
-          <ion-icon name="check-v"></ion-icon>
-        </button>
-          <button *ngIf="!is_follow" (tap)="is_follow = true;authData.add_follow(profile._id,authData.user._id)" ion-button style="background: transparent;height: 30px;border: 1px solid #12a6f9;width: 100%;">
-          FOLLOW
-        </button>
-
+       
     </ion-col >
 
     </ion-row>
@@ -42,12 +38,25 @@
 <div style="margin-top: 22px;text-align: center;margin-bottom: 10px;">
     <button ion-button style="background: #12a6f9;font-size: 14px;">UPGRADE TO PREMIUM</button>
 </div>
-
 <div style="margin-top: 10px;text-align: center;margin-bottom: 10px;">
-  <button style="height: 30px;font-size: 14px;background: #91c353;" ion-button>Sentiment</button>
+  <ion-grid style="padding: 5px;">
+    <ion-row>
+      <ion-col>
+        <ion-textarea type="text" [maxlength]="200" [(ngModel)]="authData.user.description" style="color: #8c8c8c;text-align: center;" [readonly]="!edit_description" #myDesciption (ionChange)="description_change()"></ion-textarea>
+      </ion-col>
+      <ion-col col-1 style="margin: auto;">
+        <ion-icon *ngIf="!edit_description" (tap)="edit_description=true;counter_left_description = 200 - authData.user.description.length;myDesciption.setFocus();" style="font-size: 24px;color: #8c8c8c;" name="md-create"></ion-icon>
+        <ion-icon *ngIf="edit_description" (tap)="submit_description()" style="font-size: 24px;color: #8c8c8c;" name="md-checkbox"></ion-icon>
+        <div  *ngIf="edit_description" style="color: #8c8c8c;">
+          {{counter_left_description}}
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  
 </div>
-
-
+ 
+ 
 
   <ion-grid style="border-top: 1px solid;border-top: 1px solid #12a6f9;border-bottom: 1px solid #12a6f9;">
     <ion-row>
@@ -57,7 +66,7 @@
            </span> 
             <br>
         <b [style.color]="selected_segment =='POSTS'?'white':'#12a6f9'">
-           {{posts_length}}
+            3
         </b> 
       </ion-col>
       <ion-col style="text-align: center;padding-top: 10px;padding-bottom: 10px;" (click)="change_segment('WATCHLIST')"  [style.background]="selected_segment =='WATCHLIST'?'#12a6f9':'transparent'">
@@ -65,7 +74,7 @@
           Watchlist
        </span> <br>
         <b  [style.color]="selected_segment =='WATCHLIST'?'white':'#12a6f9'">
-          {{watchlist_length}}
+            3
         </b>
       </ion-col>
       <ion-col style="text-align: center;padding-top: 10px;padding-bottom: 10px;" (click)="change_segment('FOLLOWING')"  [style.background]="selected_segment =='FOLLOWING'?'#12a6f9':'transparent'">
@@ -75,8 +84,7 @@
            </span>
              <br>
         <b [style.color]="selected_segment =='FOLLOWING'?'white':'#12a6f9'">
-          {{following_length}}
-
+            3
         </b>
       </ion-col>
       <ion-col style="text-align: center;padding-top: 10px;padding-bottom: 10px;" (click)="change_segment('FOLLOWERS')"  [style.background]="selected_segment =='FOLLOWERS'?'#12a6f9':'transparent'">
@@ -85,8 +93,7 @@
               Followers
            </span> <br>
         <b [style.color]="selected_segment =='FOLLOWERS'?'white':'#12a6f9'">
-          {{followers_length}}
-
+            3
         </b>
       </ion-col>
     </ion-row>
@@ -97,37 +104,8 @@
   <div [ngSwitch]="selected_segment">
 
     <div *ngSwitchCase="'POSTS'" style="padding-bottom: 70px;">
-      
-      <ion-grid style="padding: 8px;padding-bottom: unset;">
-        <ion-row *ngFor="let comment of profile?.posts;" style="margin-bottom: 19px;">
-          <ion-col col-2 style="text-align: right;">
-            <div>
-              <img alt="logo" height="50" width="50" style="border-radius: 50px;vertical-align:middle;" src="assets/imgs/flags/{{comment.country}}.png">
-            </div>
-          </ion-col>
-          <ion-col col-10>
-            <div class="comment">
-              <div style="display: inline">
-                <ion-grid>
-                  <ion-row>
-                    <ion-col style="font-size:14px;font-weight: 800;">
-                        {{comment.nickname}}
-                    </ion-col>
-                    <ion-col style="font-size: 12px;font-weight: 400;color: #9b9b9b;text-align: right;">
-                        {{comment.date_from_now}}
-                    </ion-col>
-                  </ion-row>
-                </ion-grid>
-                   
-              </div>
-              <div style="font-size:14px;font-weight: 300;">
-                {{comment.txt}}
-              </div>
-
-            </div>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+  
+        Someone is typing ...POSTS
        
 
     </div> 
@@ -135,7 +113,7 @@
     <div *ngSwitchCase="'WATCHLIST'" style="padding-bottom: 70px;">
   
         <ion-grid>
-            <ion-row style="border-bottom: 1px solid #4a4a4a;height: 40px;" *ngFor="let watchlist of profile.watchlist;let i = index;" (click)="goToDetails(watchlist)">
+            <ion-row style="border-bottom: 1px solid #4a4a4a;height: 40px;" *ngFor="let watchlist of globalProvider.watchlists;let i = index;" (click)="goToDetails(watchlist)">
               <ion-col style="overflow: hidden;margin:auto;text-align: left;white-space: nowrap;">
                 <span style="padding-left: 3px;">
                   <ion-icon *ngIf="watchlist.is_in_watchlist" name="star-v-a"  (click)="globalProvider.remove_from_watchlist($event,watchlist)"></ion-icon>
