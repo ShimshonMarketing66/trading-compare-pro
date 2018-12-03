@@ -38,15 +38,18 @@
 
   <div [ngStyle]="AllLeaderboard && {'overflow-y': 'unset','height':'unset'} || !AllLeaderboard && {'overflow-y': 'hidden','height': '35%'}">
     <ion-grid style="padding-top: 10px;">
-      <ion-row *ngFor="let user of users;let i = index;" style="padding: 6px;" (click)="navCtrl.push('profile',{user:user})">
+      <ion-row *ngFor="let user of users;let i = index;" style="padding: 6px;" (click)="go_to_user_page(user)">
         <ion-col col-1 style="text-align: center;margin:auto;">
           {{i+1}}
         </ion-col>
         <ion-col col-2>
           <img style="max-height: 30px;" src="assets/imgs/flags/{{user.country}}.png">
         </ion-col>
-        <ion-col style="margin:auto;">
+        <ion-col *ngIf="user._id!=authData.user._id" style="margin:auto;">
           {{user.nickname}}
+        </ion-col>
+        <ion-col *ngIf="user._id==authData.user._id" style="margin:auto;">
+         (you)
         </ion-col>
         <ion-col style="text-align: right;padding-right: 10px;margin:auto;">
           {{user.total_corect_percent}}%

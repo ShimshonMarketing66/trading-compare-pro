@@ -93,7 +93,7 @@ export class SentimentsPage {
      }
     
     }
-    this.total_profit =(num_gain/no_pain_no_gain)*100;
+    this.total_profit =Number(((num_gain/no_pain_no_gain)*100).toFixed(1));
   })
 
   })
@@ -101,6 +101,7 @@ export class SentimentsPage {
        
    
         // for (let jj = 0; jj < array.length; jj++) {
+          
         //   const element = array[index];
           
         // }

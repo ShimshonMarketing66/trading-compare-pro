@@ -19,6 +19,7 @@ export class AuthDataProvider {
   isAuth: boolean = false
   user: Profile = new Profile();
   platform: any = "browser";
+  idToken: any;
   constructor(
     private store: InAppPurchase2,
     private googlePlus: GooglePlus,
@@ -333,11 +334,11 @@ export class AuthDataProvider {
   }
 
   getFollowers(_id): Promise<any>{
-    return this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-following/" + _id).toPromise()
+    return this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-followers/" + _id).toPromise()
   }
 
-  getFollowing(_id): Promise<any>{
-    return this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-followers/" + _id).toPromise()
+  getFollowing(_id?): Promise<any>{
+    return this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-following/" + _id).toPromise()
    
   }
   getPost(_id): Promise<any>{
@@ -355,14 +356,23 @@ export class AuthDataProvider {
     })
   }
 
-  add_follow(followed,following){
-    this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/add-follow/" + followed + "/"+ following).toPromise().then
-    ((das)=>{
-      console.log(das);
-      
-    }).catch((dasasd)=>{
-      console.log(dasasd);
-      
+  add_follow(follow){
+    follow["idToken"]=this.idToken;
+    this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/add-follow",follow).toPromise()
+    .then(()=>{
+    console.log("add_follow sucsses");
+    }).catch((err)=>{
+      console.error(err);
+    })
+  }
+
+  remove_follow(follow){
+    follow["idToken"]=this.idToken;
+    this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/remove-follow",follow).toPromise()
+    .then(()=>{
+    console.log("remove_follow sucsses");
+    }).catch((err)=>{
+      console.error(err);
     })
   }
 
