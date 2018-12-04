@@ -1,5 +1,5 @@
 import { Component, HostListener, ViewChild, AfterViewInit, NgZone, ElementRef, trigger, transition, animate, keyframes, style } from '@angular/core';
-import { IonicPage, NavController, NavParams, Slides, ModalController, ModalOptions, Platform, Content, AlertController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Slides, ModalController, ModalOptions, Platform, Content, AlertController, Events } from 'ionic-angular';
 import { StockProvider } from '../../providers/stock/stock';
 import { IStock } from '../../models/stock';
 import { ForexProvider } from '../../providers/forex/forex';
@@ -58,7 +58,7 @@ export class LiveFeedPage implements AfterViewInit {
   @ViewChild('mySlider') slider: Slides;
   @ViewChild('content') content: Content;
   modeView: string = "LINES"
-
+  first_time = true;
   watchlists = [];
   /* CRYPTO */
   CoinConnectedWSCrypto: any[] = [];
@@ -98,6 +98,7 @@ export class LiveFeedPage implements AfterViewInit {
 
 
   constructor(
+    public events: Events,
     private alertCtrl: AlertController,
     public authData: AuthDataProvider,
     public toastCtrl: ToastController,
@@ -111,17 +112,9 @@ export class LiveFeedPage implements AfterViewInit {
     public navCtrl: NavController,
     public navParams: NavParams
   ) {
-    this.sizeOfBody = window.screen.height - (this.platform.is("ios") ? 180 : 199);
-    this.numOfLines = Math.ceil(this.sizeOfBody / this.sizeOfLine);
+    console.log("constructor");
 
-    this.slides = [this.STOCK, this.FOREX, this.CRYPTO, this.WATCHLIST];
-    this.buildStocks(0).then((arr) => {
-      this.offsetRequested = 50;
-      this.startWS(this.STOCK);
-      this.addCoinWebsocketStock(arr);
-    })
-
-
+   
 
   }
 
@@ -129,6 +122,7 @@ export class LiveFeedPage implements AfterViewInit {
   ionViewDidLoad() {
     console.log('ionViewDidLoad LiveFeedPage');
   }
+
 
   ngAfterViewInit(): void {
     //     setTimeout(()=>{
@@ -593,6 +587,9 @@ export class LiveFeedPage implements AfterViewInit {
       case this.STOCK:
         this.socketStock = io.connect("https://ws-api.iextrading.com/1.0/last");
         this.socketStock.on("message", (data) => {
+          if (this.socketStock.disconnected) {
+            return
+          }
           data = JSON.parse(data);
           let pair = data.symbol;
           for (let index = 0; index < this.CoinConnectedWSStock.length; index++) {
@@ -610,11 +607,8 @@ export class LiveFeedPage implements AfterViewInit {
 
               if (Number(data.price) < Number(this.stockProvider.stocks[a].day_low)) {
                 this.stockProvider.stocks[a].day_low = data.price;
-              }
-
-              console.log(data.price,pair);
-              
-              
+              }              
+      
               let original = Number(this.stockProvider.stocks[a].price_open);
               if (isNaN(original) || original == undefined || original == null ) {
                 original = 0;
@@ -648,14 +642,10 @@ export class LiveFeedPage implements AfterViewInit {
     for (let index = 0; index < this.globalProvider.watchlists.length; index++) {
      switch (this.globalProvider.watchlists[index]["type"]) {
        case this.STOCK:
-       
          this.socketStockWL.emit("subscribe",this.globalProvider.watchlists[index].symbol);
-        
          break;
 
-         case this.FOREX:
-         console.log(this.globalProvider.watchlists[index].symbol + "_2sec");
-         
+         case this.FOREX:         
          this.socketForexWL.emit("room",this.globalProvider.watchlists[index].symbol + "_2sec");
          break;
 
@@ -759,6 +749,84 @@ export class LiveFeedPage implements AfterViewInit {
       this.socketStock.emit("subscribe", str);
     } else {
       console.log("this.socketStock!=undefined");
+    }
+  }
+
+  ionViewWillEnter()
+  {
+    switch (this.selectedSegment) {
+      case this.STOCK:
+      this.sizeOfBody = window.screen.height - (this.platform.is("ios") ? 180 : 199);
+      this.numOfLines = Math.ceil(this.sizeOfBody / this.sizeOfLine);
+  
+      this.slides = [this.STOCK, this.FOREX, this.CRYPTO, this.WATCHLIST];
+      this.buildStocks(0).then((arr) => {
+        this.offsetRequested = 50;
+        this.startWS(this.STOCK);
+        this.addCoinWebsocketStock(arr);
+      })
+  
+  
+        break;
+      case this.FOREX:
+      this.buildForex().then((arr) => {
+        this.offsetRequested += 50;
+        if (this.modeView != "SQUARES") {
+          console.log("arr",arr);
+          this.startWS(this.FOREX);
+          this.addCoinWebsocketForex(arr);
+        }
+      })
+        break;
+      case this.CRYPTO:
+      this.buildCrypto().then((arr) => {
+        if (this.modeView != "SQUARES") {
+          this.startWS(this.CRYPTO);
+        this.addCoinWebsocketCrypto(arr);
+        }
+        this.offsetRequested += 50;
+      })
+        break;
+
+        case this.WATCHLIST:
+        this.startWS(this.WATCHLIST);
+        break;
+
+
+      default:
+        break;
+    }
+    
+  }
+  ionViewDidLeave(){
+    console.log("ionViewDidLeave");
+    
+  }
+
+  ionViewWillLeave(){
+    console.log("ionViewWillLeave");
+    this.content.scrollTop = 0;
+    switch (this.selectedSegment) {
+      case "FOREX":
+      this.socketForex.disconnect()
+        break;
+
+        case "CRYPTO":
+        this.socketCrypto.disconnect()
+        break;
+
+        case "STOCK":
+        this.socketStock.disconnect()
+        break;
+
+        case "WATCHLIST":
+        this.socketCryptoWL.disconnect();
+        this.socketForexWL.disconnect();
+        this.socketStockWL.disconnect();
+        break;
+    
+      default:
+        break;
     }
   }
 
@@ -1020,7 +1088,7 @@ export class LiveFeedPage implements AfterViewInit {
         arr = that2.cryptoProvider.cryptos;
         break;
       case that2.WATCHLIST:
-        arr = that2.watchlists;
+        arr = that2.globalProvider.watchlists;
         if (arr[i].status == "CLOSE" || arr[i].sentiment == "none") {
           for (let index = 0; index < this.stockProvider.allStocks.length; index++) {
             for (let j = 0; j < this.stockProvider.allStocks[index].data.length; j++) {

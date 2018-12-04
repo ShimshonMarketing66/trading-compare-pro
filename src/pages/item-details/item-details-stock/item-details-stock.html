@@ -1,9 +1,9 @@
 <ion-header (click)="foo()">
  
   <ion-navbar>
-    <ion-title>{{item.name}}</ion-title>
+    <ion-title>{{item?.name}}</ion-title>
     <ion-buttons end>
-      <img alt="logo" height="40" width="40" style="border-radius: 50px;" src="assets/imgs/flags/{{item.country}}.png">
+      <img alt="logo" height="40" width="40" style="border-radius: 50px;" src="assets/imgs/flags/{{item?.country}}.png">
     </ion-buttons>
 
   </ion-navbar>
@@ -18,32 +18,32 @@
   <ion-grid style="padding:16px;">
     <ion-row>
       <ion-col col-3>
-        <img style="width: 60px;height: 60px;border-radius: 50px;" [src]="item.logo" (error)="errorHandler($event)">
+        <img style="width: 60px;height: 60px;border-radius: 50px;" [src]="item?.logo" (error)="errorHandler($event)">
       </ion-col>
       <ion-col>
         <div>
           <span style="font-size:24px;">
-            {{item.price|tofixe}} {{item.currency|currencySymbol}}
+            {{item?.price|tofixe}} {{item?.currency|currencySymbol}}
 
           </span>
           &nbsp;
-          <span style="font-size:16px;" [ngStyle]="item.change_pct < 0  && {'color': '#ee6071'}  || item.change_pct > 0  && {'color': '#00d68b'}">
-            {{item.change_pct|tofixe}} %
+          <span style="font-size:16px;" [ngStyle]="item?.change_pct < 0  && {'color': '#ee6071'}  || item?.change_pct > 0  && {'color': '#00d68b'}">
+            {{item?.change_pct|tofixe}} %
           </span>
         </div>
         <div style="position: absolute;bottom: 10px;">
           <span style="font-size:14px;">
-            High : {{item.day_high|tofixe}}
+            High : {{item?.day_high|tofixe}}
           </span>
           &nbsp; &nbsp;
           <span style="font-size:14px;">
-            Low : {{item.day_low|tofixe}}
+            Low : {{item?.day_low|tofixe}}
           </span>
         </div>
       </ion-col>
       <ion-col col-1>
-        <ion-icon *ngIf="item.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist(undefined,item)"></ion-icon>
-        <ion-icon *ngIf="!item.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist(undefined,item)"></ion-icon>
+        <ion-icon *ngIf="item?.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist(undefined,item)"></ion-icon>
+        <ion-icon *ngIf="!item?.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist(undefined,item)"></ion-icon>
       </ion-col>
 
 
@@ -51,10 +51,10 @@
   </ion-grid>
 
   <div style="display: inline-flex;padding:16px;width: 100%;padding-top: unset;">
-    <span (click)="change_sentiment('BULLISH')" [ngClass]="item.sentiment == 'BULLISH' && item.status == 'OPEN' ? 'bullish-active' : 'bullish-disable'">
+    <span (click)="change_sentiment('BULLISH')" [ngClass]="item?.sentiment == 'BULLISH' && item?.status == 'OPEN' ? 'bullish-active' : 'bullish-disable'">
       BULLISH
     </span>
-    <span (click)="change_sentiment('BEARISH')" [ngClass]="item.sentiment == 'BEARISH' && item.status == 'OPEN' ? 'bearish-active' :  'bearish-disable'">
+    <span (click)="change_sentiment('BEARISH')" [ngClass]="item?.sentiment == 'BEARISH' && item?.status == 'OPEN' ? 'bearish-active' :  'bearish-disable'">
       BEARISH
     </span>
 
@@ -87,22 +87,22 @@
 
     <div *ngSwitchCase="'CHAT'" style="padding-bottom: 70px;">
       <ion-grid style="padding: 8px;padding-bottom: unset;" [style.min-height.px]="height - 350">
-        <ion-row *ngFor="let comment of comments;" style="margin-bottom: 19px;">
-          <ion-col col-2 style="text-align: right;">
+        <ion-row *ngFor="let comment of comments;let i = index" [id]="comment.primary_key" style="margin-bottom: 19px;">
+          <ion-col col-2 style="text-align: right;" (click)="go_to_profile(comment)">
             <div>
-              <img alt="logo" height="50" width="50" style="border-radius: 50px;vertical-align:middle;" src="assets/imgs/flags/{{comment.country}}.png">
+              <img alt="logo" height="50" width="50" style="border-radius: 50px;vertical-align:middle;" src="assets/imgs/flags/{{comment?.country}}.png">
             </div>
           </ion-col>
           <ion-col col-10>
-            <div class="comment">
+            <div class="comment comment1" [id]="comment.primary_key+i" (click)="clickMe()"  ion-long-press [interval]="2000" (onPressing)="released(comment,i)">
               <div style="display: inline">
                 <ion-grid>
                   <ion-row>
-                    <ion-col style="font-size:14px;font-weight: 800;">
-                        {{comment.nickname}}
+                    <ion-col (click)="go_to_profile(comment)" style="font-size:14px;font-weight: 800;">
+                        {{comment?.nickname}}
                     </ion-col>
                     <ion-col style="font-size: 12px;font-weight: 400;color: #9b9b9b;text-align: right;">
-                        {{comment.date_from_now}}
+                        {{comment?.date_from_now}}
                     </ion-col>
                   </ion-row>
                 </ion-grid>
@@ -139,22 +139,22 @@
       <button ion-button style="background: #12a6f9;height: 30px;" block>Trade Now</button>
 
       <div style="text-align: left;font-size: 15px; line-height: 1.8;">
-        Price : {{item.price}}
-        <br> Currency : {{item.currency}}
-        <br> Open : {{ item.price_open}}
-        <br> Day High: {{item.day_high}}
-        <br> Day Low: {{item.day_low}}
+        Price : {{item?.price}}
+        <br> Currency : {{item?.currency}}
+        <br> Open : {{ item?.price_open}}
+        <br> Day High: {{item?.day_high}}
+        <br> Day Low: {{item?.day_low}}
         <br> Year High: {{item['52_week_high']}}
         <br> Year Low: {{item['52_week_low']}}
-        <br> Day Change : {{item.day_change}}
-        <br> Change Pct : {{item.change_pct}}
-        <br> Close Yesterday : {{item.close_yesterday}}
-        <br> Market Cap : {{item.market_cap}}
-        <br> Volume : {{ item.volume}}
-        <br> Shares : {{item.shares}}
-        <br> Stock Exchange : {{item.stock_exchange_long}}
-        <br> Timezone : {{ item.timezone_name}}
-        <br> Last Trade: {{item.last_trade_time}}
+        <br> Day Change : {{item?.day_change}}
+        <br> Change Pct : {{item?.change_pct}}
+        <br> Close Yesterday : {{item?.close_yesterday}}
+        <br> Market Cap : {{item?.market_cap}}
+        <br> Volume : {{ item?.volume}}
+        <br> Shares : {{item?.shares}}
+        <br> Stock Exchange : {{item?.stock_exchange_long}}
+        <br> Timezone : {{ item?.timezone_name}}
+        <br> Last Trade: {{item?.last_trade_time}}
       </div>
     </div>
 
@@ -171,20 +171,20 @@
           <ion-grid>
             <ion-row>
               <ion-col style="text-align: left;font-size:14px;font-weight: 900;">
-                Twitter @{{item1.user.name}}
+                Twitter @{{item1?.user?.name}}
               </ion-col>
               <ion-col col-3 style="text-align: right;font-size:12px;color:#9b9b9b">
-                {{item1.created_at}}
+                {{item1?.created_at}}
               </ion-col>
             </ion-row>
             <ion-row>
               <ion-col style="text-align: left;font-size:14px;">
-                {{item1.text}}
+                {{item1?.text}}
               </ion-col>
             </ion-row>
             <ion-row>
               <ion-col style="text-align: left;font-size:12px;color:#9b9b9b">
-                {{item1.retweet_count}} Retweets {{item1.favorite_count}} Likes
+                {{item1?.retweet_count}} Retweets {{item1?.favorite_count}} Likes
               </ion-col>
             </ion-row>
           </ion-grid>

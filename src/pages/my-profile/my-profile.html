@@ -13,15 +13,15 @@
   <ion-grid style="margin-top: 15px;">
     <ion-row>
       <ion-col col-3 style="text-align: center;">
-        <img alt="logo" height="70" width="70" style="border-radius: 50px;vertical-align:middle;" src="assets/imgs/flags/{{user_profile.countryData.country}}.png">
+        <img alt="logo" height="70" width="70" style="border-radius: 50px;vertical-align:middle;" src="assets/imgs/flags/{{authData.user.countryData.country}}.png">
       </ion-col>
       <ion-col style="margin:auto;">
        
             <div style="font-size: 16px;font-weight: 900;letter-spacing: 0.5px;text-align: center;">
-              {{user_profile.nickname}}
+              {{authData.user.nickname}}
             </div>
             <div style="font-size: 12px;letter-spacing: 0.5px;text-align: center;color: #9b9b9b">
-              Joined {{user_profile.createAccountDate}}
+              Joined {{authData.user.createAccountDate}}
             </div>
             <div style="font-size: 12px;letter-spacing: 0.5px;text-align: center;color: #9b9b9b">
               45 messages sent
@@ -66,7 +66,7 @@
            </span> 
             <br>
         <b [style.color]="selected_segment =='POSTS'?'white':'#12a6f9'">
-            3
+         {{posts_length}}
         </b> 
       </ion-col>
       <ion-col style="text-align: center;padding-top: 10px;padding-bottom: 10px;" (click)="change_segment('WATCHLIST')"  [style.background]="selected_segment =='WATCHLIST'?'#12a6f9':'transparent'">
@@ -74,7 +74,7 @@
           Watchlist
        </span> <br>
         <b  [style.color]="selected_segment =='WATCHLIST'?'white':'#12a6f9'">
-            3
+          {{watchlist_length}}
         </b>
       </ion-col>
       <ion-col style="text-align: center;padding-top: 10px;padding-bottom: 10px;" (click)="change_segment('FOLLOWING')"  [style.background]="selected_segment =='FOLLOWING'?'#12a6f9':'transparent'">
@@ -84,7 +84,7 @@
            </span>
              <br>
         <b [style.color]="selected_segment =='FOLLOWING'?'white':'#12a6f9'">
-            3
+            {{following_length}}
         </b>
       </ion-col>
       <ion-col style="text-align: center;padding-top: 10px;padding-bottom: 10px;" (click)="change_segment('FOLLOWERS')"  [style.background]="selected_segment =='FOLLOWERS'?'#12a6f9':'transparent'">
@@ -93,7 +93,7 @@
               Followers
            </span> <br>
         <b [style.color]="selected_segment =='FOLLOWERS'?'white':'#12a6f9'">
-            3
+          {{followers_length}}
         </b>
       </ion-col>
     </ion-row>
@@ -104,9 +104,39 @@
   <div [ngSwitch]="selected_segment">
 
     <div *ngSwitchCase="'POSTS'" style="padding-bottom: 70px;">
-  
-        Someone is typing ...POSTS
-       
+      <ion-grid style="padding: 8px;padding-bottom: unset;">
+        <ion-row *ngFor="let comment of posts;" (click)="go_to_comment(comment)" style="margin-bottom: 19px;">
+          <ion-col col-2 style="text-align: right;">
+            <div>
+              <img alt="logo" height="50" width="50" style="border-radius: 50px;vertical-align:middle;" src="assets/imgs/flags/{{comment.country}}.png">
+            </div>
+          </ion-col>
+          <ion-col col-10>
+            <div class="comment">
+              <div style="display: inline">
+                <ion-grid>
+                  <ion-row>
+                    <ion-col style="font-size:14px;font-weight: 800;">
+                      {{comment.nickname}} 
+                      <span style="font-weight: 400;color: #12a6f9;">
+                        ({{comment.symbol}}) 
+                      </span>
+                    </ion-col>
+                    <ion-col col-3 style="font-size: 12px;font-weight: 400;color: #9b9b9b;text-align: right;">
+                      {{comment.date_from_now}}
+                    </ion-col>
+                  </ion-row>
+                </ion-grid>
+
+              </div>
+              <div style="font-size:14px;font-weight: 300;">
+                {{comment.txt}}
+              </div>
+
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
 
     </div> 
    
@@ -171,7 +201,27 @@
       
     <div *ngSwitchCase="'FOLLOWING'" style="padding-bottom: 70px;">
   
-        Someone is typing ...FOLLOWING
+      <ion-grid style="padding: 12px;">
+        <ion-row *ngFor="let following of globalProvider.my_following"  (click)="go_to_profile(following)" style="padding-bottom:25px;">
+          <ion-col col-2>
+            <img alt="logo" height="50" width="50" style="border-radius: 50px;vertical-align:middle;" src="assets/imgs/flags/{{following.country}}.png">
+          </ion-col>
+
+
+          <ion-col style="margin:auto;">
+            {{following.nickname}}
+          </ion-col>
+
+          
+
+          <ion-col  style="margin: auto;text-align: right;padding-left: 9px;">
+            <button (click)="remove_follow_other(following,$event)" ion-button style="width: 35px;background: #12a6f9;height: 30px;">
+              <ion-icon name="check-v"></ion-icon>
+            </button>
+  
+          </ion-col>
+        </ion-row>
+      </ion-grid>
        
 
     </div>
@@ -179,8 +229,25 @@
       
     <div *ngSwitchCase="'FOLLOWERS'" style="padding-bottom: 70px;">
   
-        Someone is typing ...FOLLOWERS
-       
+      <ion-grid style="padding: 12px;">
+        <ion-row *ngFor="let follower of globalProvider.my_followers"  (click)="go_to_profile(follower)" style="padding-bottom:25px;">
+          <ion-col col-2 >
+            <img alt="logo" height="50" width="50" style="border-radius: 50px;vertical-align:middle;" src="assets/imgs/flags/{{follower.country}}.png">
+          </ion-col>
+
+          <ion-col style="margin:auto;">
+            {{follower.nickname}}
+          </ion-col>
+         
+
+          <ion-col style="margin: auto;text-align: right;padding-left: 9px;">
+            <button (click)="remove_follow_other(follower,$event)" ion-button style="width: 35px;background: #12a6f9;height: 30px;">
+              <ion-icon name="check-v"></ion-icon>
+            </button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
 
     </div>
   </div>

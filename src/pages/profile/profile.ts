@@ -53,6 +53,8 @@ export class ProfilePage {
     ) {
     this.globalProvider.loading("get user profile");
     var a = this.navParams.get("user");
+    console.log("a",a);
+    
     this.profile_country = a.country;
 
       for (let index = 0; index < this.globalProvider.my_following.length; index++) {
@@ -64,9 +66,8 @@ export class ProfilePage {
 
 
     this.globalProvider.get_all_information(a._id).then((data)=>{
+
     this.profile = data;
-    console.log(data);
-    
     this.posts_length =  this.profile.posts.length;
     this.watchlist_length = this.profile.watchlist.length;
     this.followers_length = this.profile.followers.length;
@@ -84,7 +85,7 @@ export class ProfilePage {
     for (let index = 0; index < this.profile.following.length; index++) {
       for (let j = 0; j < this.globalProvider.my_following.length; j++) {
        if (this.globalProvider.my_following[j]._id == this.profile.following[index]._id) {
-        this.profile.followers[index]["is_in_my_following"] = true;
+        this.profile.following[index]["is_in_my_following"] = true;
        }
       }
     }
@@ -104,7 +105,9 @@ export class ProfilePage {
   }
 
   foo() {
-    console.log(this.globalProvider.watchlists);
+   
+    console.log(this.authData);
+    
   }
 
   change_segment(segment) {
@@ -135,7 +138,7 @@ export class ProfilePage {
 
   add_follow(){
     this.is_follow = true;
-    this.following_length += 1;
+    this.followers_length += 1;
 
     this.globalProvider.my_following.push({
       _id:this.profile._id,
@@ -155,7 +158,7 @@ export class ProfilePage {
   }
 
   remove_follow(){
-    this.following_length -= 1;
+    this.followers_length -= 1;
     this.is_follow = false;
     var follow = {
       id_following:this.authData.user._id,
@@ -170,10 +173,9 @@ export class ProfilePage {
     this.authData.remove_follow(follow)
   }
 
-  add_follow_other(profile){
-    this.is_follow = true;
-    this.following_length += 1;
-
+  add_follow_other(profile,ev){
+    ev.stopPropagation();
+    profile["is_in_my_following"] = true;
     this.globalProvider.my_following.push({
       _id:profile._id,
       nickname:profile.nickname,
@@ -188,14 +190,12 @@ export class ProfilePage {
       country_following :this.authData.user.countryData.country,
       country_followed :profile.country,
     }
-
-
-    this.authData.add_follow(follow)
+    this.authData.add_follow(follow);
   }
 
-  remove_follow_other(profile){
-    this.following_length -= 1;
-    this.is_follow = false;
+  remove_follow_other(profile,ev){
+    ev.stopPropagation();
+    profile["is_in_my_following"] = false;
     var follow = {
       id_following:this.authData.user._id,
       id_followed:profile._id
@@ -209,6 +209,44 @@ export class ProfilePage {
  
     this.authData.remove_follow(follow)
   }
+
+  go_to_comment(comment){
+   let a = this.globalProvider.get_symbol_type(comment.symbol)
+   console.log(a);
+   let page: string = ""    
+    switch (a) {
+      case "STOCK":
+        page = "item-details-stock";
+        break;
+      case "FOREX":
+        page = "item-details-forex";
+        break;
+      case "CRYPTO":
+        page = "item-details-crypto";
+        break;
+
+      default:
+        break;
+    }
+    this.navCtrl.pop({animate:false});
+    this.navCtrl.push(page, {
+      primary_key:comment.primary_key,
+      symbol:comment.symbol
+    })
+   
+  }
+
+  go_to_profile(user){
+    this.navCtrl.pop({animate:false});
+    if (user._id == this.authData.user._id) {
+      this.navCtrl.push('my-profile')
+    }else{
+      this.navCtrl.push('profile',{user:user})
+
+    }
+   }
+
+  
 
 
 }

@@ -1,24 +1,38 @@
-<ion-header>
-  <ion-navbar  (click)="goToSginup()">    
-    <ion-title>phone-number-verified</ion-title>
+<ion-header (click)="goto()">
+  <ion-navbar>    
+    <ion-title >Enter Phone Number</ion-title>
+    <ion-buttons  end>
+     <ion-icon  style="font-size: 38px;color: white;" name="md-arrow-forward"></ion-icon>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 
 <ion-content padding style="background:#2b2b2b;color: white;">
   
-<div style="margin-top: 15%;">{{ 'Enter your phone number to' | translate }}</div>
-<div>{{ 'complete registration' | translate }}</div>
+<div style="margin-top: 15%;text-align: center;margin-bottom: 35px;">Enter your Phone number And Username to complete registration</div>
 <ion-grid style="color: white;margin-bottom: 8px;">
- 
+  <ion-row style="padding-bottom: 14px;">
+    <ion-col style="text-align:left;    border-bottom: 1px solid #484848;">
+        <input style="    width: 100%;
+        text-align: left;
+        font-size: 16px;
+        color: white;
+        border: unset;
+        background: #2b2b2b;" type="text" [(ngModel)]="authData.user.nickname" placeholder="Username">
+        <!-- <ion-input type="text" style="color:#ffffff;font-size:16px;font-weight: 500;" [(ngModel)]="authData.user.nickname" placeholder="Username">
+        </ion-input> -->
+     
+    </ion-col>
+  </ion-row>
   <ion-row>
-    <ion-col (click)="presentDialCode()" col-2 style="margin-top:10px;font-size:1.7rem; border-bottom: 1px solid #afb9d7;">
+    <ion-col (click)="presentDialCode()" col-2 style="margin-top:10px;font-size:1.7rem; border-bottom: 1px solid #484848;">
       {{authData.user.countryData.dial_code}}
     </ion-col>
     <ion-col (click)="presentDialCode()" col-1 style="font-size:1.7rem;margin: auto;text-align: left;">
       <ion-icon name="md-arrow-dropdown"></ion-icon>
     </ion-col>
-    <ion-col style="font-size:1.7rem;border-bottom: 1px solid #afb9d7;">
+    <ion-col style="font-size:1.7rem;border-bottom: 1px solid #484848;">
       <ion-input style="color:white" [(ngModel)]="this.authData.user.phone_number" type="number" placeholder="{{ 'phone_number' | translate }}"></ion-input>
     </ion-col>
   </ion-row>
@@ -26,8 +40,8 @@
 <div style="text-align: center;color: red;font-size: 14pt;margin-bottom: 8px;">
     {{error}}
   </div>
-<div style="text-align: center;">
-  <button (click)="submit()" style="background:#ffc046;height: 40px;width: 70%;">{{ 'SUBMIT' | translate }}
+<div style="text-align: center;margin-top: 51px;">
+  <button (click)="submit()" style="background: #12a6f9;height: 40px;border-radius: 4px;width: 181px;">{{ 'SUBMIT' | translate }}
   </button>
 </div>
 </ion-content>

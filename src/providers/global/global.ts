@@ -8,6 +8,7 @@ import { ToastController, AlertController, LoadingController, Loading } from 'io
 
 @Injectable()
 export class GlobalProvider {
+  
   private Loading: Loading;
   sentiments = [];
   watchlists = [];
@@ -388,7 +389,8 @@ export class GlobalProvider {
   }
 
   get_all_information(_id): Promise<any> {
-
+    console.log(_id);
+    
     return new Promise((resolve, reject) => {
       var promises = [];
       promises.push(this.authData.getProfileFromServer(_id));
@@ -458,96 +460,21 @@ export class GlobalProvider {
 
       })
 
-      // Promise.all(promises).then((data)=>{
-      //   for (let index1 = 0; index1 < data.length; index1++) {
-      //     for (let index2 = 0; index2 < data[0].length; index2++) {
-      //       for (let i = 0; i < data[3].length; i++) {
-      //         if (data[0][index2].symbol == data[3][i].symbol &&  data[3][i].status == "OPEN") {
-      //           data[0][index2]["sentiment"] = data[3][i].type;
-      //           data[0][index2]["status"] = "OPEN";
-      //           break;
-      //         }
-      //       }
-      //     }
-
-      //     for (let index2 = 0; index2 < data[1].length; index2++) {
-      //       for (let i = 0; i < data[3].length; i++) {
-      //         if (data[1][index2].symbol == data[3][i].symbol &&  data[3][i].status == "OPEN") {
-      //           data[1][index2]["sentiment"] = data[3][i].type;
-      //           data[1][index2]["status"] = "OPEN";
-      //           break;
-      //         }
-      //       }
-      //     }
-
-      //     for (let index2 = 0; index2 < data[2].length; index2++) {
-      //       for (let i = 0; i < data[3].length; i++) {
-      //         if (data[2][index2].symbol == data[3][i].symbol && data[3][i].status == "OPEN") {
-      //           data[2][index2]["sentiment"] = data[3][i].type;
-      //           data[2][index2]["status"] = "OPEN";
-      //           break;
-      //         }
-      //       }
-      //     }
-      //   }
-
-      //   let promises11 = [this.forexProvider.getAllForex(), this.cryptoProvider.getCrypto()];
-      //   for (let index = 0; index < this.authData.user.watchlist.length; index++) {
-      //     if (this.authData.user.watchlist[index].type == "STOCK") {
-      //       promises11.push(this.stockProvider.get_stock_by_symbol(this.authData.user.watchlist[index].symbol));
-      //     }
-      //   }
-
-      //   Promise.all(promises11).then((data: any[]) => {
-      //     for (let i = 0; i < this.authData.user.watchlist.length; i++) {
-      //       switch (this.authData.user.watchlist[i].type) {
-      //         case "FOREX":
-      //           for (let j = 0; j < data[0].length; j++) {
-      //             if (data[0][j].symbol == this.authData.user.watchlist[i].symbol) {
-      //               this.watchlists.push(data[0][j]);
-      //               break;
-      //             }
-      //           }
-      //           break;
-      //         case "CRYPTO":
-      //           for (let j = 0; j < data[1].length; j++) {
-      //             if (data[1][j].symbol == this.authData.user.watchlist[i].symbol) {
-      //               this.watchlists.push(data[1][j]);
-      //               break;
-      //             }
-      //           }
-      //           break;
-      //         case "STOCK":            
-      //           for (let j = 2; j < data.length; j++) {
-      //             if (data[j].symbol == this.authData.user.watchlist[i].symbol) {
-      //               for (let aaa = 0; aaa < this.sentiments.length; aaa++) {
-      //                if (this.sentiments[aaa].symbol == data[j].symbol) {
-      //                  if (this.sentiments[aaa].status == "OPEN") {
-      //                   data[j]["status"]= "OPEN";
-      //                   data[j]["sentiment"]= this.sentiments[aaa].type;
-      //                   break;
-      //                  }else{
-      //                   data[j]["status"]= "CLOSE";
-      //                   data[j]["sentiment"]= this.sentiments[aaa].type;
-      //                  }
-      //                }
-      //               }
-      //               this.watchlists.push(data[j]);
-      //               break;
-      //             }
-      //           }
-      //           break;
-      //         default:
-      //           break;
-      //       }
-      //     }
-      //     resolve();
-
-      //   })
-      //   resolve();
-      // })
     })
   }
+  get_symbol_type(symbol: string): any {
+  for (let index = 0; index < this.forexProvider.forexs.length; index++) {
+    if (this.forexProvider.forexs[index].symbol == symbol) {
+      return "FOREX";
+    }
+  }
+  for (let index = 0; index < this.cryptoProvider.cryptos.length; index++) {
+    if (this.cryptoProvider.cryptos[index].symbol == symbol) {
+      return "CRYPTO";
+    }
+  }
 
+  return "STOCK";
+  }
 
 }

@@ -3,6 +3,7 @@ import { IonicPageModule } from 'ionic-angular';
 import { SignUpPage } from './sign-up';
 import { TranslateModule } from '@ngx-translate/core';
 import { Profile } from '../../../models/profile-model';
+import { PipesModule } from '../../../pipes/pipes.module';
 
 @NgModule({
   declarations: [
@@ -10,7 +11,9 @@ import { Profile } from '../../../models/profile-model';
   ],
   imports: [
     IonicPageModule.forChild(SignUpPage),
-    TranslateModule.forChild()
+    TranslateModule.forChild(),
+    PipesModule 
+
   ], providers:[Profile],
 })
 export class SignUpPageModule {}

@@ -1,9 +1,9 @@
-<ion-header style="background: #e9e9e9!important;">
-        <ion-navbar>
+<ion-header mode="ios" style="background: #e9e9e9!important;">
+        <ion-navbar  mode="ios">
                 <ion-grid style="background: #e9e9e9;">
                         <ion-row>
                                 <ion-col style="margin: auto;">
-                                        <ion-searchbar (ionInput)="getItems($event)" [(ngModel)]="myInput"
+                                        <ion-searchbar  mode="ios" style="width: 77%;" (ionInput)="getItems($event)" [(ngModel)]="myInput"
                                                 [showCancelButton]="false" (ionCancel)="onCancel($event)">
                                         </ion-searchbar>
                                 </ion-col>
@@ -15,14 +15,6 @@
         </ion-navbar>
 </ion-header>
 <ion-content>
-
-        <!-- 
-        <ion-list>
-                <ion-item *ngFor="let country of countries; let i = index" (click)="chooseCountry(i)">
-                        
-                </ion-item>
-
-        </ion-list> -->
 
         <div *ngFor="let country of countries; let i = index" (click)="chooseCountry(i)" style="color: white;padding: 16px;border-bottom: solid 1px #7d7d7d;">
                 {{country[a]}} &nbsp; &nbsp;({{country[b]}} )

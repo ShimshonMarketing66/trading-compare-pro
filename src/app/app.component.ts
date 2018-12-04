@@ -38,6 +38,7 @@ export class MyApp {
    
       this.onAuthStateChangedCalled = true;
       if (user) {
+        this.authData.user_firebase = user;
         firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
           authData.idToken = idToken;
         }).catch(function(error) {

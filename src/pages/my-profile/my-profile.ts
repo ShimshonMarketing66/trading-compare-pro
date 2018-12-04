@@ -5,7 +5,7 @@ import { GlobalProvider } from '../../providers/global/global';
 
 
 @IonicPage({
-  name:"my-profile"
+  name: "my-profile"
 })
 @Component({
   selector: 'page-my-profile',
@@ -34,55 +34,56 @@ import { GlobalProvider } from '../../providers/global/global';
     ])
   ]
 })
-export class MyProfilePage implements AfterViewInit {
-  ngAfterViewInit(): void {
-    ;
+export class MyProfilePage {
 
-  }
-  edit_description:boolean=false;
-  counter_left_description:number=0;
-  
-  @ViewChild("myDesciption") myDesciption:any;
+  edit_description: boolean = false;
+  counter_left_description: number = 0;
 
-  posts :any[] = [];
+  @ViewChild("myDesciption") myDesciption: any;
+
+  profile_country;
+  posts_length=0;
+  posts: any[] = [];
   is_follow = false;
-  user_profile : any = {};
   selected_segment = "POSTS";
+  watchlist_length: number = 0;
+  followers_length=0;
+  following_length= 0;
   constructor(
-    public globalProvider:GlobalProvider,
+    public globalProvider: GlobalProvider,
     public navCtrl: NavController,
-     public navParams: NavParams,
-     public authData:AuthDataProvider) {
-    this.user_profile["user_id"] = authData.user._id;
-    if (this.user_profile["user_id"] == authData.user._id) {
-      this.user_profile = authData.user;
-    }else{
-      this.authData.getProfileFromServer(this.user_profile["user_id"]).then((user)=>{
-        this.user_profile = user;
+    public navParams: NavParams,
+    public authData: AuthDataProvider) {
+
+      this.globalProvider.loading("get user profile");
+      this.authData.getPost(this.authData.user._id)
+      .then((data)=>{
+        this.posts = data;
+        this.posts_length = this.posts.length;
+        this.globalProvider.dismiss_loading();
       })
-    }
-    console.log(this.user_profile);
-    
+      this.followers_length = this.globalProvider.my_followers.length;
+      this.following_length = this.globalProvider.my_following.length;
+      this.watchlist_length = this.globalProvider.watchlists.length;
+      
+
   }
 
-  ionViewDidLoad() {
-    
-  }
-  foo(){
-    console.log(this.globalProvider.watchlists);
-    
+  foo() {
+    console.log(this.posts);
+
   }
 
-  follow(){
+  follow() {
     this.is_follow = this.is_follow
   }
 
-  change_segment(segment){
+  change_segment(segment) {
     this.selected_segment = segment;
   }
 
   goToDetails(watchlist: any) {
-    let page: string = ""    
+    let page: string = ""
     switch (watchlist.type) {
       case "STOCK":
         page = "item-details-stock";
@@ -103,15 +104,69 @@ export class MyProfilePage implements AfterViewInit {
     })
   }
 
-  description_change(){
+  description_change() {
     this.counter_left_description = 200 - this.myDesciption.value.length;
   }
 
-  submit_description(){
+  submit_description() {
     this.edit_description = false;
     this.authData.updateFields({
-      description : this.authData.user.description
+      description: this.authData.user.description
     })
   }
+
+  remove_follow_other(profile){
+    var follow = {
+      id_following:this.authData.user._id,
+      id_followed:profile._id
+    }
+
+    let arr ;
+    if (this.selected_segment == "FOLLOWERS") {
+      arr = this.globalProvider.my_followers;
+    }else{
+      arr = this.globalProvider.my_following;
+    }
+    for (let index = 0; index < arr.length; index++) {
+      if (arr[index]._id == profile._id) {
+        arr.splice(index,1);
+      }
+    }
+ 
+    this.authData.remove_follow(follow)
+  }
+
+  go_to_comment(comment){
+    let a = this.globalProvider.get_symbol_type(comment.symbol)
+    console.log(a);
+    let page: string = ""    
+     switch (a) {
+       case "STOCK":
+         page = "item-details-stock";
+         break;
+       case "FOREX":
+         page = "item-details-forex";
+         break;
+       case "CRYPTO":
+         page = "item-details-crypto";
+         break;
+ 
+       default:
+         break;
+     }
+     this.navCtrl.pop({animate:false});
+     this.navCtrl.push(page, {
+       primary_key:comment.primary_key,
+       symbol:comment.symbol
+     })
+    
+   }
+
+   
+  go_to_profile(user){
+    this.navCtrl.pop({animate:false});
+    this.navCtrl.push('profile',{user:user})
+   }
+
 
 }

@@ -7,21 +7,19 @@ import { GooglePlus } from '@ionic-native/google-plus';
 import { InAppPurchase2, IAPProduct } from '@ionic-native/in-app-purchase-2';
 import firebase from 'firebase';
 import { CountryModel } from '../../models/country-model';
-import { Nexmo } from '../../models/nexmo-model';
-import { GlobalProvider } from '../global/global';
+
 
 
 
 @Injectable()
 export class AuthDataProvider {
- 
+  user_firebase:any
   localCountry: CountryModel = new CountryModel();
   isAuth: boolean = false
   user: Profile = new Profile();
   platform: any = "browser";
   idToken: any;
   constructor(
-    private store: InAppPurchase2,
     private googlePlus: GooglePlus,
     public facebook: Facebook,
     public modalCtrl: ModalController,
@@ -32,6 +30,20 @@ export class AuthDataProvider {
   }
   /* from here I used these functions */
 
+  is_nickname_exist(nickname,send_id?:boolean):Promise<boolean>{
+    let params = nickname;
+    if (send_id) {
+      params+='/' + this.user._id;
+    }
+    return new Promise((resolve,reject)=>{
+      this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/is-nickname-exist/"+params ).toPromise().then((data:boolean)=>{
+        resolve(data);
+      }).catch((err)=>{
+        console.error(err);
+        resolve(false);
+      })
+    })
+  }
 
 
   providerLogin(m_provider): Promise<firebase.User> {
@@ -242,15 +254,17 @@ export class AuthDataProvider {
   }
 
   getProfileFromServer(_id: string): Promise<Profile> {
-    console.log(_id);
     
     return new Promise((resolve, reject) => {
       this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/getUsersById", { _id: _id })
         .toPromise()
         .then((profile: Profile) => {
-          resolve(profile);
-          console.log(profile);
-          
+          if (profile["error"] != undefined) {
+            console.log("no user in server");
+            reject()
+          }else{
+            resolve(profile);
+          }
         })
         .catch((err) => {
           console.error(err);
@@ -263,7 +277,7 @@ export class AuthDataProvider {
     })
   }
   
-  loginUserWithProvider(m_provider: string): Promise<Profile> {
+  loginUserWithProvider(m_provider: string): Promise<any> {
     var provider;
     switch (m_provider) {
       case "facebook":
@@ -279,25 +293,8 @@ export class AuthDataProvider {
     if (this.plt.is("cordova")) {
       return new Promise((resolve, reject) => {
         this.providerLogin(m_provider).then((profileFireBase) => {
-
-          this.getProfileFromServer(profileFireBase.uid)
-            .then((user: Profile) => {
-              console.log("user", user);
-              resolve(user);
-            })
-            .catch(() => {
-              console.log("user created in firebase but not exsist in mongo");
-              this.getProfileWithFirebaseUser(profileFireBase);
-              this.user.provider = m_provider;
-              this.keepProfileInServer(this.user).then(() => {
-                resolve(this.user);
-              })
-                .catch(() => {
-                  reject("error in server")
-                })
-            })
+          resolve(profileFireBase);
         }).catch((err) => {
-          console.log("err from firebase", err);
           reject(err)
         })
       })
@@ -308,25 +305,8 @@ export class AuthDataProvider {
     else {
       return new Promise((resolve, reject) => {
         firebase.auth().signInWithPopup(provider).then((profileFireBase) => {
-
-          this.getProfileFromServer(profileFireBase.user.uid)
-            .then((user: Profile) => {
-              console.log("user", user);
-              resolve(user);
-            })
-            .catch(() => {
-              console.log("user created in firebase but not exsist in mongo");
-              this.getProfileWithFirebaseUser(profileFireBase.user);
-              this.user.provider = m_provider;
-              this.keepProfileInServer(this.user).then(() => {
-                resolve(this.user);
-              })
-                .catch(() => {
-                  reject("error in server")
-                })
-            })
+          resolve(profileFireBase);
         }).catch((err) => {
-          console.log("err from firebase", err);
           reject(err)
         })
       })
@@ -344,10 +324,8 @@ export class AuthDataProvider {
   getPost(_id): Promise<any>{
     return new Promise((resolve)=>{
       this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-comments-by-id/" + _id).toPromise().then((data:any)=>{
-
       var dd=[];
         for (let index = 0; index < data.length; index++) {
-          data[index].country = data[index].country.replace("-", " ");
           dd.unshift(data[index]);
         }
         resolve(dd)
@@ -406,16 +384,9 @@ export class AuthDataProvider {
 
   getProfileWithFirebaseUser(user: firebase.User) {
     if (user.displayName != null) {
-      let displayName = user.displayName.split(" ");
-      if (displayName.length >= 2) {
-        this.user.first_name = displayName[0]
-        for (let index = 1; index < displayName.length - 1; index++) {
-          this.user.last_name += displayName[index] + " "
-        }
-        this.user.last_name += displayName[displayName.length - 1];
-      } else {
-        this.user.first_name = user.displayName;
-      }
+      this.user.full_name = user.displayName;
+    }else{
+      this.user.full_name = "no name";
     }
     this.user.email = user.email;
     this.user._id = user.uid;

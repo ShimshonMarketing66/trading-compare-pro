@@ -49,7 +49,7 @@
           {{user.nickname}}
         </ion-col>
         <ion-col *ngIf="user._id==authData.user._id" style="margin:auto;">
-         (you)
+          {{user.nickname}} (You!)
         </ion-col>
         <ion-col style="text-align: right;padding-right: 10px;margin:auto;">
           {{user.total_corect_percent}}%

@@ -104,7 +104,7 @@
     <div *ngSwitchCase="'POSTS'" style="padding-bottom: 70px;">
 
       <ion-grid style="padding: 8px;padding-bottom: unset;">
-        <ion-row *ngFor="let comment of profile?.posts;" style="margin-bottom: 19px;">
+        <ion-row *ngFor="let comment of profile?.posts;" (click)="go_to_comment(comment)" style="margin-bottom: 19px;">
           <ion-col col-2 style="text-align: right;">
             <div>
               <img alt="logo" height="50" width="50" style="border-radius: 50px;vertical-align:middle;" src="assets/imgs/flags/{{comment.country}}.png">
@@ -116,7 +116,9 @@
                 <ion-grid>
                   <ion-row>
                     <ion-col style="font-size:14px;font-weight: 800;">
-                      {{comment.nickname}}
+                      {{comment.nickname}}  <span style="font-weight: 400;color: #12a6f9;">
+                        ({{comment.symbol}}) 
+                      </span>
                     </ion-col>
                     <ion-col style="font-size: 12px;font-weight: 400;color: #9b9b9b;text-align: right;">
                       {{comment.date_from_now}}
@@ -200,7 +202,7 @@
     <div *ngSwitchCase="'FOLLOWING'" style="padding-bottom: 70px;">
 
       <ion-grid style="padding: 12px;">
-        <ion-row *ngFor="let following of profile.following">
+        <ion-row  (click)="go_to_profile(following)" *ngFor="let following of profile.following" style="padding-bottom:25px;">
           <ion-col col-2>
             <img alt="logo" height="50" width="50" style="border-radius: 50px;vertical-align:middle;" src="assets/imgs/flags/{{following.country}}.png">
           </ion-col>
@@ -211,14 +213,14 @@
           </ion-col>
 
           <ion-col *ngIf="following._id == authData.user._id" style="margin:auto;">
-           (You)
+            {{following.nickname}} (You)!
           </ion-col>
 
           <ion-col *ngIf="following._id != authData.user._id" style="margin: auto;text-align: right;padding-left: 9px;">
-            <button *ngIf="following.is_in_my_following" (tap)="remove_follow()" ion-button style="width: 35px;background: #12a6f9;height: 30px;">
+            <button *ngIf="following.is_in_my_following" (click)="remove_follow_other(following,$event)" ion-button style="width: 35px;background: #12a6f9;height: 30px;">
               <ion-icon name="check-v"></ion-icon>
             </button>
-            <button  *ngIf="!following.is_in_my_following" (tap)="add_follow()" ion-button style="background: transparent;height: 30px;border: 1px solid #12a6f9;width: 76px;">
+            <button  *ngIf="!following.is_in_my_following" (click)="add_follow_other(following,$event)" ion-button style="background: transparent;height: 30px;border: 1px solid #12a6f9;width: 76px;">
               FOLLOW
             </button>
           </ion-col>
@@ -233,7 +235,7 @@
     <div *ngSwitchCase="'FOLLOWERS'" style="padding-bottom: 70px;">
 
       <ion-grid style="padding: 12px;">
-        <ion-row *ngFor="let follower of profile.followers">
+        <ion-row *ngFor="let follower of profile.followers" (click)="go_to_profile(follower)" style="padding-bottom:25px;">
           <ion-col col-2>
             <img alt="logo" height="50" width="50" style="border-radius: 50px;vertical-align:middle;" src="assets/imgs/flags/{{follower.country}}.png">
           </ion-col>
@@ -242,14 +244,14 @@
             {{follower.nickname}}
           </ion-col>
           <ion-col *ngIf="follower._id == authData.user._id" style="margin:auto;">
-           (You)
+            {{follower.nickname}} (You)!
           </ion-col>
 
           <ion-col *ngIf="follower._id != authData.user._id" style="margin: auto;text-align: right;padding-left: 9px;">
-            <button *ngIf="follower.is_in_my_following" (tap)="remove_follow()" ion-button style="width: 35px;background: #12a6f9;height: 30px;">
+            <button *ngIf="follower.is_in_my_following" (click)="remove_follow_other(follower,$event)" ion-button style="width: 35px;background: #12a6f9;height: 30px;">
               <ion-icon name="check-v"></ion-icon>
             </button>
-            <button *ngIf="!follower.is_in_my_following" (tap)="add_follow()" ion-button style="background: transparent;height: 30px;border: 1px solid #12a6f9;width: 76px;">
+            <button *ngIf="!follower.is_in_my_following" (click)="add_follow_other(follower,$event)" ion-button style="background: transparent;height: 30px;border: 1px solid #12a6f9;width: 76px;">
               FOLLOW
             </button>
           </ion-col>

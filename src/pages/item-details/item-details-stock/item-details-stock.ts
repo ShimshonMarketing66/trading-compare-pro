@@ -21,7 +21,7 @@ export class ItemDetailsStockPage {
   is_on_bottom = true;
   message: string = "";
   item: any;
-  selectedSegment: string = "CHART";
+  selectedSegment: string;
   Segments: string[];
   tweetsdata;
   symbol: string;
@@ -34,7 +34,7 @@ export class ItemDetailsStockPage {
   shouldScrollDown: boolean;
   showScrollButton: boolean;
 
-  constructor(
+   constructor(
     public zone: NgZone,
     public authData: AuthDataProvider,
     public globalProvider: GlobalProvider,
@@ -42,7 +42,28 @@ export class ItemDetailsStockPage {
     public navCtrl: NavController,
     public navParams: NavParams,
     public stockProvider: StockProvider) {
-    this.item = navParams.get("item");
+     
+   this.initialize()
+  }
+
+  async get_item(){
+    let symbol = this.navParams.get("symbol");
+    let itemd = await this.stockProvider.get_stock_by_symbol(symbol)
+      console.log(itemd);
+      this.item = itemd;
+
+    
+  }
+
+
+  async initialize(){
+    this.item = this.navParams.get("item");
+    if ( this.item == undefined) {
+       await this.get_item();
+    }else{
+      this.selectedSegment = "CHART";
+    }
+
     this.tweetCall();
     this.Segments = ["CHAT", "OVERVIEW", "CHART", "SOCIAL", "NEWS"];
     this.symbol = this.item.symbol;
@@ -50,16 +71,23 @@ export class ItemDetailsStockPage {
     this.group = "stock";
     this.height = window.screen.height;
     this.globalProvider.get_comments(this.symbol).then((data) => {
-      console.log(data);
-
       for (let index = 0; index < data.length; index++) {
-        data[index].country = data[index].country.replace("-", " ");
         this.comments.unshift(data[index]);
       }
+     
+        if(this.navParams.get("primary_key") != undefined){
+          this.globalProvider.loading("load comments");
+          this.selectedSegment = "CHAT";
+          setTimeout(()=>{
+            let y = document.getElementById(this.navParams.get("primary_key")).offsetTop;
+            this.content_detail.scrollTo(0, y-50);
+            this.globalProvider.dismiss_loading();
+          },2000)
+         
+        }
     })
       .catch((err) => {
-        console.log("catch");
-        
+        console.log("catch",err);
         this.comments = [];
       })
     // http://localhost:5000/
@@ -81,6 +109,8 @@ export class ItemDetailsStockPage {
       }
     });
 
+    
+
     this.socket.on("on_message", (data) => {
       if (this.socket.id != data.id) {
         data.country = data.country.replace("-", " ");
@@ -93,8 +123,15 @@ export class ItemDetailsStockPage {
 
   foo() {
     console.log(this.comments);
-
+   
+    this.scrollTo(571)
   }
+
+  scrollTo(elementId: number) {
+    let y = document.getElementById(elementId.toString()).offsetTop;
+    this.content_detail.scrollTo(0, y-50);
+}
+
   tweetCall() {
     this.http.get('https://xosignals.herokuapp.com/search/' + this.item.symbol + "/en").toPromise().then((res) => {
  
@@ -219,9 +256,21 @@ export class ItemDetailsStockPage {
     this.socket.emit("typing", this.symbol);
   }
 
-  released() {
+  released(comment,i) {
+    console.log(document.getElementById(comment.primary_key+i));
+    
+   ( document.getElementById(comment.primary_key+i) as HTMLElement).classList.remove("comment1");
     alert("pressed")
     console.log("released");
+  }
+  animated: boolean = false;
+  clickMe() {
+    this.animated = true;
+    this.delay(500).then(() => this.animated = false);
+  }
+  
+  async delay(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   sendMessage() {
@@ -268,6 +317,16 @@ export class ItemDetailsStockPage {
   reply(comment) {
     this.message = "@" + comment.nickname + " ";
     this.myInput.setFocus();
+  }
+
+  go_to_profile(comment){
+    console.log(comment);
+    comment["_id"] = comment.user_id
+    if (comment.user_id == this.authData.user._id) {
+      this.navCtrl.push('my-profile')
+    }else{
+      this.navCtrl.push('profile',{user:comment})
+    }
   }
 
 

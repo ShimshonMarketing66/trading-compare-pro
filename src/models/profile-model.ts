@@ -5,14 +5,11 @@ export class Profile {
     verifyData:Nexmo =  new Nexmo();
     email: string = "";
     password: string = "";
-    first_name: string = "";
-    last_name: string = "";
+    full_name: string = "";
     phone_number: string = "";
     _id: string = "";
     provider: string = "";
     platform: string = "";
-    likes: string[] = [];
-    unlikes: string[] = [];
     state: string = "unknown";
     token_notification: string = "";
     isAlvexo: boolean = false
