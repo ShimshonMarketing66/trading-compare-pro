@@ -88,7 +88,10 @@
     <div *ngSwitchCase="'CHAT'" style="padding-bottom: 70px;">
       <div style="text-align: center;font-size: 16px;color: #9B9B9B;margin-top: 35px;font-weight: 300;" *ngIf="comments.length==0">
 Be the first to comment!
-      </div>
+      </div> 
+      <div  [style.opacity]="is_typing == 'nobodyyy'?'0':'1'" style="margin-top: 3px;height:16px;text-align: center;font-weight: 100;color: #ababab;">
+        Someone is typing ...
+      </div>  
       <ion-grid style="padding: 8px;padding-bottom: unset;" [style.min-height.px]="height - 350">
         <ion-row *ngFor="let comment of comments;let i = index"  style="margin-bottom: 19px;">
           <ion-col col-2 style="text-align: right;" (click)="go_to_profile(comment)">
@@ -129,9 +132,7 @@ Be the first to comment!
 
      
 
-      <div  [style.opacity]="is_typing == 'nobodyyy'?'0':'1'" style="height:30px;text-align: center;font-weight: 100;color: #ababab;">
-          Someone is typing ...
-        </div>  
+   
 
        
 

@@ -154,11 +154,11 @@ export class MyProfilePage {
        default:
          break;
      }
-     this.navCtrl.pop({animate:false});
+     this.navCtrl.pop({animate:true,direction: 'forward'});
      this.navCtrl.push(page, {
        primary_key:comment.primary_key,
        symbol:comment.symbol
-     })
+     },{animate:false})
     
    }
 
