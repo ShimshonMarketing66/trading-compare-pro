@@ -5,6 +5,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 import { Keyboard } from '@ionic-native/keyboard';
 // import { AmChartsModule } from "@amcharts/amcharts3-angular";
+import { SocialSharing } from '@ionic-native/social-sharing';
 
 import { MyApp } from './app.component';
 import { StockProvider } from '../providers/stock/stock';
@@ -79,6 +80,7 @@ export function createTranslateLoader(http: HttpClient) {
     MyApp 
   ],
   providers: [
+    SocialSharing,
     Clipboard,
     Vibration,
     GlobalProvider,

@@ -35,7 +35,6 @@ export class MyApp {
   ) {
     this.loop();
     firebase.auth().onAuthStateChanged(user => {
-   
       this.onAuthStateChangedCalled = true;
       if (user) {
         this.authData.user_firebase = user;
