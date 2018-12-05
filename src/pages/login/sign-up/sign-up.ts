@@ -64,7 +64,7 @@ export class SignUpPage {
       })
       .catch(()=>{
         this.authData.getProfileWithFirebaseUser(user1.user);
-        this.authData.keepProfileInServer(this.authData.user)
+        this.authData.createUser(this.authData.user)
         .then((data)=>{
           console.log("added in backend");
           this.app.getRootNavs()[0].setRoot("enter-phone");
@@ -144,8 +144,9 @@ export class SignUpPage {
       loading.dismiss();
       return ;
     }
-    
-    this.authData.user.countryData.country = this.authData.user.countryData.country.replace("-"," ").toLocaleLowerCase();
+    let a = this.authData.user.countryData.country.split(",")[0];
+    this.authData.user.countryData.country = a.replace(" ","-").toLocaleLowerCase();
+
     this.authData.signupUser(this.authData.user, loading).then(() => {
       this.authData.sendVerifyCode(loading).then(() => {
         loading.dismiss();

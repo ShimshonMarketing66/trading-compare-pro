@@ -13,7 +13,8 @@ import { CountryModel } from '../../models/country-model';
 
 @Injectable()
 export class AuthDataProvider {
-  user_firebase:any
+
+  user_firebase: any
   localCountry: CountryModel = new CountryModel();
   isAuth: boolean = false
   user: Profile = new Profile();
@@ -30,15 +31,17 @@ export class AuthDataProvider {
   }
   /* from here I used these functions */
 
-  is_nickname_exist(nickname,send_id?:boolean):Promise<boolean>{
+  is_nickname_exist(nickname, send_id?: boolean): Promise<boolean> {
     let params = nickname;
     if (send_id) {
-      params+='/' + this.user._id;
+      params += '/' + this.user._id;
+    }else{
+      params += '/' + undefined
     }
-    return new Promise((resolve,reject)=>{
-      this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/is-nickname-exist/"+params ).toPromise().then((data:boolean)=>{
+    return new Promise((resolve, reject) => {
+      this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/is-nickname-exist/" + params).toPromise().then((data: boolean) => {
         resolve(data);
-      }).catch((err)=>{
+      }).catch((err) => {
         console.error(err);
         resolve(false);
       })
@@ -53,7 +56,7 @@ export class AuthDataProvider {
           .then(response => {
             const facebookCredential = firebase.auth.FacebookAuthProvider
               .credential(response.authResponse.accessToken);
-           firebase.auth().signInWithCredential(facebookCredential)
+            firebase.auth().signInWithCredential(facebookCredential)
               .then((success) => {
                 resolve(success)
               });
@@ -71,7 +74,7 @@ export class AuthDataProvider {
           console.log(response);
           const googleCrendential = firebase.auth.GoogleAuthProvider
             .credential(response.idToken);
-            firebase.auth().signInWithCredential(googleCrendential)
+          firebase.auth().signInWithCredential(googleCrendential)
             .then(success => {
               resolve(success);
             })
@@ -112,6 +115,14 @@ export class AuthDataProvider {
     })
   }
 
+  deleteComment(comment: any): any {
+    comment["idToken"] = this.idToken;
+    this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/delete-comment", comment).toPromise()
+      .then((data) => {
+        console.log(data);
+
+      })
+  }
 
   signupUser(profile: Profile, loading: Loading): Promise<any> {
     return new Promise((resolve, reject) => {
@@ -119,14 +130,14 @@ export class AuthDataProvider {
       firebase.auth().createUserWithEmailAndPassword(profile.email, profile.password)
         .then((newUser) => {
           console.log("new User", newUser);
-          
+
           profile._id = newUser.uid;
           profile.platform = (this.plt.is('ios')) ? "ios" : "android";
           profile.provider = "password";
           profile.createAccountDate = new Date().toLocaleDateString();
           this.user = profile;
           loading.setContent("keep profile in server...");
-          this.keepProfileInServer(profile)
+          this.createUser(profile)
             .then(data => {
               resolve(data);
             })
@@ -158,7 +169,7 @@ export class AuthDataProvider {
   }
 
 
-  keepProfileInServer(profile: Profile): Promise<Profile> {
+  createUser(profile: Profile): Promise<Profile> {
     return new Promise((resolve, reject) => {
       this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/createUser", profile)
         .toPromise()
@@ -179,16 +190,16 @@ export class AuthDataProvider {
       this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/send-user-verify-code", this.user).toPromise()
         .then((data: any) => {
           console.log(data);
-          
+
           if (data.status == "0") {
-           
+
             this.user.verifyData.verify_id = data.request_id;
             this.user.verifyData.is_verify_code_sent = true;
             var x = {
               "verifyData": this.user.verifyData
             }
             this.updateFields(x).then(() => {
-              console.log("promise from this.updateFields()",x);
+              console.log("promise from this.updateFields()", x);
             })
             resolve("A SMS has sent to you.");
           } else { // in futur need check the status response and to response as well
@@ -231,15 +242,15 @@ export class AuthDataProvider {
           console.log(data);
 
           if (data == "ok") {
-          
-           this.user.verifyData.is_phone_number_verified = true;
-           this.user.verifyData.verify_code = verify_code;
-           
+
+            this.user.verifyData.is_phone_number_verified = true;
+            this.user.verifyData.verify_code = verify_code;
+
             var x = {
-              "verifyData":  this.user.verifyData
+              "verifyData": this.user.verifyData
             }
             this.updateFields(x).then(() => {
-              console.log("promise from this.updateFields()",x);
+              console.log("promise from this.updateFields()", x);
               resolve(true);
             })
           } else {
@@ -254,7 +265,7 @@ export class AuthDataProvider {
   }
 
   getProfileFromServer(_id: string): Promise<Profile> {
-    
+
     return new Promise((resolve, reject) => {
       this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/getUsersById", { _id: _id })
         .toPromise()
@@ -262,7 +273,7 @@ export class AuthDataProvider {
           if (profile["error"] != undefined) {
             console.log("no user in server");
             reject()
-          }else{
+          } else {
             resolve(profile);
           }
         })
@@ -276,7 +287,7 @@ export class AuthDataProvider {
         })
     })
   }
-  
+
   loginUserWithProvider(m_provider: string): Promise<any> {
     var provider;
     switch (m_provider) {
@@ -313,48 +324,48 @@ export class AuthDataProvider {
     }
   }
 
-  getFollowers(_id): Promise<any>{
+  getFollowers(_id): Promise<any> {
     return this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-followers/" + _id).toPromise()
   }
 
-  getFollowing(_id?): Promise<any>{
+  getFollowing(_id?): Promise<any> {
     return this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-following/" + _id).toPromise()
-   
+
   }
-  getPost(_id): Promise<any>{
-    return new Promise((resolve)=>{
-      this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-comments-by-id/" + _id).toPromise().then((data:any)=>{
-      var dd=[];
+
+  getPost(_id): Promise<any> {
+    return new Promise((resolve) => {
+      this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-comments-by-id/" + _id).toPromise().then((data: any) => {
+        var dd = [];
         for (let index = 0; index < data.length; index++) {
           dd.unshift(data[index]);
         }
         resolve(dd)
-    })
-
-    })
-  }
-
-  add_follow(follow){
-    follow["idToken"]=this.idToken;
-    this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/add-follow",follow).toPromise()
-    .then(()=>{
-    console.log("add_follow sucsses");
-    }).catch((err)=>{
-      console.error(err);
+      })
     })
   }
 
-  remove_follow(follow){
-    follow["idToken"]=this.idToken;
-    this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/remove-follow",follow).toPromise()
-    .then(()=>{
-    console.log("remove_follow sucsses");
-    }).catch((err)=>{
-      console.error(err);
-    })
+  add_follow(follow) {
+    follow["idToken"] = this.idToken;
+    this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/add-follow", follow).toPromise()
+      .then(() => {
+        console.log("add_follow sucsses");
+      }).catch((err) => {
+        console.error(err);
+      })
   }
 
- 
+  remove_follow(follow) {
+    follow["idToken"] = this.idToken;
+    this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/remove-follow", follow).toPromise()
+      .then(() => {
+        console.log("remove_follow sucsses");
+      }).catch((err) => {
+        console.error(err);
+      })
+  }
+
+
 
 
   /* until here I used these functions */
@@ -367,7 +378,7 @@ export class AuthDataProvider {
 
 
 
-  
+
 
   loginUserViaEmail(email: string, password: string): Promise<any> {
     return firebase.auth().signInWithEmailAndPassword(email, password)
@@ -385,7 +396,7 @@ export class AuthDataProvider {
   getProfileWithFirebaseUser(user: firebase.User) {
     if (user.displayName != null) {
       this.user.full_name = user.displayName;
-    }else{
+    } else {
       this.user.full_name = "no name";
     }
     this.user.email = user.email;

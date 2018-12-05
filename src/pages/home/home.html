@@ -43,7 +43,7 @@
           {{i+1}}
         </ion-col>
         <ion-col col-2>
-          <img style="max-height: 30px;" src="assets/imgs/flags/{{user.country}}.png">
+          <img style="max-height: 30px;" [src]="'assets/imgs/flags/'+user.country+'.png'">
         </ion-col>
         <ion-col *ngIf="user._id!=authData.user._id" style="margin:auto;">
           {{user.nickname}}

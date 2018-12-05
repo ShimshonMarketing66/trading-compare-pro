@@ -64,8 +64,7 @@
         <ion-col col-1 style="margin:auto;color:#707070;text-align: center;background: #373737;" [style.opacity]="selectedSegment != 'WATCHLIST' && '0' || selectedSegment == 'WATCHLIST' && '0'">
           <ion-icon style="font-size: 30px; " name="md-create"></ion-icon>
         </ion-col>
-        <ion-col col-2 (tap)="changeModeView('LINES')" style="margin:auto;text-align: center;background: #2b2b2b;"
-          [style.color]="modeView=='LINES'&&'#12a6f9'||modeView=='SQUARES'&&'#707070'">
+        <ion-col col-2 (tap)="changeModeView('LINES')" style="margin:auto;text-align: center;background: #2b2b2b;"[style.color]="modeView=='LINES'&&'#12a6f9'||modeView=='SQUARES'&&'#707070'">
           <div style="text-align:right;">
             <ion-icon (tap)="changeModeView('LINES')" style="margin:auto;text-align: center;background: #373737;"
               [style.color]="modeView=='LINES'&&'#12a6f9'||modeView=='SQUARES'&&'#707070'" [name]="modeView=='LINES'?'bars-v-a':'bars-v-d'"></ion-icon>

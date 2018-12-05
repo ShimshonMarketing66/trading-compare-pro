@@ -172,9 +172,7 @@ console.log(this.authData.user);
     });
     alert.present()
   }
-goto(){
-  console.log("asd");
-  
-  this.navCtrl.push('verify-code')
+goto(){  
+  this.navCtrl.push('verify-code');
 }
 }

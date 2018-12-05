@@ -9,13 +9,12 @@ import { IonicPage, NavController } from 'ionic-angular';
   templateUrl: 'main-tabs.html'
 })
 export class MainTabsPage {
-  tabIndex: number = 0;
-
+  selectedIndex = '0'
   homeRoot = 'HomePage'
   liveFeedRoot = 'live-feed'
   alertsRoot = 'AlertsPage'
   menuRoot = 'menu'
-  profileRoot = 'my-profile'
+  chatRoot = 'chat-general'
 
 
   constructor(public navCtrl: NavController) {

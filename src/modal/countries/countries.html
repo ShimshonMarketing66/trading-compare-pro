@@ -16,7 +16,14 @@
 </ion-header>
 <ion-content>
 
-        <div *ngFor="let country of countries; let i = index" (click)="chooseCountry(i)" style="color: white;padding: 16px;border-bottom: solid 1px #7d7d7d;">
-                {{country[a]}} &nbsp; &nbsp;({{country[b]}} )
-        </div>
+              <ion-grid>
+                      <ion-row *ngFor="let country of countries; let i = index" (click)="chooseCountry(i)" style="color: white;padding: 16px;border-bottom: solid 1px #7d7d7d;">
+                        <ion-col col-2>
+                                {{country[a]}} 
+                              </ion-col>
+                              <ion-col>
+                                ({{country[b]}} )
+                        </ion-col>   
+                      </ion-row>
+              </ion-grid>           
 </ion-content>

@@ -125,9 +125,8 @@ ion-slides {
   }
 
 
-.comment1:active {
-       -webkit-animation: bgcolorchange 3s; /* Chrome, Safari, Opera */
-       animation: 3s bgcolorchange;
+.comment:active {
+  background: #808080;
      }
 
 

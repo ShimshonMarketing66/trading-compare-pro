@@ -36,6 +36,8 @@ import { DrawingToolbar } from '../components/chartIQ/drawing_toolbar_component/
 import { TitlecasePipe } from '../components/chartIQ/pipes/title.case.pipe';
 import { Colorpicker } from '../components/chartIQ/colorpicker_component/colorpicker';
 import { MapObjectToArrayPipe } from '../components/chartIQ/pipes/mapObject.pipe';
+import { Vibration } from '@ionic-native/vibration';
+import { Clipboard } from '@ionic-native/clipboard';
 
 
 const firebaseConfig = {
@@ -77,6 +79,8 @@ export function createTranslateLoader(http: HttpClient) {
     MyApp 
   ],
   providers: [
+    Clipboard,
+    Vibration,
     GlobalProvider,
     Sim,
     FCM,
