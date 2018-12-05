@@ -44,57 +44,12 @@ export class SignInPage {
       return;
     }
 
-    console.log("done");
-
     this.authData.loginUserViaEmail(this.email, this.password).then((user) => {
-      console.log(user, "user");
-      this.authData.getProfileFromServer(user.uid)
-        .then((data) => {
-          if (data.verifyData.is_phone_number_verified) {
-            this.splashscreen.show();
-            window.location.reload();
-            this.app.getRootNav().setRoot(MyApp);
-          } else {
-            let alert = this.alertCtrl.create({
-              message: "need to complete registration",
-              buttons: [
-                {
-                  text: "complete registration",
-                  role: 'cancel',
-                  handler: () => {
-                    this.navCtrl.setRoot("verify-code");
-                  }
-                }
-              ]
-            });
-            alert.present();
-          }
-        })
-        .catch(err => {
-          console.log("aaa");
-          this.authData.deleteProfile(user.user.uid).then(()=>{
-            console.log("user deleted");
-            let alert = this.alertCtrl.create({
-              message: "Sorry, please complet registretion.",
-              buttons: [
-                {
-                  text: "complete registration",
-                  role: 'cancel',
-                  handler: () => {
-                    this.authData.user.password = this.password;
-                    this.authData.user.email = this.email;
-                    this.navCtrl.parent.select(0);                  }
-                }
-              ]
-            });
-            alert.present();
-          }).catch((err)=>{
-            console.log("err123334", err);
-          })
-          console.log("err", err);
-        })
+      console.log(user);
+      
+      this.after_get_firebase_id(user.uid)
+
     }).catch((err) => {
-      console.log(err);
       let message = ""
       switch (err.code) {
         case "auth/user-not-found":
@@ -119,17 +74,65 @@ export class SignInPage {
     })
   }
 
+  after_get_firebase_id(_id:string){
+    console.log(_id, "_id");
+    this.authData.getProfileFromServer(_id)
+      .then((data) => {
+        if (data == undefined) {
+          console.log("error in server (server down)"); 
+          return;
+        }
+        if (data.verifyData.is_phone_number_verified) {
+            this.splashscreen.show();
+            window.location.reload();
+        } else {
+          let alert = this.alertCtrl.create({
+            message: "need to complete registration",
+            buttons: [
+              {
+                text: "complete registration",
+                role: 'cancel',
+                handler: () => {
+                  this.navCtrl.setRoot("verify-code");
+                }
+              }
+            ]
+          });
+          alert.present();
+        }
+      })
+      .catch(err => {
+        console.log("aaa",_id);
+        this.authData.deleteProfile(_id).then(()=>{
+          console.log("user deleted");
+          let alert = this.alertCtrl.create({
+            message: "Sorry, please complet registretion.",
+            buttons: [
+              {
+                text: "complete registration",
+                role: 'cancel',
+                handler: () => {
+                  this.authData.user.password = this.password;
+                  this.authData.user.email = this.email;
+                  setTimeout(()=>{
+                    this.navCtrl.parent.select(0); 
+                  },1000)
+                                  }
+              }
+            ]
+          });
+          alert.present();
+        }).catch((err)=>{
+          console.log("err123334", err);
+        })
+        console.log("err", err);
+      })
+  }
 
   loginUserWithProvider(m_provider: string) {
-    this.authData.loginUserWithProvider(m_provider).then((user: Profile) => {
-      if (user.verifyData.is_phone_number_verified) {
-        this.splashscreen.show();
-        this.app.getRootNavs()[0].setRoot(MyApp).then(() => {
-          window.location.reload();
-        })
-      } else {
-        this.app.getRootNavs()[0].setRoot("enter-phone");
-      }
+    this.authData.loginUserWithProvider(m_provider).then((user: any) => {
+      
+      this.after_get_firebase_id(user.user.uid);
     })
       .catch((err) => {
         console.log("err 656721356731 ", err);

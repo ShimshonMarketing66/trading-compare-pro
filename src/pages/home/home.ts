@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { GlobalProvider } from '../../providers/global/global';
+import { AuthDataProvider } from '../../providers/auth-data/auth-data';
 
 
 @IonicPage()
@@ -9,13 +10,24 @@ import { GlobalProvider } from '../../providers/global/global';
   templateUrl: 'home.html',
 })
 export class HomePage {
-  users: any[] = [];
-  all_users :any[] = [];
+  users: {
+    total_corect_percent:number,
+    _id:string,
+    country:string,
+    nickname:string
+   }[] = [];
+  all_users :{
+    total_corect_percent:number,
+    _id:string,
+    country:string,
+    nickname:string
+   }[] = [];
   selectedSegmentSocialFeeds: string = "Following";
   AllLeaderboard: boolean = false;
   constructor(
+    public authData : AuthDataProvider,
     public navCtrl: NavController,
-     public navParams: NavParams,
+    public navParams: NavParams,
     public globalProvider:GlobalProvider) {
     this.getUsers();
   }
@@ -29,9 +41,15 @@ export class HomePage {
   }
 
   getUsers() {
-   this.globalProvider.get_sentiments_users().then((data)=>{
-    this.all_users = data;
+   this.globalProvider.get_sentiments_users().then((data:{
+    total_corect_percent:number,
+    _id:string,
+    country:string,
+    nickname:string
+   }[])=>{
+    this.all_users = data;    
     for (let index = 0; index < 10 && index < this.all_users.length; index++) {
+      this.all_users[index].total_corect_percent = Number(this.all_users[index].total_corect_percent.toFixed(1))
       this.users.push(this.all_users[index]);
     }
    })
@@ -62,6 +80,14 @@ export class HomePage {
   seeAllLeaderboard() {
     if (this.AllLeaderboard) return;
     this.AllLeaderboard = true;
+  }
+
+  go_to_user_page(user){
+    if (user._id == this.authData.user._id) {
+      this.navCtrl.push('my-profile')
+    }else{
+      this.navCtrl.push('profile',{user:user})
+    }
   }
 
 }

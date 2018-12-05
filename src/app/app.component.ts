@@ -35,14 +35,23 @@ export class MyApp {
   ) {
     this.loop();
     firebase.auth().onAuthStateChanged(user => {
+   
       this.onAuthStateChangedCalled = true;
       if (user) {
+        this.authData.user_firebase = user;
+        firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
+          authData.idToken = idToken;
+        }).catch(function(error) {
+         console.error("cannot get token",error);
+        });
+        
         this._id = user.uid;
         this.isLogin = true;
       } else {
         this.isLogin = false;
       }
     });
+
     translate.setDefaultLang('english');
   }
 

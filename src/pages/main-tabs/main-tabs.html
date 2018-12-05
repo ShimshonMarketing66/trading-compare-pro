@@ -1,9 +1,9 @@
-<ion-tabs >
-    <ion-tab [root]="homeRoot" tabTitle="Home" tabIcon="information-circle"></ion-tab>
-    <ion-tab [root]="liveFeedRoot" tabTitle="Live feed" tabIcon="information-circle" tabsHideOnSubPages="true"></ion-tab>
-    <ion-tab [root]="alertsRoot" tabTitle="Alerts" tabIcon="information-circle"></ion-tab>
-    <ion-tab [root]="profileRoot" tabTitle="Profile" tabIcon="information-circle"></ion-tab>
-    <ion-tab [root]="menuRoot" tabTitle="Menu" tabIcon="menu" tabsHideOnSubPages="true"></ion-tab>
+<ion-tabs selectedIndex="'0'">
+    <ion-tab (ionSelect)="selectedIndex = '0'" [root]="homeRoot" tabTitle="Home" tabIcon="{{selectedIndex == '0'? 'home-tabs-a':'home-tabs-d'}}"  tabsHideOnSubPages="true"></ion-tab>
+    <ion-tab (ionSelect)="selectedIndex = '1'" [root]="liveFeedRoot" tabTitle="Live feed" tabIcon="{{selectedIndex == '1'? 'feed-tabs-a':'feed-tabs-d'}}" tabsHideOnSubPages="true"></ion-tab>
+    <ion-tab (ionSelect)="selectedIndex = '2'" [root]="alertsRoot" tabTitle="Alerts" tabIcon="{{selectedIndex == '2'? 'bell-tabs-a':'bell-tabs-d'}}" tabsHideOnSubPages="true"></ion-tab>
+    <ion-tab (ionSelect)="selectedIndex = '3'" [root]="chatRoot" tabTitle="Chat" tabIcon="{{selectedIndex =='3'? 'comment-tabs-a':'comment-tabs-d'}}" tabsHideOnSubPages="true"></ion-tab>
+    <ion-tab (ionSelect)="selectedIndex = '4'" [root]="menuRoot" tabTitle="Menu" tabIcon="{{selectedIndex == '4'? 'bars-tabs-a':'bars-tabs-d'}}" tabsHideOnSubPages="true"></ion-tab>
 
 </ion-tabs>
  

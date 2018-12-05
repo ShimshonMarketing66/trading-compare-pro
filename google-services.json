@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "212982281977-d7h3lsf7s2nnedj6sl42jbl2mnbhlla8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tradingcompare",
+            "certificate_hash": "990cb378d2a27733765d24f7c0d44d0e801cc3ad"
+          }
+        },
+        {
           "client_id": "212982281977-nrar31o20thlvs4k7f3civmhtthcg94i.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -88,6 +96,14 @@
           "android_info": {
             "package_name": "com.tradingcompare.app",
             "certificate_hash": "8279bb62f15083103c3821b93d32e6885386341f"
+          }
+        },
+        {
+          "client_id": "212982281977-mdlcm8o3p48t9sgc78ll5epegebo6sgm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tradingcompare.app",
+            "certificate_hash": "990cb378d2a27733765d24f7c0d44d0e801cc3ad"
           }
         },
         {

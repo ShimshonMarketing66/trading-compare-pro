@@ -72,15 +72,71 @@
     color: #12a6f9;
     }
     }
-    @include makeIcon_bars_a(bars-v-a,"\f0c9");
-    @include makeIcon_bars_d(bars-v-d,"\f0c9");
 
+    @mixin makeIcon_white($arg, $val) {
+      .#{$arg}:before ,
+      .ion-ios-#{$arg}:before ,
+      .ion-ios-#{$arg}-outline:before ,
+      .ion-md-#{$arg}:before ,
+      .ion-md-#{$arg}-outline:before {
+      content: $val;
+      font-size:18px;
+      color: white;
+      }
+      }
+
+      @mixin makeIcon_tabs_active($arg, $val) {
+        .#{$arg}:before ,
+        .ion-ios-#{$arg}:before ,
+        .ion-ios-#{$arg}-outline:before ,
+        .ion-md-#{$arg}:before ,
+        .ion-md-#{$arg}-outline:before {
+        content: $val;
+        font-size:30px;
+        color: #6ae5f5;
+        }
+        }
+
+        @mixin makeIcon_tabs_inactive($arg, $val) {
+          .#{$arg}:before ,
+          .ion-ios-#{$arg}:before ,
+          .ion-ios-#{$arg}-outline:before ,
+          .ion-md-#{$arg}:before ,
+          .ion-md-#{$arg}-outline:before {
+          content: $val;
+          font-size:25px;
+          color: #707070;
+          }
+          }
+
+          @include makeIcon_tabs_active(home-tabs-a,"\f015");
+          @include makeIcon_tabs_inactive(home-tabs-d,"\f015");
+
+          @include makeIcon_tabs_active(bars-tabs-a,"\f0c9");
+          @include makeIcon_tabs_inactive(bars-tabs-d,"\f0c9");
+
+          @include makeIcon_tabs_active(feed-tabs-a,"\f09e");
+          @include makeIcon_tabs_inactive(feed-tabs-d,"\f09e");
+
+          @include makeIcon_tabs_active(comment-tabs-a,"\f075");
+          @include makeIcon_tabs_inactive(comment-tabs-d,"\f075");
+
+          @include makeIcon_tabs_active(bell-tabs-a,"\f0f3");
+          @include makeIcon_tabs_inactive(bell-tabs-d,"\f0f3");
+
+          @include makeIcon_bars_a(bars-v-a,"\f0c9");
+          @include makeIcon_bars_d(bars-v-d,"\f0c9");
+      
+          @include makeIcon_bars_a(th-v-a,"\f00a");
+          @include makeIcon_bars_d(th-v-d,"\f00a");
+          
     @include makeIcon_bars_a(th-v-a,"\f00a");
     @include makeIcon_bars_d(th-v-d,"\f00a");
 
   @include makeIcon(double-sort,'\e900');
 
 
+  @include makeIcon(home-v,"\f015");
 
 @include makeIcon(plus-v,"\f067");
  
@@ -91,7 +147,7 @@
 @include makeIcon_a(star-v-a,"\f005");
  
  
-@include makeIcon(check-v,"\f00c");
+@include makeIcon_white(check-v,"\f00c");
  
 @include makeIcon(close-v,"\f00d");
  
@@ -99,7 +155,6 @@
  
 @include makeIcon(trash-v,"\f014");
  
-@include makeIcon(home-v,"\f015");
  
 @include makeIcon(flag-v,"\f024");
  

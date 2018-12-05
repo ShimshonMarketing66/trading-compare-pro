@@ -52,14 +52,26 @@ export class SignUpPage {
   }
 
   loginUserWithProvider(m_provider: string) {
-    this.authData.loginUserWithProvider(m_provider).then((user: Profile) => {
-      console.log(user);
-      if (user.verifyData.is_phone_number_verified) {
-        // this.splashscreen.show();
-        this.app.getRootNavs()[0].setRoot("main-tabs");
-      } else {
-        this.app.getRootNavs()[0].setRoot("enter-phone");
-      }
+    this.authData.loginUserWithProvider(m_provider).then((user1: any) => {
+      this.authData.getProfileFromServer(user1.user.uid)
+      .then((user)=>{
+        if (user.verifyData.is_phone_number_verified) {
+          this.splashscreen.show()
+          window.location.reload();
+        } else {
+          this.app.getRootNavs()[0].setRoot("enter-phone");
+        }
+      })
+      .catch(()=>{
+        this.authData.getProfileWithFirebaseUser(user1.user);
+        this.authData.createUser(this.authData.user)
+        .then((data)=>{
+          console.log("added in backend");
+          this.app.getRootNavs()[0].setRoot("enter-phone");
+        })
+      })
+      
+     
     })
       .catch((err) => {
         console.log("err 656721356731 ", err);
@@ -67,15 +79,16 @@ export class SignUpPage {
   }
 
   register() {
-    if (this.authData.user.first_name == "") {
-      this.error = "*Please enter Correct First name.";
+    if (this.authData.user.full_name === "") {
+      this.error = "*Please enter Correct Full Name.";
       return;
     }
 
-    if (this.authData.user.last_name == "") {
-      this.error = "*Please enter Correct Last name.";
+    if (this.authData.user.nickname === "") {
+      this.error = "*Please enter Correct Username.";
       return;
     }
+
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (!re.test(String(this.authData.user.email).toLowerCase())) {
       this.error = "*Please enter Correct Email.";
@@ -90,11 +103,11 @@ export class SignUpPage {
       this.error = "*Please enter Correct Phone Number.";
       return;
     }
-    if (this.authData.user.countryData.country == "") {
+    if (this.authData.user.countryData.country === "") {
       this.error = "*Please select Country.";
       return;
     }
-    if (this.authData.user.countryData.dial_code == "") {
+    if (this.authData.user.countryData.dial_code === "") {
       this.error = "*Please select Dial Code.";
       return;
     }
@@ -120,13 +133,21 @@ export class SignUpPage {
   }
 
 
-  loginUserWithPassword() {
+  async loginUserWithPassword() {
     let loading = this.loadingCtrl.create({
       content: "checking data..."
     })
     loading.present();
+    let d = await this.authData.is_nickname_exist(this.authData.user.nickname,false);
+    if (d) {
+      this.error = "*Username exists already."
+      loading.dismiss();
+      return ;
+    }
+    let a = this.authData.user.countryData.country.split(",")[0];
+    this.authData.user.countryData.country = a.replace(" ","-").toLocaleLowerCase();
+
     this.authData.signupUser(this.authData.user, loading).then(() => {
-      
       this.authData.sendVerifyCode(loading).then(() => {
         loading.dismiss();
         this.app.getRootNav().setRoot("verify-code");

@@ -1,5 +1,5 @@
 import { Component, HostListener, ViewChild, AfterViewInit, NgZone, ElementRef, trigger, transition, animate, keyframes, style } from '@angular/core';
-import { IonicPage, NavController, NavParams, Slides, ModalController, ModalOptions, Platform, Content, AlertController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Slides, ModalController, ModalOptions, Platform, Content, AlertController, Events } from 'ionic-angular';
 import { StockProvider } from '../../providers/stock/stock';
 import { IStock } from '../../models/stock';
 import { ForexProvider } from '../../providers/forex/forex';
@@ -58,20 +58,18 @@ export class LiveFeedPage implements AfterViewInit {
   @ViewChild('mySlider') slider: Slides;
   @ViewChild('content') content: Content;
   modeView: string = "LINES"
-
+  first_time = true;
   watchlists = [];
   /* CRYPTO */
   CoinConnectedWSCrypto: any[] = [];
   ScrollFromTopCrypto: number = 0;
   ScrollDoneCrypto: boolean = true;
-  cryptos: any = [];
   socketCrypto: SocketIOClient.Socket;
   /* END CRYPTO */
 
   /* FOREX */
   CoinConnectedWSForex: any[] = [];
   ScrollFromTopForex: number = 0;
-  forexs: any = [];
   socketForex: SocketIOClient.Socket;
   /* END FOREX */
 
@@ -100,6 +98,7 @@ export class LiveFeedPage implements AfterViewInit {
 
 
   constructor(
+    public events: Events,
     private alertCtrl: AlertController,
     public authData: AuthDataProvider,
     public toastCtrl: ToastController,
@@ -113,17 +112,9 @@ export class LiveFeedPage implements AfterViewInit {
     public navCtrl: NavController,
     public navParams: NavParams
   ) {
-    this.sizeOfBody = window.screen.height - (this.platform.is("ios") ? 180 : 199);
-    this.numOfLines = Math.ceil(this.sizeOfBody / this.sizeOfLine);
+    console.log("constructor");
 
-    this.slides = [this.STOCK, this.FOREX, this.CRYPTO, this.WATCHLIST];
-    this.buildStocks(0).then((arr) => {
-      this.offsetRequested = 50;
-      this.startWS(this.STOCK);
-      this.addCoinWebsocketStock(arr);
-    })
-
-
+   
 
   }
 
@@ -131,6 +122,7 @@ export class LiveFeedPage implements AfterViewInit {
   ionViewDidLoad() {
     console.log('ionViewDidLoad LiveFeedPage');
   }
+
 
   ngAfterViewInit(): void {
     //     setTimeout(()=>{
@@ -160,9 +152,9 @@ export class LiveFeedPage implements AfterViewInit {
         this.stockProvider.stocks = [];
         break;
       case this.FOREX:
-        this.forexs = [];
+        this.forexProvider.forexs = [];
       case this.CRYPTO:
-        this.cryptos = [];
+        this.cryptoProvider.cryptos = [];
       case this.WATCHLIST:
         // this.globalProvider.watchlists = [];
         break;
@@ -286,7 +278,7 @@ export class LiveFeedPage implements AfterViewInit {
             .then(data => {
               this.offsetRequested += data.length;
               for (let index = 0; index < data.length; index++) {
-                this.forexs.push(data[index]);
+                this.forexProvider.forexs.push(data[index]);
               }
               resolve();
             })
@@ -300,7 +292,7 @@ export class LiveFeedPage implements AfterViewInit {
             .then(data => {
               this.offsetRequested += data.length;
               for (let index = 0; index < data.length; index++) {
-                this.cryptos.push(data[index]);
+                this.cryptoProvider.cryptos.push(data[index]);
               }
               resolve();
             })
@@ -319,32 +311,21 @@ export class LiveFeedPage implements AfterViewInit {
   goToDetailsStock(i: number) {
     this.navCtrl.push("item-details-stock", {
       item: this.stockProvider.stocks[i], 
-      remove_from_watchlist:this.remove_from_watchlist,
-      change_sentiment:this.change_sentiment,
-      add_to_watchlist:this.add_to_watchlist,
-      that:this
+      change_sentiment:this.change_sentiment
     })
   }
 
   goToDetailsForex(i: number) {
     this.navCtrl.push("item-details-forex", {
-      item: this.forexs[i],   
-      remove_from_watchlist:this.remove_from_watchlist,
-      change_sentiment:this.change_sentiment,
-      add_to_watchlist:this.add_to_watchlist,
-      i:i,
-      that:this
+      item: this.forexProvider.forexs[i],   
+      change_sentiment:this.change_sentiment
     })
   }
 
   goToDetailsCrypto(i: number) {
     this.navCtrl.push("item-details-crypto", {
-      item: this.cryptos[i],
-      remove_from_watchlist:this.remove_from_watchlist,
-      change_sentiment:this.change_sentiment,
-      add_to_watchlist:this.add_to_watchlist,
-      i:i,
-      that:this
+      item: this.cryptoProvider.cryptos[i],
+      change_sentiment:this.change_sentiment
     })
   }
 
@@ -414,11 +395,11 @@ export class LiveFeedPage implements AfterViewInit {
     return new Promise((resolve) => {
       this.forexProvider.getForex(0).then(data => {
         for (let index = 0; index < data.length; index++) {
-          this.forexs.push(data[index]);
+          this.forexProvider.forexs.push(data[index]);
         }
         let arr = [];
         this.CoinConnectedWSForex = [];
-        for (let index = 0; index < this.forexs.length; index++) { 
+        for (let index = 0; index < this.forexProvider.forexs.length; index++) { 
           if (index < this.numOfLines) {
             this.CoinConnectedWSForex.push(data[index]);
             arr.push(data[index].pair);
@@ -433,10 +414,10 @@ export class LiveFeedPage implements AfterViewInit {
     return new Promise((resolve) => {
       this.cryptoProvider.getCrypto(0).then(data => {
         for (let index = 0; index < data.length; index++) {
-          this.cryptos.push(data[index])
+          this.cryptoProvider.cryptos.push(data[index]);
         }
         let arr = [];
-        for (let index = 0; index < this.cryptos.length; index++) {
+        for (let index = 0; index < this.cryptoProvider.cryptos.length; index++) {
           if (index < this.numOfLines) {
             this.CoinConnectedWSCrypto.push(data[index]);
             arr.push(data[index].pair);
@@ -541,25 +522,25 @@ export class LiveFeedPage implements AfterViewInit {
 
         this.socketCrypto.on("message", (data) => {
           let pair = data.pair;
-          if (this.cryptos.length == 0) {
+          if (this.cryptoProvider.cryptos.length == 0) {
             this.socketCrypto.disconnect();
             return;
           }
           for (let index = 0; index < this.CoinConnectedWSCrypto.length; index++) {
             let a = this.CoinConnectedWSCrypto[index]["index"];
             if (pair == this.CoinConnectedWSCrypto[index].pair) {
-              if (this.cryptos[a].price > Number(data.price)) {
-                this.cryptos[a].state = this.cryptos[a].state == "falling" ? "falling1" : "falling";
-                this.cryptos[a].price = Number(data.price);
-                this.cryptos[a].high24 = Number(data.high24);
-                this.cryptos[a].low24 = Number(data.low24);
-                this.cryptos[a].change24 = Number(data.change24);
-              } else if (this.cryptos[a].price < Number(data.price)) {
-                this.cryptos[a].state = this.cryptos[a].state == "raising" ? "raising1" : "raising";
-                this.cryptos[a].price = Number(data.price);
-                this.cryptos[a].high24 = Number(data.high24);
-                this.cryptos[a].low24 = Number(data.low24);
-                this.cryptos[a].change24 = Number(data.change24);
+              if (this.cryptoProvider.cryptos[a].price > Number(data.price)) {
+                this.cryptoProvider.cryptos[a].state = this.cryptoProvider.cryptos[a].state == "falling" ? "falling1" : "falling";
+                this.cryptoProvider.cryptos[a].price = Number(data.price);
+                this.cryptoProvider.cryptos[a].high24 = Number(data.high24);
+                this.cryptoProvider.cryptos[a].low24 = Number(data.low24);
+                this.cryptoProvider.cryptos[a].change24 = Number(data.change24);
+              } else if (this.cryptoProvider.cryptos[a].price < Number(data.price)) {
+                this.cryptoProvider.cryptos[a].state = this.cryptoProvider.cryptos[a].state == "raising" ? "raising1" : "raising";
+                this.cryptoProvider.cryptos[a].price = Number(data.price);
+                this.cryptoProvider.cryptos[a].high24 = Number(data.high24);
+                this.cryptoProvider.cryptos[a].low24 = Number(data.low24);
+                this.cryptoProvider.cryptos[a].change24 = Number(data.change24);
               }
 
               break;
@@ -582,18 +563,18 @@ export class LiveFeedPage implements AfterViewInit {
           for (let index = 0; index < this.CoinConnectedWSForex.length; index++) {
             if (pair == this.CoinConnectedWSForex[index].pair) {
               let a = this.CoinConnectedWSForex[index].index;
-              if (this.forexs[a].price > data.price) {
-                this.forexs[a].state = this.forexs[a].state == "falling" ? "falling1" : "falling";
-                this.forexs[a].price = Number(data.price);
-                this.forexs[a].high24 = Number(data.high24);
-                this.forexs[a].low24 = Number(data.low24);
-                this.forexs[a].change24 = Number(data.change24);
-              } else if (this.forexs[a].price < data.price) {
-                this.forexs[a].state = this.forexs[a].state == "raising" ? "raising1" : "raising";
-                this.forexs[a].price = Number(data.price);
-                this.forexs[a].high24 = Number(data.high24);
-                this.forexs[a].low24 = Number(data.low24);
-                this.forexs[a].change24 = Number(data.change24);
+              if (this.forexProvider.forexs[a].price > data.price) {
+                this.forexProvider.forexs[a].state = this.forexProvider.forexs[a].state == "falling" ? "falling1" : "falling";
+                this.forexProvider.forexs[a].price = Number(data.price);
+                this.forexProvider.forexs[a].high24 = Number(data.high24);
+                this.forexProvider.forexs[a].low24 = Number(data.low24);
+                this.forexProvider.forexs[a].change24 = Number(data.change24);
+              } else if (this.forexProvider.forexs[a].price < data.price) {
+                this.forexProvider.forexs[a].state = this.forexProvider.forexs[a].state == "raising" ? "raising1" : "raising";
+                this.forexProvider.forexs[a].price = Number(data.price);
+                this.forexProvider.forexs[a].high24 = Number(data.high24);
+                this.forexProvider.forexs[a].low24 = Number(data.low24);
+                this.forexProvider.forexs[a].change24 = Number(data.change24);
               }
 
               break;
@@ -606,6 +587,9 @@ export class LiveFeedPage implements AfterViewInit {
       case this.STOCK:
         this.socketStock = io.connect("https://ws-api.iextrading.com/1.0/last");
         this.socketStock.on("message", (data) => {
+          if (this.socketStock.disconnected) {
+            return
+          }
           data = JSON.parse(data);
           let pair = data.symbol;
           for (let index = 0; index < this.CoinConnectedWSStock.length; index++) {
@@ -623,11 +607,8 @@ export class LiveFeedPage implements AfterViewInit {
 
               if (Number(data.price) < Number(this.stockProvider.stocks[a].day_low)) {
                 this.stockProvider.stocks[a].day_low = data.price;
-              }
-
-              console.log(data.price,pair);
-              
-              
+              }              
+      
               let original = Number(this.stockProvider.stocks[a].price_open);
               if (isNaN(original) || original == undefined || original == null ) {
                 original = 0;
@@ -661,14 +642,10 @@ export class LiveFeedPage implements AfterViewInit {
     for (let index = 0; index < this.globalProvider.watchlists.length; index++) {
      switch (this.globalProvider.watchlists[index]["type"]) {
        case this.STOCK:
-       
          this.socketStockWL.emit("subscribe",this.globalProvider.watchlists[index].symbol);
-        
          break;
 
-         case this.FOREX:
-         console.log(this.globalProvider.watchlists[index].symbol + "_2sec");
-         
+         case this.FOREX:         
          this.socketForexWL.emit("room",this.globalProvider.watchlists[index].symbol + "_2sec");
          break;
 
@@ -775,6 +752,84 @@ export class LiveFeedPage implements AfterViewInit {
     }
   }
 
+  ionViewWillEnter()
+  {
+    switch (this.selectedSegment) {
+      case this.STOCK:
+      this.sizeOfBody = window.screen.height - (this.platform.is("ios") ? 180 : 199);
+      this.numOfLines = Math.ceil(this.sizeOfBody / this.sizeOfLine);
+  
+      this.slides = [this.STOCK, this.FOREX, this.CRYPTO, this.WATCHLIST];
+      this.buildStocks(0).then((arr) => {
+        this.offsetRequested = 50;
+        this.startWS(this.STOCK);
+        this.addCoinWebsocketStock(arr);
+      })
+  
+  
+        break;
+      case this.FOREX:
+      this.buildForex().then((arr) => {
+        this.offsetRequested += 50;
+        if (this.modeView != "SQUARES") {
+          console.log("arr",arr);
+          this.startWS(this.FOREX);
+          this.addCoinWebsocketForex(arr);
+        }
+      })
+        break;
+      case this.CRYPTO:
+      this.buildCrypto().then((arr) => {
+        if (this.modeView != "SQUARES") {
+          this.startWS(this.CRYPTO);
+        this.addCoinWebsocketCrypto(arr);
+        }
+        this.offsetRequested += 50;
+      })
+        break;
+
+        case this.WATCHLIST:
+        this.startWS(this.WATCHLIST);
+        break;
+
+
+      default:
+        break;
+    }
+    
+  }
+  ionViewDidLeave(){
+    console.log("ionViewDidLeave");
+    
+  }
+
+  ionViewWillLeave(){
+    console.log("ionViewWillLeave");
+    this.content.scrollTop = 0;
+    switch (this.selectedSegment) {
+      case "FOREX":
+      this.socketForex.disconnect()
+        break;
+
+        case "CRYPTO":
+        this.socketCrypto.disconnect()
+        break;
+
+        case "STOCK":
+        this.socketStock.disconnect()
+        break;
+
+        case "WATCHLIST":
+        this.socketCryptoWL.disconnect();
+        this.socketForexWL.disconnect();
+        this.socketStockWL.disconnect();
+        break;
+    
+      default:
+        break;
+    }
+  }
+
   leaveCoinWebsocketStock(arr: string[]) {
     // console.log("leaveCoinWebsocketStock", arr);
     let str = "";
@@ -819,8 +874,8 @@ export class LiveFeedPage implements AfterViewInit {
     var Toconect = [];
     let a = Math.ceil(scrollPx / this.sizeOfLine) - 2;
     for (let j = 0; j < this.numOfLines; j++) {
-      if (a + j > -1 && this.cryptos[a + j] != undefined) {
-        SuposedToBe.push(this.cryptos[a + j]);
+      if (a + j > -1 && this.cryptoProvider.cryptos[a + j] != undefined) {
+        SuposedToBe.push(this.cryptoProvider.cryptos[a + j]);
       }
     }
     for (let j1 = 0; j1 < SuposedToBe.length; j1++) {
@@ -864,8 +919,8 @@ export class LiveFeedPage implements AfterViewInit {
     var Toconect = [];
     let a = Math.ceil(scrollPx / this.sizeOfLine) - 2;
     for (let j = 0; j < this.numOfLines; j++) {
-      if (a + j > -1 && this.forexs[a + j] != undefined) {
-        SuposedToBe.push(this.forexs[a + j]);
+      if (a + j > -1 && this.forexProvider.forexs[a + j] != undefined) {
+        SuposedToBe.push(this.forexProvider.forexs[a + j]);
       }
     }
 
@@ -981,123 +1036,12 @@ export class LiveFeedPage implements AfterViewInit {
     }
   }
 
-  add_to_watchlist(event: any, symbol: string, type: string, i,that2?:any,item?:any) {
-    if (event!=undefined) {
-      event.stopPropagation();
-    }
-    var that = this;
-    if (that2!=undefined) {
-      that=that2;
-    }
-    
-    if (that.authData.user.watchlist.length + 1 > 10 && that.authData.user.state == "unknown") {
-      if (item != undefined) {
-        item.is_in_watchlist = false;
-      }
-      let alert = that.alertCtrl.create({
-        title: 'your watchlist is full',
-        subTitle: 'you have to be vip to make your watchlist greaten.',
-        buttons: [
-          {
-            text: 'Cancel',
-            role: 'cancel'
-          },
-          {
-            text: 'Go to vip',
-            handler: () => {
-              console.log('go to vip.');
-            }
-          }
-        ]
-      })
-      alert.present();
-      return;
-    }
-
-    switch (type) {
-      case that.STOCK:
-        if (that.globalProvider.watchlists.length != 0) {
-          that.globalProvider.watchlists.push(that.stockProvider.stocks[i]);
-        }
-        that.stockProvider.stocks[i].is_in_watchlist = true;
-        break;
-      case that.FOREX:
-        if (that.globalProvider.watchlists.length != 0) {
-          that.globalProvider.watchlists.push(that.forexs[i]);
-        }
-        that.forexs[i].is_in_watchlist = true;
-        break;
-      case that.CRYPTO:
-        if (that.globalProvider.watchlists.length != 0) {
-          that.globalProvider.watchlists.push(that.cryptos[i]);
-        }
-        that.cryptos[i].is_in_watchlist = true;
-        break;
-      default:
-        console.log("missing params");
-        return;
-    }
-    let toast = that.toastCtrl.create({
-      message: symbol + ' was added successfully',
-      duration: 2000,
-      position: 'bottom'
-    });
-    toast.present();
-    that.globalProvider.add_to_watchlist(symbol, type)
-  }
 
   errorHandler(event) {
     console.debug(event);
     event.target.src = "assets/imgs/stocks.png";
   }
 
-  remove_from_watchlist(event: any, symbol: string, type: string, i,that2?:any,item?:any) {
-    if (event !=undefined) {
-      event.stopPropagation();
-    }
-    var that = this;
-    if (that2!= undefined) {
-      that = that2;
-    }
-
-    if (that.selectedSegment != that.WATCHLIST) {
-      switch (type) {
-        case that.STOCK:
-        that.stockProvider.stocks[i].is_in_watchlist = false;
-          break;
-        case that.FOREX:
-        that.forexs[i].is_in_watchlist = false;
-          break;
-        case that.CRYPTO:
-        that.cryptos[i].is_in_watchlist = false;
-          break;
-        default:
-          console.log("missing params");
-          return;
-      }
-    }
-    if (item != undefined) {
-      item.is_in_watchlist = false;
-    }
-    
-    for (let index = 0; index < that.globalProvider.watchlists.length; index++) {
-      if (that.globalProvider.watchlists[index].symbol == symbol) {
-        that.globalProvider.watchlists.splice(index, 1);
-      }
-    }
-
-    let toast = that.toastCtrl.create({
-      message: symbol + ' was removed from watchlist successfully',
-      duration: 2000,
-      position: 'bottom'
-    });
-    toast.present();
-    if (that.selectedSegment == that.WATCHLIST) {
-      that.globalProvider.remove_from_watchlist(symbol, type, i);
-    } else {
-      that.globalProvider.remove_from_watchlist(symbol, type);
-    }
-  }
 
   goToDetails(watchlist: any) {
     let page: string = ""    
@@ -1118,9 +1062,6 @@ export class LiveFeedPage implements AfterViewInit {
 
     this.navCtrl.push(page, {
       item: watchlist,
-      remove_from_watchlist:this.remove_from_watchlist,
-      add_to_watchlist:this.add_to_watchlist,
-      that:this
     })
   }
 
@@ -1141,13 +1082,13 @@ export class LiveFeedPage implements AfterViewInit {
         arr = that2.stocks;
         break;
       case that2.FOREX:
-        arr = that2.forexs;
+        arr = that2.forexProvider.forexs;
         break;
       case that2.CRYPTO:
-        arr = that2.cryptos;
+        arr = that2.cryptoProvider.cryptos;
         break;
       case that2.WATCHLIST:
-        arr = that2.watchlists;
+        arr = that2.globalProvider.watchlists;
         if (arr[i].status == "CLOSE" || arr[i].sentiment == "none") {
           for (let index = 0; index < this.stockProvider.allStocks.length; index++) {
             for (let j = 0; j < this.stockProvider.allStocks[index].data.length; j++) {

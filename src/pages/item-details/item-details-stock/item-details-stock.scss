@@ -126,9 +126,11 @@ ion-slides {
 
 
 .comment:active {
-       -webkit-animation: bgcolorchange 3s; /* Chrome, Safari, Opera */
-       animation: 3s bgcolorchange;
+  background: #808080;
      }
+
+
+
      @keyframes bgcolorchange {
        100% {background: #808080;}
      }
@@ -151,6 +153,12 @@ ion-slides {
     
 }
 
-
+@keyframes buttonClickAnimation {
+  0% {transform: scale(0.8);}
+  100% {transform: scale(1);}
+}
+.animated-button {
+  animation: buttonClickAnimation 0.5s;
+}
  
 }
