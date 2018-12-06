@@ -1,0 +1,41 @@
+<ion-header mode="ios" style="background: #e9e9e9!important;">
+    <ion-navbar  mode="ios">
+           Share Via
+    </ion-navbar>
+</ion-header>
+<ion-content>
+        
+    <ion-grid>
+        <ion-row (click)="share('com.facebook.katana')">
+            <ion-col col-2>
+                    <ion-icon style="font-size: 40px;color: blue;" name="logo-facebook"></ion-icon>
+            </ion-col>
+
+            <ion-col style="margin: auto;">
+                Facebook
+                </ion-col>
+        </ion-row>
+        <ion-row>
+                <ion-col col-2>
+                        <ion-icon style="font-size: 40px;color: green;" name="logo-whatsapp"></ion-icon>
+
+                </ion-col>
+    
+                <ion-col style="margin: auto;">
+                        Whatsapp
+                    </ion-col>
+            </ion-row>
+            <ion-row (click)="share('com.twitter.android')">
+                    <ion-col  col-2>
+                            <ion-icon style="font-size: 40px;color: pink;" name="logo-twitter"></ion-icon>
+    
+                    </ion-col>
+        
+                    <ion-col style="margin: auto;">
+                            Twitter
+                        </ion-col>
+                </ion-row>
+    
+
+    </ion-grid>
+</ion-content>

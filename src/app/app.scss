@@ -81,3 +81,26 @@ ion-modal.countries-popup{
 .tabbar { 
     background: #1e375e !important;
 }    
+
+// .share-comment .modal-wrapper{
+//     height: 50%;
+//     margin-top: 26%;
+//     max-width: 80%;
+//     margin-left: 10%;
+//     margin-top: 35%;
+// }
+
+.share-comment {
+    ion-backdrop {
+        visibility: visible;
+    }
+    .modal-wrapper {
+        width: 86%;
+        height: 55%;
+        margin: 7%;
+        position: absolute;
+        border-radius: 13px;
+        overflow: hidden;
+        margin-top: 36%;
+    }
+}

@@ -34,7 +34,7 @@ export class MenuPage {
   }
 
   open_sentiment(){
-    this.navCtrl.push("sentiments")
+    this.navCtrl.push("sentiments",{user_id:789})
   }
 
 }

@@ -119,4 +119,10 @@
     <plugin name="cordova-plugin-x-socialsharing" spec="5.4.3">
         <variable name="ANDROID_SUPPORT_V4_VERSION" value="24.1.1+" />
     </plugin>
+    <plugin name="ionic-plugin-deeplinks" spec="1.0.17">
+        <variable name="URL_SCHEME" value="tradingcompare" />
+        <variable name="DEEPLINK_SCHEME" value="https" />
+        <variable name="DEEPLINK_HOST" value="tradingcompare.com" />
+        <variable name="ANDROID_PATH_PREFIX" value="/" />
+    </plugin>
 </widget>

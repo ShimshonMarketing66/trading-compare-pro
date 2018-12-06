@@ -6,14 +6,15 @@ import { CryptoProvider } from '../../providers/crypto/crypto';
 import { ForexProvider } from '../../providers/forex/forex';
 
 @IonicPage({
-  name: "sentiments"
+  name: "sentiments",
+  segment:"/sentiment/:user_id"
 })
 @Component({
   selector: 'page-sentiments',
   templateUrl: 'sentiments.html',
 })
 export class SentimentsPage {
-
+  user_id:string;
   private readonly STOCK: string = "STOCK";
   private readonly FOREX: string = "FOREX";
   private readonly CRYPTO: string = "CRYPTO";
@@ -115,6 +116,9 @@ export class SentimentsPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad SentimentsPage');
+    this.user_id = this.navParams.get("user_id");
+    console.log(this.user_id);
+    
   }
 
   close(item, i) {

@@ -1,5 +1,5 @@
 import { Component, ViewChild, AfterViewInit, OnInit, NgZone } from '@angular/core';
-import { IonicPage, NavController, NavParams, Slides, Content, AlertController, ToastController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Slides, Content, AlertController, ToastController, ModalController, ModalOptions } from 'ionic-angular';
 
 import { Http, Headers } from '@angular/http';
 import { StockProvider } from '../../../providers/stock/stock';
@@ -38,6 +38,7 @@ export class ItemDetailsStockPage {
   showScrollButton: boolean;
 
   constructor(
+    public modalCrl:ModalController,
     private toastCtrl: ToastController,
     private clipboard: Clipboard,
     public alertCtrl: AlertController,
@@ -299,7 +300,7 @@ newsCall(){
     var buttons = [{
       text: 'Share',
       handler: () => {
-        console.log('Share clicked');
+       this.openShareModal(comment);
       }
     }, {
       text: 'Copy',
@@ -340,6 +341,20 @@ newsCall(){
       buttons: buttons
     });
     alert.present();
+  }
+
+  openShareModal(comment){
+    let modal = this.modalCrl.create("share-comment",{
+      comment:comment
+    },{
+      cssClass:"share-comment",
+      enableBackdropDismiss:true,
+      showBackdrop:true,
+    })
+    modal.present()
+    modal.onDidDismiss(comment=>{
+      console.log(comment);
+    })
   }
 
   sendMessage() {
