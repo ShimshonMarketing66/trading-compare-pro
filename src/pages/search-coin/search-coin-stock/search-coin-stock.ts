@@ -1,7 +1,6 @@
 import { Component, AfterContentInit, AfterViewInit, NgZone } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController, Keyboard, Searchbar } from 'ionic-angular';
 import { ViewChild } from '@angular/core'
-import { IStock } from '../../../models/stock';
 import { StockProvider } from '../../../providers/stock/stock';
 import { RmPointPipe } from '../../../pipes/rm-point/rm-point';
 

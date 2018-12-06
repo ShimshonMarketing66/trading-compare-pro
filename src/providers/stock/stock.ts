@@ -56,7 +56,7 @@ export class StockProvider {
         data["shortName"] = data["name"].split(" ")[0];
         let a = (data.symbol).split(".")[0];
         data["logo"] = "https://storage.googleapis.com/iex/api/logos/" + a + ".png";
-        data["is_in_watchlist"] = true;        
+        data["is_in_watchlist"] = false;        
         resolve(data);
       })
       .catch((err)=>{

@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, AfterViewInit } from '@angular/core';
 import { Platform, Nav } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -10,19 +10,22 @@ import { AuthDataProvider } from '../providers/auth-data/auth-data';
 import { Profile } from '../models/profile-model';
 import { Sim } from '@ionic-native/sim';
 import { GlobalProvider } from '../providers/global/global';
+import { Deeplinks } from '@ionic-native/deeplinks';
+import { CodePush } from '@ionic-native/code-push';
 
 @Component({
   templateUrl: 'app.html'
 })
-export class MyApp {
+export class MyApp implements AfterViewInit {
   @ViewChild(Nav) navCtrl: Nav;
   rootPage: any ;
-  isLogin: boolean;
   onAuthStateChangedCalled: boolean = false;
   firstTime: boolean = true;
   _id: string;
 
   constructor(
+    public codePush: CodePush,
+    private deeplinks: Deeplinks,
     public global:GlobalProvider,
     public sim:Sim,
     public authData: AuthDataProvider,
@@ -37,22 +40,24 @@ export class MyApp {
     firebase.auth().onAuthStateChanged(user => {
       this.onAuthStateChangedCalled = true;
       if (user) {
+        this.authData.isAuth = true;
         this.authData.user_firebase = user;
         firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
           authData.idToken = idToken;
         }).catch(function(error) {
          console.error("cannot get token",error);
         });
-        
         this._id = user.uid;
-        this.isLogin = true;
+        this.authData.isAuth = true;
       } else {
-        this.isLogin = false;
+        this.authData.isAuth = false;
       }
     });
 
     translate.setDefaultLang('english');
   }
+
+
 
   checkPermissionSim() {
     this.sim.hasReadPermission().then((info) => {
@@ -74,6 +79,16 @@ export class MyApp {
       } 
     })
   }
+
+  ngAfterViewInit() {
+    this.platform.ready().then(() => {
+      this.deeplinks.routeWithNavController(this.navCtrl, {
+        '/about-us': "AboutPage",
+        '/hats/:hatId': "HatDetailPage"
+      });
+    });
+  }
+
   
   checkPermissionREAD_SMS() :Promise<any> {
     return new Promise((resolve)=>{
@@ -105,7 +120,7 @@ export class MyApp {
   loop() {
     setTimeout(() => {
       if (this.onAuthStateChangedCalled) {
-        if (this.isLogin) {
+        if (this.authData.isAuth) {
           this.authData.getProfileFromServer(this._id).then((user:Profile) => {
             user.countryData.country =  user.countryData.country.toLowerCase().replace("-"," ");
             this.authData.user = user;
@@ -114,6 +129,11 @@ export class MyApp {
               this.global.initialProviders().then(()=>{
                 this.rootPage = "main-tabs";
                 this.platform.ready().then(() => {
+                  this.codePush.sync().subscribe((syncStatus) => console.log("syncStatus",syncStatus));
+
+const downloadProgress = (progress) => { console.log(`Downloaded ${progress.receivedBytes} of ${progress.totalBytes}`); }
+this.codePush.sync({}, downloadProgress).subscribe((syncStatus) => console.log(syncStatus));
+
                   this.statusBar.styleDefault();
                   this.splashScreen.hide();
                 })
@@ -123,6 +143,7 @@ export class MyApp {
             }
            
             this.platform.ready().then(() => {
+              
               this.statusBar.styleDefault();
               this.splashScreen.hide();
               this.initial_app_when_login();
@@ -130,7 +151,7 @@ export class MyApp {
           })
           .catch((err)=>{
             console.log("err this.authData.getProfileFromServer app commponnent"); 
-            this.rootPage = "login-tabs";
+            this.rootPage = "onboarding";
           })
         } else {
           this.platform.ready().then(() => {
@@ -138,7 +159,7 @@ export class MyApp {
             this.splashScreen.hide();
             this.initial_app_when_log_out();
           })
-          this.rootPage = "login-tabs";
+          this.rootPage = "onboarding";
         }
       } else {
         this.loop();

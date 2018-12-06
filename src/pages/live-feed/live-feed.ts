@@ -223,6 +223,9 @@ export class LiveFeedPage implements AfterViewInit {
       case this.TRENDING:
         // this.selectedSegment = this.TRENDING;
         break;
+        case this.WATCHLIST:
+        profileModal = this.modalCtrl.create("search-all-page");
+        break;
       default:
         break;
     }
@@ -1066,10 +1069,14 @@ export class LiveFeedPage implements AfterViewInit {
   }
 
   change_sentiment(type: string, i: number, event?:any,that?) {    
-    var that2;
     if (event != undefined) {
       event.stopPropagation();
     }
+    if (!this.globalProvider.isAuth()) {
+      this.globalProvider.open_login_alert();
+      return;
+    }
+    var that2;
     if (that != undefined) {
       that2 = that;
     }else{
@@ -1111,7 +1118,7 @@ export class LiveFeedPage implements AfterViewInit {
       arr[i].status = "OPEN";
       that2.globalProvider.add_sentiment( arr[i].symbol,type,arr[i].type,arr[i].price)
       .then(()=>{
-
+        
       })
       .catch((err)=>{
         console.error(err);

@@ -251,6 +251,10 @@ newsCall(){
 
 
   change_sentiment(type) {
+    if (!this.globalProvider.isAuth()) {
+      this.globalProvider.open_login_alert();
+      return;
+    }
     if (this.navParams.get("i") == undefined) {
       if (this.item.status == "CLOSE" || this.item.sentiment == 'none') {
         this.item.sentiment = type;
@@ -358,9 +362,16 @@ newsCall(){
   }
 
   sendMessage() {
+    
+    if (!this.globalProvider.isAuth()) {
+      this.globalProvider.open_login_alert();
+      return;
+    }
+
     if (this.message === '') {
       return;
     }
+    
     var data = {
       nickname: this.authData.user.nickname,
       txt: this.message,

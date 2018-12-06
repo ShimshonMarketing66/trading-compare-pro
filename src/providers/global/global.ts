@@ -4,7 +4,7 @@ import { StockProvider } from '../stock/stock';
 import { CryptoProvider } from '../crypto/crypto';
 import { ForexProvider } from '../forex/forex';
 import { AuthDataProvider } from '../auth-data/auth-data';
-import { ToastController, AlertController, LoadingController, Loading } from 'ionic-angular';
+import { ToastController, AlertController, LoadingController, Loading, App } from 'ionic-angular';
 
 @Injectable()
 export class GlobalProvider {
@@ -17,6 +17,7 @@ export class GlobalProvider {
 
   constructor
     (
+    public app: App,
     public loadingCtrl: LoadingController,
     public alertCtrl: AlertController,
     public toastCtrl: ToastController,
@@ -50,6 +51,10 @@ export class GlobalProvider {
 
 
   add_sentiment(symbol: string, type: string, symbol_type: string, price: number): Promise<any> {
+    if (!this.isAuth()) {
+      this.open_login_alert();
+      return;
+    }
     return new Promise((resolve, reject) => {
       var dataToSend = {
         _id: this.authData.user._id,
@@ -83,6 +88,10 @@ export class GlobalProvider {
 
 
   close_sentiment(symbol: string, symbol_type: string, close_price: number): Promise<any> {
+    if (!this.isAuth()) {
+      this.open_login_alert();
+      return;
+    }
     return new Promise((resolve, reject) => {
       var dataToSend = {
         _id: this.authData.user._id,
@@ -146,12 +155,15 @@ export class GlobalProvider {
 
   }
 
-  get_sentiments(): Promise<any> {
+  get_sentiments(_id): Promise<any> {
 
     return new Promise((resolve, reject) => {
+      if (_id == undefined) {
+        resolve([]);
+      }
       if (this.sentiments.length == 0) {
 
-        this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-sentiments-by-user/" + this.authData.user._id).toPromise().then((data: any) => {
+        this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-sentiments-by-user/" + _id).toPromise().then((data: any) => {
           this.sentiments = data;
           resolve(this.sentiments);
         }).catch((err) => {
@@ -165,7 +177,7 @@ export class GlobalProvider {
 
   initialProviders(): Promise<any> {
     return new Promise((resolve) => {
-      var promises = [this.forexProvider.getAllForex(), this.cryptoProvider.getCrypto(), this.stockProvider.get_stocks(0, "united-states-of-america"), this.get_sentiments(),this.authData.getFollowers(this.authData.user._id),this.authData.getFollowing(this.authData.user._id)]
+      var promises = [this.forexProvider.getAllForex(), this.cryptoProvider.getCrypto(), this.stockProvider.get_stocks(0, "united-states-of-america"), this.get_sentiments(this.authData.user._id),this.authData.getFollowers(this.authData.user._id),this.authData.getFollowing(this.authData.user._id)]
       Promise.all(promises).then((data) => {
           for (let index2 = 0; index2 < data[0].length; index2++) {
             for (let i = 0; i < data[3].length; i++) {
@@ -276,10 +288,15 @@ export class GlobalProvider {
 
 
   add_to_watchlist(event: any, item) {
-    console.log(item);
+  
 
     if (event != undefined) {
       event.stopPropagation();
+    }
+
+    if (!this.isAuth()) {
+      this.open_login_alert();
+      return;
     }
 
     if (this.authData.user.watchlist.length + 1 > 10 && this.authData.user.state == "unknown") {
@@ -295,7 +312,9 @@ export class GlobalProvider {
           {
             text: 'Go to vip',
             handler: () => {
-              console.log('go to vip.');
+              let nav = this.app.getActiveNav();
+              nav.setRoot("login-tabs")
+
             }
           }
         ]
@@ -319,6 +338,12 @@ export class GlobalProvider {
   }
 
   add_to_watchlist_backend(symbol: string, type: string) {
+
+    if (!this.isAuth()) {
+      this.open_login_alert();
+      return;
+    }
+
     let dataTOSEND = {
       data: {
         symbol: symbol,
@@ -341,6 +366,11 @@ export class GlobalProvider {
   remove_from_watchlist(event: any, item: any) {
     if (event != undefined) {
       event.stopPropagation();
+    }
+
+    if (!this.isAuth()) {
+      this.open_login_alert();
+      return;
     }
 
     item.is_in_watchlist = false;
@@ -371,6 +401,10 @@ export class GlobalProvider {
 
 
   remove_from_watchlist_backend(symbol: string, type: string) {
+    if (!this.isAuth()) {
+      this.open_login_alert();
+      return;
+    }
     let dataTOSEND = {
       data: {
         symbol: symbol,
@@ -388,8 +422,34 @@ export class GlobalProvider {
       })
   }
 
+  isAuth():boolean{
+    return this.authData.isAuth;
+  }
+  
+  open_login_alert(){
+    let alert = this.alertCtrl.create({
+      title: 'Confirm purchase',
+      message: 'Do you want to buy this book?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            this.app
+          }
+        },
+        {
+          text: 'Buy',
+          handler: () => {
+            console.log('Buy clicked');
+          }
+        }
+      ]
+    });
+    alert.present();
+  }
+
   get_all_information(_id): Promise<any> {
-    console.log(_id);
     
     return new Promise((resolve, reject) => {
       var promises = [];
@@ -402,8 +462,6 @@ export class GlobalProvider {
         console.log(data);
 
         this.get_watchlist(data[0].watchlist).then((WATCH) => {
-          console.log(WATCH);
-
           var a = data[0];
           a["following"] = data[1];
           a["followers"] = data[2];
@@ -417,8 +475,6 @@ export class GlobalProvider {
   }
 
   get_watchlist(watchlist_to_return): Promise<any> {
-    console.log(watchlist_to_return);
-
     return new Promise((resolve) => {
       var promises = [];
 
@@ -440,9 +496,8 @@ export class GlobalProvider {
           default:
             break;
         }
-
-
       }
+
       Promise.all(promises).then((data) => {
         for (let index = 0; index < data.length; index++) {
           let flag = false;
@@ -456,7 +511,7 @@ export class GlobalProvider {
 
         }
 
-        resolve(data)
+        resolve(data);
 
       })
 

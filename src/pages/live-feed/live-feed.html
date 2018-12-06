@@ -374,6 +374,16 @@
     </div>
 
     <div *ngSwitchCase="WATCHLIST">
+      <div *ngIf="globalProvider.watchlists.length == 0" style="text-align:center;">
+          <div style="text-align: center;font-size: 16px;color: #9B9B9B;margin-top: 35px;font-weight: 300;">
+            You have no instruments in your watchlist
+          </div>
+
+  <div style="margin-top: 22px;text-align: center;margin-bottom: 10px;">
+    <button ion-button style="background: #12a6f9;font-size: 14px;">START YOUR WATCHLIST</button>
+  </div>  
+
+      </div>
       <div *ngIf="modeView=='LINES'">
         <ion-grid>
           <ion-row style="border-bottom: 1px solid #4a4a4a;height: 40px;" *ngFor="let watchlist of globalProvider.watchlists;let i = index;"

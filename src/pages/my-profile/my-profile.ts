@@ -168,5 +168,20 @@ export class MyProfilePage {
     this.navCtrl.push('profile',{user:user})
    }
 
+   go_to_sentiment(m_user_id?){
+     let user_id ={
+      user_id:undefined
+     };
+    if (m_user_id != undefined) {
+      user_id.user_id= m_user_id;
+    }else{
+      if (this.globalProvider.isAuth()) {
+        user_id.user_id = this.authData.user._id;
+      }
+    }
+
+    this.navCtrl.push("sentiments",user_id);
+   }
+
 
 }
