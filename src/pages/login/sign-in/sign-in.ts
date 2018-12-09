@@ -83,8 +83,9 @@ export class SignInPage {
           return;
         }
         if (data.verifyData.is_phone_number_verified) {
-            this.splashscreen.show();
-            window.location.reload();
+          this.splashscreen.show();
+          window.location.replace("localhost:8080");
+          window.location.reload();
         } else {
           let alert = this.alertCtrl.create({
             message: "need to complete registration",
@@ -131,8 +132,9 @@ export class SignInPage {
 
   loginUserWithProvider(m_provider: string) {
     this.authData.loginUserWithProvider(m_provider).then((user: any) => {
+      console.log(user);
       
-      this.after_get_firebase_id(user.user.uid);
+      this.after_get_firebase_id(user.uid);
     })
       .catch((err) => {
         console.log("err 656721356731 ", err);

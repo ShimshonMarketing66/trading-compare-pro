@@ -158,8 +158,9 @@ export class GlobalProvider {
   get_sentiments(_id): Promise<any> {
 
     return new Promise((resolve, reject) => {
-      if (_id == undefined) {
+      if (_id == undefined||_id==='') {
         resolve([]);
+        return;
       }
       if (this.sentiments.length == 0) {
 
@@ -273,7 +274,10 @@ export class GlobalProvider {
     return new Promise((resolve, reject) => {
       this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-sentiments-leaderboard")
         .toPromise()
-        .then((data) => {
+        .then((data:any[]) => {
+          for (let index = 0; index < data.length; index++) {
+            data[index].country = data[index].country.replace(" ","-");
+          }
           resolve(data);
         })
         .catch((err) => {

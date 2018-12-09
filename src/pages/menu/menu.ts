@@ -30,8 +30,9 @@ export class MenuPage {
 
   logout() {
     this.authData.logoutUser().then(() => {
-      // navigator.navigateTo('http://www.google.com');
-
+      this.splashscreen.show();
+      window.location.replace("localhost:8080");
+      window.location.reload();
     })
   }
 

@@ -1,4 +1,4 @@
-import { Component, ViewChild, AfterViewInit, OnInit, NgZone } from '@angular/core';
+import { Component, ViewChild, AfterViewInit, OnInit, NgZone, HostListener } from '@angular/core';
 import { IonicPage, NavController, NavParams, Slides, Content, AlertController, ToastController, ModalController, ModalOptions } from 'ionic-angular';
 
 import { Http, Headers } from '@angular/http';
@@ -9,10 +9,14 @@ import { AuthDataProvider } from '../../../providers/auth-data/auth-data';
 import { Vibration } from '@ionic-native/vibration';
 import * as $ from 'jquery'
 import { Clipboard } from '@ionic-native/clipboard';
+import { AdMobPro } from '@ionic-native/admob-pro';
 
 @IonicPage({
   name: "item-details-stock"
 })
+
+@HostListener('focus', ['$event.target.value'])
+
 @Component({
   selector: 'page-item-details-stock',
   templateUrl: 'item-details-stock.html',
@@ -36,8 +40,10 @@ export class ItemDetailsStockPage {
   height: number;
   shouldScrollDown: boolean;
   showScrollButton: boolean;
+  header_stock: boolean = true;
 
   constructor(
+    public admob:AdMobPro,
     public modalCrl:ModalController,
     private toastCtrl: ToastController,
     private clipboard: Clipboard,
@@ -50,8 +56,38 @@ export class ItemDetailsStockPage {
     public navCtrl: NavController,
     public navParams: NavParams,
     public stockProvider: StockProvider) {
-
+      console.log("constructor");
+      var admobid = {
+        banner: 'ca-app-pub-7144298839495795/2206101991',
+        interstitial: 'ca-app-pub-7144298839495795/4257550264'
+    };
+  
+    this.admob.createBanner({
+        adId: admobid.banner,
+        isTesting: true,
+        autoShow: false,
+        position: this.admob.AD_POSITION.POS_XY
+    })
+    this.admob.showBanner(this.admob.AD_POSITION.BOTTOM_CENTER);
+    this.admob.prepareInterstitial({
+        adId: admobid.interstitial,
+        isTesting: true,
+        autoShow: false
+    })
+  
+     
+  
     this.initialize()
+  }
+
+  consultar(){
+    document.getElementById("header_stock").style.display = "unset"
+    this.header_stock = true;
+  }
+
+  foodd(){
+    document.getElementById("header_stock").style.display = "none"
+    this.header_stock = false;
   }
 
   async get_item() {
@@ -121,7 +157,7 @@ export class ItemDetailsStockPage {
 
     this.socket.on("on_message", (data) => {
       if (this.socket.id != data.id) {
-        data.country = data.country.replace("-", " ");
+        data.country = data.country.replace(" ","-");
         this.comments.unshift(data);
       }
     });
@@ -385,6 +421,7 @@ newsCall(){
     this.message = '';
   }
   ionViewDidLeave() {
+    this.admob.hideBanner();
     this.socket.disconnect();
   }
 

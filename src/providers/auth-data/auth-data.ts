@@ -308,6 +308,8 @@ export class AuthDataProvider {
     if (this.plt.is("cordova")) {
       return new Promise((resolve, reject) => {
         this.providerLogin(m_provider).then((profileFireBase) => {
+          console.log("profileFireBase",profileFireBase);
+          
           resolve(profileFireBase);
         }).catch((err) => {
           reject(err)
@@ -320,7 +322,7 @@ export class AuthDataProvider {
     else {
       return new Promise((resolve, reject) => {
         firebase.auth().signInWithPopup(provider).then((profileFireBase) => {
-          resolve(profileFireBase);
+          resolve(profileFireBase.user);
         }).catch((err) => {
           reject(err)
         })
