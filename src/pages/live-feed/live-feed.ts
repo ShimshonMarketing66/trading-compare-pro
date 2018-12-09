@@ -1,13 +1,13 @@
-import { Component, HostListener, ViewChild, AfterViewInit, NgZone, ElementRef, trigger, transition, animate, keyframes, style } from '@angular/core';
-import { IonicPage, NavController, NavParams, Slides, ModalController, ModalOptions, Platform, Content, AlertController, Events } from 'ionic-angular';
+import { Component, HostListener, ViewChild, AfterViewInit, NgZone, trigger, transition, animate, keyframes, style } from '@angular/core';
+import { IonicPage, NavController, NavParams, Slides, ModalController, ModalOptions, Platform, Content, Events } from 'ionic-angular';
 import { StockProvider } from '../../providers/stock/stock';
-import { IStock } from '../../models/stock';
 import { ForexProvider } from '../../providers/forex/forex';
 import * as io from "socket.io-client";
 import { CryptoProvider } from '../../providers/crypto/crypto';
 import { GlobalProvider } from '../../providers/global/global';
 import { ToastController } from 'ionic-angular/components/toast/toast-controller';
 import { AuthDataProvider } from '../../providers/auth-data/auth-data';
+import { AdMobPro } from '@ionic-native/admob-pro';
 
 @HostListener('scroll', ['$event'])
 @HostListener("click", ["$event"])
@@ -99,7 +99,7 @@ export class LiveFeedPage implements AfterViewInit {
 
   constructor(
     public events: Events,
-    private alertCtrl: AlertController,
+    private admob: AdMobPro,
     public authData: AuthDataProvider,
     public toastCtrl: ToastController,
     public globalProvider: GlobalProvider,
@@ -112,10 +112,7 @@ export class LiveFeedPage implements AfterViewInit {
     public navCtrl: NavController,
     public navParams: NavParams
   ) {
-    console.log("constructor");
-
    
-
   }
 
 
@@ -222,6 +219,9 @@ export class LiveFeedPage implements AfterViewInit {
         break;
       case this.TRENDING:
         // this.selectedSegment = this.TRENDING;
+        break;
+        case this.WATCHLIST:
+        profileModal = this.modalCtrl.create("search-all-page");
         break;
       default:
         break;
@@ -448,10 +448,30 @@ export class LiveFeedPage implements AfterViewInit {
     })
   }
   foo() {
-
-    console.log(this.globalProvider.watchlists);
+    if (AdMobPro) {
+      this.admob.showInterstitial();
+  }
+    // this.platform.ready().then(()=>{
+    //   let adId;
+    //   if(this.platform.is('android')) {
+    //     adId = 'ca-app-pub-7144298839495795/4257550264';
+    //   } else if (this.platform.is('ios')) {
+    //     adId = 'YOUR_ADID_IOS';
+    //   }
+    //   this.admob.prepareInterstitial({adId: adId})
+    //     .then(() => {
+    //       console.log("prepareInterstitial done");
+    //               this.admob.showInterstitial(); }).catch((err)=>{
+    //                 console.log(err);
+                    
+    //               })
+    // })
+   
 
   }
+
+   
+
 
 
   async onScroll(event) {
@@ -1066,10 +1086,14 @@ export class LiveFeedPage implements AfterViewInit {
   }
 
   change_sentiment(type: string, i: number, event?:any,that?) {    
-    var that2;
     if (event != undefined) {
       event.stopPropagation();
     }
+    if (!this.globalProvider.isAuth()) {
+      this.globalProvider.open_login_alert();
+      return;
+    }
+    var that2;
     if (that != undefined) {
       that2 = that;
     }else{
@@ -1111,7 +1135,7 @@ export class LiveFeedPage implements AfterViewInit {
       arr[i].status = "OPEN";
       that2.globalProvider.add_sentiment( arr[i].symbol,type,arr[i].type,arr[i].price)
       .then(()=>{
-
+        
       })
       .catch((err)=>{
         console.error(err);

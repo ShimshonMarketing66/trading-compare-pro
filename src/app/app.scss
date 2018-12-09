@@ -81,3 +81,23 @@ ion-modal.countries-popup{
 .tabbar { 
     background: #1e375e !important;
 }    
+
+
+.share-comment {
+    ion-backdrop {
+        visibility: visible;
+    }
+    .modal-wrapper {
+        width: 86%;
+        height: 55%;
+        margin: 7%;
+        position: absolute;
+        border-radius: 13px;
+        overflow: hidden;
+        margin-top: 36%;
+    }
+}
+
+.searchbar-clear-icon {
+    display: none !important;
+    }

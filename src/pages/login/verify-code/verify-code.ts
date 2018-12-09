@@ -3,7 +3,6 @@ import { IonicPage, NavController, NavParams, Platform, LoadingController, Toast
 import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { AuthDataProvider } from '../../../providers/auth-data/auth-data';
 import { SplashScreen } from '@ionic-native/splash-screen';
-import { MyApp } from '../../../app/app.component';
 
 declare var SMSReceive: any;
 
@@ -166,11 +165,9 @@ export class VerifyCodePage {
         setTimeout(() => {
           loading.setContent("wait please...");
           setTimeout(() => {
-            loading.setContent("restarting app");
-            loading.dismiss();
             this.splashscreen.show();
+            window.location.replace("localhost:8080");
             window.location.reload();
-
           }, 2000)
         }, 2000)
       } else {
@@ -184,8 +181,6 @@ export class VerifyCodePage {
         toast.present();
       }
     })
-
-
   }
 
   ionViewDidLoad() {
