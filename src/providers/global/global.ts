@@ -427,7 +427,8 @@ export class GlobalProvider {
   }
 
   isAuth():boolean{
-    return this.authData.isAuth;
+    
+    return this.authData.isFinishRegistration;
   }
   
   open_login_alert(){

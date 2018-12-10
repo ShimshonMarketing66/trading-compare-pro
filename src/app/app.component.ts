@@ -134,7 +134,7 @@ export class MyApp implements AfterViewInit {
     
 
   
-  
+    this.authData.isFinishRegistration = true;
     if (!this.platform.is("cordova")) {
       this.rootPage = "main-tabs";
       return;
@@ -142,10 +142,9 @@ export class MyApp implements AfterViewInit {
 
     let toast = this.toastCtrl.create({
       message: this.authData.user.provider + ' sign in success',
-      duration: 4000,
+      duration: 2000,
       position: 'bottom'
     });
-  
     this.rootPage = "default-page";
     this.statusBar.styleDefault();
     console.log("this.splashScreen.hide()");
