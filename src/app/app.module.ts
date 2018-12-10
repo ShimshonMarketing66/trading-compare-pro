@@ -16,8 +16,7 @@ import { HttpModule } from '@angular/http';
 import { ForexProvider } from '../providers/forex/forex';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CryptoProvider } from '../providers/crypto/crypto';
-// import { ChartUI } from '../components/chart-iq/ui_component/ui.component';
-import { FCM } from '@ionic-native/fcm';
+import { Firebase } from '@ionic-native/firebase';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateModule } from '@ngx-translate/core';
 import { TranslateLoader } from '@ngx-translate/core';
@@ -89,7 +88,6 @@ export function createTranslateLoader(http: HttpClient) {
     Vibration,
     GlobalProvider,
     Sim,
-    FCM,
     Keyboard,
     StatusBar,
     SplashScreen,
@@ -104,7 +102,8 @@ export function createTranslateLoader(http: HttpClient) {
     AndroidPermissions,
     Deeplinks,
     CodePush,
-    AdMobPro 
+    AdMobPro,
+    Firebase
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

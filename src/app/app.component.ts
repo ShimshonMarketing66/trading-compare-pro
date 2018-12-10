@@ -2,7 +2,6 @@ import { Component, ViewChild, AfterViewInit } from '@angular/core';
 import { Platform, Nav, ToastController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
-import { FCM } from '@ionic-native/fcm';
 import { TranslateService } from '@ngx-translate/core';
 import firebase from 'firebase';
 import { AuthDataProvider } from '../providers/auth-data/auth-data';
@@ -11,6 +10,7 @@ import { GlobalProvider } from '../providers/global/global';
 import { Deeplinks } from '@ionic-native/deeplinks';
 import { CodePush } from '@ionic-native/code-push';
 import { Storage } from '@ionic/storage';
+import { Firebase } from '@ionic-native/firebase';
 
 @Component({
   templateUrl: 'app.html'
@@ -29,7 +29,7 @@ export class MyApp implements AfterViewInit {
     private deeplinks: Deeplinks,
     public global: GlobalProvider,
     public authData: AuthDataProvider,
-    private fcm: FCM,
+    private firebase_plugin: Firebase,
     public platform: Platform,
     public statusBar: StatusBar,
     public splashScreen: SplashScreen,
@@ -153,20 +153,21 @@ export class MyApp implements AfterViewInit {
     
     toast.present()
    
-    this.fcm.onNotification().subscribe(data => {
+    this.firebase_plugin.onNotificationOpen().subscribe(data => {
       if (data.wasTapped) {
         console.log("Received in background");
       } else {
         console.log("Received in foreground");
       };
     });
+    
     var x = this.authData.user.token_notification;
 
 
 
     if (x == undefined || x == null || x === '') {
       
-      this.fcm.getToken().then(token => {
+      this.firebase_plugin.getToken().then(token => {
         this.authData.updateFields({
           token_notification: token
         }).then(() => {
@@ -181,7 +182,7 @@ export class MyApp implements AfterViewInit {
       })
     }
 
-    this.fcm.onTokenRefresh().subscribe(token => {
+    this.firebase_plugin.onTokenRefresh().subscribe(token => {
       this.authData.updateFields({
         token_notification: token
       }).then(() => {
