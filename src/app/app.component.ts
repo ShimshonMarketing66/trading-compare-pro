@@ -1,32 +1,34 @@
-import { Component, ViewChild } from '@angular/core';
-import { Platform, Nav } from 'ionic-angular';
+import { Component, ViewChild, AfterViewInit } from '@angular/core';
+import { Platform, Nav, ToastController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { FCM } from '@ionic-native/fcm';
 import { TranslateService } from '@ngx-translate/core';
-import { AndroidPermissions } from '@ionic-native/android-permissions';
 import firebase from 'firebase';
 import { AuthDataProvider } from '../providers/auth-data/auth-data';
 import { Profile } from '../models/profile-model';
-import { Sim } from '@ionic-native/sim';
 import { GlobalProvider } from '../providers/global/global';
+import { Deeplinks } from '@ionic-native/deeplinks';
+import { CodePush } from '@ionic-native/code-push';
+import { Storage } from '@ionic/storage';
 
 @Component({
   templateUrl: 'app.html'
 })
-export class MyApp {
+export class MyApp implements AfterViewInit {
   @ViewChild(Nav) navCtrl: Nav;
-  rootPage: any ;
-  isLogin: boolean;
+  rootPage: any;
   onAuthStateChangedCalled: boolean = false;
   firstTime: boolean = true;
   _id: string;
 
   constructor(
-    public global:GlobalProvider,
-    public sim:Sim,
+    private toastCtrl: ToastController,
+    public storage: Storage,
+    public codePush: CodePush,
+    private deeplinks: Deeplinks,
+    public global: GlobalProvider,
     public authData: AuthDataProvider,
-    private androidPermissions: AndroidPermissions,
     private fcm: FCM,
     public platform: Platform,
     public statusBar: StatusBar,
@@ -35,195 +37,193 @@ export class MyApp {
   ) {
     this.loop();
     firebase.auth().onAuthStateChanged(user => {
-   
       this.onAuthStateChangedCalled = true;
       if (user) {
+        this.authData.isAuth = true;
         this.authData.user_firebase = user;
-        firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
+        firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function (idToken) {
           authData.idToken = idToken;
-        }).catch(function(error) {
-         console.error("cannot get token",error);
+        }).catch(function (error) {
+          console.error("cannot get token", error);
         });
-        
         this._id = user.uid;
-        this.isLogin = true;
+        this.authData.isAuth = true;
       } else {
-        this.isLogin = false;
+        this.authData.isAuth = false;
       }
     });
 
     translate.setDefaultLang('english');
   }
 
-  checkPermissionSim() {
-    this.sim.hasReadPermission().then((info) => {
-      if (!info) {
-        this.sim.requestReadPermission().then(() => {
-          console.log('Permission granted')
-          this.sim.getSimInfo().then(
-            (info) => {
-              console.log("info", info);
-            },
-            (err) => {
-              console.log('Unable to get sim info: ', err);
-            });
-        },
-          () => {
-            console.log('Permission denied')
-          }
-        );
-      } 
-    })
-  }
-  
-  checkPermissionREAD_SMS() :Promise<any> {
-    return new Promise((resolve)=>{
-      this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.READ_SMS)
-      .then(() => {
-        console.log("permited checkPermissionREAD_SMS");
-        resolve();
-      },
-        err => {
-          console.log("not permited checkPermissionREAD_SMS");
-          resolve();
-          this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.READ_SMS)
-            .then(() => {
-              console.log("permited checkPermissionREAD_SMS");
-              resolve();
-            },
-              err => {
-                console.log("not accept checkPermissionREAD_SMS");
-                resolve();
-              });
-        });
 
-   
-    })
-   
+
+
+
+  ngAfterViewInit() {
+    this.platform.ready().then(() => {
+      this.deeplinks.routeWithNavController(this.navCtrl, {
+        '/about-us': "AboutPage",
+        '/hats/:hatId': "HatDetailPage"
+      });
+    });
   }
+
+
+
 
 
   loop() {
     setTimeout(() => {
+
+
+
+      // this.codePush.sync().subscribe((syncStatus) => console.log("syncStatus", syncStatus));
+      // const downloadProgress = (progress) => { console.log(`Downloaded ${progress.receivedBytes} of ${progress.totalBytes}`); }
+      // this.codePush.sync({}, downloadProgress).subscribe((syncStatus) => console.log(syncStatus));
+
       if (this.onAuthStateChangedCalled) {
-        if (this.isLogin) {
-          this.authData.getProfileFromServer(this._id).then((user:Profile) => {
-            user.countryData.country =  user.countryData.country.toLowerCase().replace("-"," ");
-            this.authData.user = user;
-            
-            if (user.verifyData.is_phone_number_verified) {
-              this.global.initialProviders().then(()=>{
-                this.rootPage = "main-tabs";
-                this.platform.ready().then(() => {
-                  this.statusBar.styleDefault();
-                  this.splashScreen.hide();
-                })
-              })
-            }else{
-              this.rootPage = "enter-phone";
-            }
-           
-            this.platform.ready().then(() => {
-              this.statusBar.styleDefault();
-              this.splashScreen.hide();
-              this.initial_app_when_login();
+        this.platform.ready().then(() => {
+          if (this.platform.is("cordova")) {
+            this.codePush.checkForUpdate().then(data => {
+              console.log(data);
             })
-          })
-          .catch((err)=>{
-            console.log("err this.authData.getProfileFromServer app commponnent"); 
-            this.rootPage = "login-tabs";
-          })
-        } else {
-          this.platform.ready().then(() => {
-            this.statusBar.styleDefault();
-            this.splashScreen.hide();
+          }
+          if (this.authData.isAuth) {
+            this.authData.getProfileFromServer(this._id).then((user: Profile) => {
+              user.countryData.country = user.countryData.country.toLowerCase().replace(" ", "-");
+              this.authData.user = user;
+              if (user.verifyData.is_phone_number_verified) {
+                this.global.initialProviders().then(() => {
+                  this.platform.ready().then(() => {
+                    this.initial_app_when_login();
+                  })
+                })
+              } else {
+                this.platform.ready().then(() => {
+                  this.rootPage = "enter-phone";
+                })
+              }
+
+
+            })
+              .catch((err) => {
+                console.log("err this.authData.getProfileFromServer app commponnent");
+                this.rootPage = "onboarding";
+              })
+          } else {
             this.initial_app_when_log_out();
-          })
-          this.rootPage = "login-tabs";
-        }
+          }
+        })
       } else {
         this.loop();
       }
     }, 1000 * 2)
   }
 
-  initial_app_when_login(){
+  initial_app_when_login() {
     console.log("initial_app_when_login avi1");
+
+    if (!this.platform.is("cordova")) {
+      this.authData.platform = "browser";
+    } else if (this.platform.is("android")) {
+      this.authData.platform = "android";
+    } else if (this.platform.is("ios")) {
+      this.authData.platform = "ios";
+    }
     
-      if (! this.platform.is("cordova")) {
-        this.authData.platform = "browser";
-      } else if ( this.platform.is("android")) {
-        this.authData.platform = "android";
-      } else if ( this.platform.is("ios")) {
-        this.authData.platform = "ios";
-      }
-      if (! this.platform.is("cordova")) {
-        return;
-      }
-      console.log("initial_app_when_login avi2");
-      this.fcm.onNotification().subscribe(data => {
-        if(data.wasTapped){
-          console.log("Received in background");
-        } else {
-          console.log("Received in foreground");
-        };
-      });
-      var x = this.authData.user.token_notification;
+
+  
+  
+    if (!this.platform.is("cordova")) {
+      this.rootPage = "main-tabs";
+      return;
+    }
+
+    let toast = this.toastCtrl.create({
+      message: this.authData.user.provider + ' sign in success',
+      duration: 4000,
+      position: 'bottom'
+    });
+  
+    this.rootPage = "default-page";
+    this.statusBar.styleDefault();
+    console.log("this.splashScreen.hide()");
+    
+    this.splashScreen.hide();
+    
+    toast.present()
+   
+    this.fcm.onNotification().subscribe(data => {
+      if (data.wasTapped) {
+        console.log("Received in background");
+      } else {
+        console.log("Received in foreground");
+      };
+    });
+    var x = this.authData.user.token_notification;
+
+
+
+    if (x == undefined || x == null || x === '') {
       
-      if (x  == undefined || x  == null || x  === '' ) {        
-        this.fcm.getToken().then(token => {
-          this.authData.updateFields({
-            token_notification:token
-           }).then(()=>{
-             console.log( "token_notification updated");
-           })
-           .catch(()=>{
-            console.log( "token_notification field to update");
-           })
-          }).catch((err)=>{
-            console.log("errrrr",err);
-            
+      this.fcm.getToken().then(token => {
+        this.authData.updateFields({
+          token_notification: token
+        }).then(() => {
+          console.log("token_notification updated");
+        })
+          .catch(() => {
+            console.log("token_notification field to update");
           })
-      }
+      }).catch((err) => {
+        console.log("errrrr", err);
 
-     
+      })
+    }
 
-      this.fcm.onTokenRefresh().subscribe(token => {
-       this.authData.updateFields({
-        token_notification:token
-       }).then(()=>{
-         console.log("token_notification updated");
+    this.fcm.onTokenRefresh().subscribe(token => {
+      this.authData.updateFields({
+        token_notification: token
+      }).then(() => {
+        console.log("token_notification updated");
 
-       })
-       .catch(()=>{
-        console.log("token_notification field to update");
-
-        ;
-       })
-      });
+      })
+        .catch(() => {
+          console.log("token_notification field to update");
+        })
+    });
   }
 
-  initial_app_when_log_out(){
-    if (! this.platform.is("cordova")) {
+  initial_app_when_log_out() {
+    if (!this.platform.is("cordova")) {
       this.authData.platform = "browser";
-    } else if ( this.platform.is("android")) {
+    } else if (this.platform.is("android")) {
       this.authData.platform = "android";
-    } else if ( this.platform.is("ios")) {
+    } else if (this.platform.is("ios")) {
       this.authData.platform = "ios";
     }
     if (!this.platform.is("cordova")) {
+      // ionic serve
+      this.rootPage = "onboarding";
       return;
     }
-    this.checkPermission();   
-}
-
-checkPermission(){
-  console.log("checkPermission");
-  
-  this.checkPermissionREAD_SMS().then(()=>{
-    this.checkPermissionREAD_SMS().then(()=>{  
+    this.platform.ready().then(() => {
+      this.storage.get('first_time').then((val) => {
+        if (val !== null) {
+          this.rootPage = "onboarding";
+          this.statusBar.styleDefault();
+          this.splashScreen.hide();
+        } else {
+          this.storage.set('first_time', 'done');
+          this.statusBar.styleDefault();
+          this.splashScreen.hide();
+          this.rootPage = "main-tabs";
+        }
+      });
     })
-  })
-}
+  }
+
+
 }
 

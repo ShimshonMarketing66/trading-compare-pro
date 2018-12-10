@@ -154,11 +154,11 @@ export class MyProfilePage {
        default:
          break;
      }
-     this.navCtrl.pop({animate:false});
+     this.navCtrl.pop({animate:true,direction: 'forward'});
      this.navCtrl.push(page, {
        primary_key:comment.primary_key,
        symbol:comment.symbol
-     })
+     },{animate:false})
     
    }
 
@@ -166,6 +166,21 @@ export class MyProfilePage {
   go_to_profile(user){
     this.navCtrl.pop({animate:false});
     this.navCtrl.push('profile',{user:user})
+   }
+
+   go_to_sentiment(m_user_id?){
+     let user_id ={
+      user_id:undefined
+     };
+    if (m_user_id != undefined) {
+      user_id.user_id= m_user_id;
+    }else{
+      if (this.globalProvider.isAuth()) {
+        user_id.user_id = this.authData.user._id;
+      }
+    }
+
+    this.navCtrl.push("sentiments",user_id);
    }
 
 

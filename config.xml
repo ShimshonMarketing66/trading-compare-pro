@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.tradingcompare.app" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.tradingcompare.app" version="0.0.3" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Trading Compare</name>
     <description>An awesome Ionic/Cordova app.</description>
     <author email="hi@ionicframework" href="http://ionicframework.com/">Ionic Framework Team</author>
@@ -22,6 +22,7 @@
     <preference name="KeyboardDisplayRequiresUserAction" value="false" />
     <preference name="DisableDeploy" value="true" />
     <platform name="android">
+        <preference name="CodePushDeploymentKey" value="u3biB254B6gFpnoFFjEAOuHCifsP75561a51-cbbc-4974-b9b8-ec04a9e82aab" />
         <replace-string file="project.properties" find="com.google.android.gms:play-services-auth:11.8.0" replace="com.google.android.gms:play-services-auth:10.+" />
         <replace-string file="project.properties" find="com.google.android.gms:play-services-identity:11.8.0" replace="com.google.android.gms:play-services-identity:10.+" />
         <config-file parent="/resources" target="./res/values/strings.xml">
@@ -113,7 +114,33 @@
         <variable name="MAX_STORE" value="2" />
     </plugin>
     <plugin name="cordova-plugin-vibration" spec="3.1.0" />
+    <plugin name="cordova-clipboard" spec="1.2.1" />
+    <plugin name="cordova-plugin-admobpro" spec="2.35.3">
+        <variable name="PLAY_SERVICES_VERSION" value="16.0.0" />
+    </plugin>
+    <plugin name="cordova-plugin-x-socialsharing" spec="5.4.3">
+        <variable name="ANDROID_SUPPORT_V4_VERSION" value="24.1.1+" />
+    </plugin>
+    <plugin name="ionic-plugin-deeplinks" spec="1.0.17">
+        <variable name="URL_SCHEME" value="tradingcompare" />
+        <variable name="DEEPLINK_SCHEME" value="https" />
+        <variable name="DEEPLINK_HOST" value="tradingcompare.com" />
+        <variable name="ANDROID_PATH_PREFIX" value="/" />
+        <variable name="ANDROID_2_PATH_PREFIX" value="/" />
+        <variable name="ANDROID_3_PATH_PREFIX" value="/" />
+        <variable name="ANDROID_4_PATH_PREFIX" value="/" />
+        <variable name="ANDROID_5_PATH_PREFIX" value="/" />
+        <variable name="DEEPLINK_2_SCHEME" value=" " />
+        <variable name="DEEPLINK_2_HOST" value=" " />
+        <variable name="DEEPLINK_3_SCHEME" value=" " />
+        <variable name="DEEPLINK_3_HOST" value=" " />
+        <variable name="DEEPLINK_4_SCHEME" value=" " />
+        <variable name="DEEPLINK_4_HOST" value=" " />
+        <variable name="DEEPLINK_5_SCHEME" value=" " />
+        <variable name="DEEPLINK_5_HOST" value=" " />
+    </plugin>
+    <plugin name="cordova-plugin-code-push" spec="1.11.15" />
+    <plugin name="cordova-plugin-zip" spec="^3.1.0" />
     <engine name="ios" spec="4.5.5" />
     <engine name="android" spec="7.1.1" />
-    <plugin name="cordova-clipboard" spec="1.2.1" />
 </widget>

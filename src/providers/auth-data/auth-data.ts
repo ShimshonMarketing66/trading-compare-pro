@@ -152,8 +152,12 @@ export class AuthDataProvider {
   }
 
   deleteProfile(_id: String): Promise<any> {
+    let profile = {
+      _id:_id,
+      idToken:this.idToken
+    }
     return new Promise((resolve, reject) => {
-      this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/delete-user", { _id: _id })
+      this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/delete-user", profile)
         .toPromise()
         .then((newUserServer) => {
           console.log(newUserServer);
@@ -304,6 +308,8 @@ export class AuthDataProvider {
     if (this.plt.is("cordova")) {
       return new Promise((resolve, reject) => {
         this.providerLogin(m_provider).then((profileFireBase) => {
+          console.log("profileFireBase",profileFireBase);
+          
           resolve(profileFireBase);
         }).catch((err) => {
           reject(err)
@@ -316,7 +322,7 @@ export class AuthDataProvider {
     else {
       return new Promise((resolve, reject) => {
         firebase.auth().signInWithPopup(provider).then((profileFireBase) => {
-          resolve(profileFireBase);
+          resolve(profileFireBase.user);
         }).catch((err) => {
           reject(err)
         })

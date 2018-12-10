@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, LoadingController, App, ModalController, AlertController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController, App, ModalController, AlertController, ViewController } from 'ionic-angular';
 import { Profile } from '../../../models/profile-model';
 import { AuthDataProvider } from '../../../providers/auth-data/auth-data';
 import { Sim } from '@ionic-native/sim';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { MyApp } from '../../../app/app.component';
+import { AndroidPermissions } from '@ionic-native/android-permissions';
 
 @IonicPage({
   name: "sign-up"
@@ -17,6 +18,8 @@ export class SignUpPage {
   error: string = "";
 
   constructor(
+    public viewCtrl:ViewController,
+    private androidPermissions: AndroidPermissions,
     public alertCtrl:AlertController,
     public splashscreen: SplashScreen,
     public sim: Sim,
@@ -52,20 +55,43 @@ export class SignUpPage {
   }
 
   loginUserWithProvider(m_provider: string) {
+    
+    let loading = this.loadingCtrl.create({
+      content:"login via " + m_provider + "..."
+    })
+    loading.present()
     this.authData.loginUserWithProvider(m_provider).then((user1: any) => {
-      this.authData.getProfileFromServer(user1.user.uid)
+      loading.setContent("retrieving data...");
+      console.log(user1);
+      this.authData.getProfileFromServer(user1.uid)
       .then((user)=>{
-        if (user.verifyData.is_phone_number_verified) {
-          this.splashscreen.show()
-          window.location.reload();
-        } else {
-          this.app.getRootNavs()[0].setRoot("enter-phone");
-        }
+        loading.setContent("checking data...");
+        setTimeout(() => {
+          loading.dismiss();
+          if (user.verifyData.is_phone_number_verified) {
+            this.splashscreen.show();
+           
+            this.navCtrl
+      .push("main-tabs")
+      .then(() => {
+        window.location.replace("localhost:8080/");
+        window.location.reload();
+        // first we find the index of the current view controller:
+        const index = this.viewCtrl.index;
+        // then we remove it from the navigation stack
+        this.navCtrl.remove(index);
+      });
+          } else {
+            this.app.getRootNavs()[0].setRoot("enter-phone");
+          }
+        }, 2000);
       })
       .catch(()=>{
         this.authData.getProfileWithFirebaseUser(user1.user);
+        loading.setContent("create user...");
         this.authData.createUser(this.authData.user)
-        .then((data)=>{
+        .then(()=>{
+          loading.dismiss();
           console.log("added in backend");
           this.app.getRootNavs()[0].setRoot("enter-phone");
         })
@@ -74,6 +100,7 @@ export class SignUpPage {
      
     })
       .catch((err) => {
+        loading.dismiss();
         console.log("err 656721356731 ", err);
       })
   }
@@ -130,6 +157,61 @@ export class SignUpPage {
     });
     alert.present()
    
+  }
+
+  async checkPermission() {
+    await this.checkPermissionREAD_SMS();
+    await this.checkPermissionSim();
+
+  }
+  checkPermissionREAD_SMS(): Promise<any> {
+    return new Promise((resolve) => {
+      this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.READ_SMS)
+        .then(() => {
+          console.log("permited checkPermissionREAD_SMS");
+          resolve();
+        },
+          err => {
+            console.log("not permited checkPermissionREAD_SMS");
+            resolve();
+            this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.READ_SMS)
+              .then(() => {
+                console.log("permited checkPermissionREAD_SMS");
+                resolve();
+              },
+                err => {
+                  console.log("not accept checkPermissionREAD_SMS");
+                  resolve();
+                });
+          });
+    })
+  }
+
+  checkPermissionSim() : Promise<any> {
+    return new Promise((resolve)=>{
+      this.sim.hasReadPermission().then((info) => {
+        if (!info) {
+          this.sim.requestReadPermission().then(() => {
+            console.log('Permission granted')
+            this.sim.getSimInfo().then(
+              (info) => {
+                console.log("info", info);
+                resolve();
+              },
+              (err) => {
+                console.log('Unable to get sim info: ', err);
+                resolve();
+              });
+          },
+            () => {
+              console.log('Permission denied');
+              resolve();
+            }
+          );
+        }
+        resolve();
+      })
+    })
   }
 
 
