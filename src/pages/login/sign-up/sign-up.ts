@@ -6,6 +6,7 @@ import { Sim } from '@ionic-native/sim';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { MyApp } from '../../../app/app.component';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
+import { TrackProvider } from '../../../providers/track/track';
 
 @IonicPage({
   name: "sign-up"
@@ -17,7 +18,7 @@ import { AndroidPermissions } from '@ionic-native/android-permissions';
 export class SignUpPage {
   error: string = "";
 
-  constructor(
+  constructor( public track:TrackProvider,
     public viewCtrl:ViewController,
     private androidPermissions: AndroidPermissions,
     public alertCtrl:AlertController,

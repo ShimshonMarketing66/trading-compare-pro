@@ -137,14 +137,22 @@
       </ion-col>
   </ion-row>
 
-<ion-row (click)="logout()" style="height: 42px;">
+<ion-row *ngIf="globalProvider.isAuth()" (click)="logout()" style="height: 42px;">
   <ion-col col-1 style="text-align: center;margin: auto">
     <ion-icon name="sign-out-v"></ion-icon>
   </ion-col>
-  <ion-col *ngIf="globalProvider.isAuth()" style="text-align: left;margin: auto;padding-left: 37px;">
+  <ion-col  style="text-align: left;margin: auto;padding-left: 37px;">
     Sign Out
     </ion-col>
-    <ion-col  *ngIf="!globalProvider.isAuth()" style="text-align: left;margin: auto;padding-left: 37px;">
+    
+</ion-row>
+
+
+<ion-row *ngIf="!globalProvider.isAuth()" (click)="navCtrl.push('login-tabs')" style="height: 42px;">
+  <ion-col col-1 style="text-align: center;margin: auto">
+    <ion-icon style="color: #999999;font-size: 23px;" name="md-log-in"></ion-icon>
+  </ion-col>
+    <ion-col   style="text-align: left;margin: auto;padding-left: 37px;">
       Sign in
       </ion-col>
 </ion-row>

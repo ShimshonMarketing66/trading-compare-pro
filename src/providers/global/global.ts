@@ -4,7 +4,7 @@ import { StockProvider } from '../stock/stock';
 import { CryptoProvider } from '../crypto/crypto';
 import { ForexProvider } from '../forex/forex';
 import { AuthDataProvider } from '../auth-data/auth-data';
-import { ToastController, AlertController, LoadingController, Loading, App } from 'ionic-angular';
+import { ToastController, AlertController, LoadingController, Loading, App, ViewController } from 'ionic-angular';
 
 @Injectable()
 export class GlobalProvider {
@@ -431,10 +431,12 @@ export class GlobalProvider {
     return this.authData.isFinishRegistration;
   }
   
-  open_login_alert(){
+  open_login_alert(viewCtrl?){
+    console.log(viewCtrl);
+    
     let alert = this.alertCtrl.create({
-      title: 'Confirm purchase',
-      message: 'Do you want to buy this book?',
+      title: 'Registered Users Only',
+      message: 'Sorry, the feature you are trying to access is for registered Trading Compare users only. Please sign in to continue.',
       buttons: [
         {
           text: 'Cancel',
@@ -444,10 +446,15 @@ export class GlobalProvider {
           }
         },
         {
-          text: 'Buy',
+          text: 'Sign In',
           handler: () => {
-            console.log('Buy clicked');
-          }
+            // this.app.getActiveNavs()[0].removeView(viewCtrl).then(()=>{
+            //     this.app.getActiveNavs()[0].setRoot("login-tabs");
+            // })
+            this.app.getActiveNavs()[0].push("login-tabs");
+
+            
+          } 
         }
       ]
     });

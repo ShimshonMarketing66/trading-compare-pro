@@ -4,8 +4,8 @@ import { AuthDataProvider } from '../../providers/auth-data/auth-data';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { MyApp } from '../../app/app.component';
 import { GlobalProvider } from '../../providers/global/global';
+import { TrackProvider } from '../../providers/track/track';
 
-declare var navigator:any;
 @IonicPage({
   name: "menu"
 })
@@ -15,7 +15,7 @@ declare var navigator:any;
 })
 export class MenuPage {
 
-  constructor(
+  constructor( public track:TrackProvider,
     public globalProvider:GlobalProvider,
     public app:App,
     public splashscreen:SplashScreen,

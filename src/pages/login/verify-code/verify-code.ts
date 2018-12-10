@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams, Platform, LoadingController, Toast
 import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { AuthDataProvider } from '../../../providers/auth-data/auth-data';
 import { SplashScreen } from '@ionic-native/splash-screen';
+import { TrackProvider } from '../../../providers/track/track';
 
 declare var SMSReceive: any;
 
@@ -26,7 +27,7 @@ export class VerifyCodePage {
 
   isSetedFocusForFirstTime: boolean = false;
   canSubmit: boolean = false;
-  constructor(
+  constructor( public track:TrackProvider,
     public app:App,
     public splashscreen: SplashScreen,
     private toastCtrl: ToastController,

@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 import { IonicPage, NavParams, ViewController } from "ionic-angular";
 import { HttpClient } from "@angular/common/http";
+import { TrackProvider } from "../../providers/track/track";
 
 @IonicPage({
     name: "countriesModal"
@@ -17,7 +18,7 @@ export class Countries {
     countries: any[]
     a : string
     b:string
-    constructor(params: NavParams, public view: ViewController, public http: HttpClient) {
+    constructor( public track:TrackProvider,params: NavParams, public view: ViewController, public http: HttpClient) {
        
         
         if (params.get("type") == "country") {

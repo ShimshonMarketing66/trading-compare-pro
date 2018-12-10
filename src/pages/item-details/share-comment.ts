@@ -2,6 +2,7 @@ import { Component } from "@angular/core";
 import { IonicPage, ViewController, NavParams } from "ionic-angular";
 import { SocialSharing } from "@ionic-native/social-sharing";
 import { GlobalProvider } from "../../providers/global/global";
+import { TrackProvider } from "../../providers/track/track";
 
 @IonicPage({
     name: "share-comment"
@@ -13,7 +14,7 @@ import { GlobalProvider } from "../../providers/global/global";
 })
 
 export class ShareComment {
-    constructor(
+    constructor( public track:TrackProvider,
         public globalProvider:GlobalProvider,
         public navParams:NavParams,
         public socialSharing:SocialSharing,

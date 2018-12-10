@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController } from 'ionic-angular';
+import { TrackProvider } from '../../providers/track/track';
 
 @IonicPage({
   name:"main-tabs"
@@ -17,7 +18,7 @@ export class MainTabsPage {
   chatRoot = 'chat-general'
 
 
-  constructor(public navCtrl: NavController) {
+  constructor( public track:TrackProvider,public navCtrl: NavController) {
     
   }
 

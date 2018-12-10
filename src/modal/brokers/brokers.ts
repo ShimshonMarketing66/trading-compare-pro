@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 import { IonicPage, NavParams, ViewController } from "ionic-angular";
 import { HttpClient } from "@angular/common/http";
+import { TrackProvider } from "../../providers/track/track";
 
 @IonicPage({
     name: "brokers-modal"
@@ -15,7 +16,7 @@ export class Brokers {
     myInput: string;
     brokersFilePath: string = './assets/lot of data/brokers.json';
     brokers: any[]
-    constructor(public view: ViewController, public http: HttpClient) {
+    constructor( public track:TrackProvider,public view: ViewController, public http: HttpClient) {
         this.http.get(this.brokersFilePath)
             .toPromise()
             .then((response) => {

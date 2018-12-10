@@ -208,11 +208,7 @@
   <ion-grid>
     <ion-row style="padding:10px">
       <ion-col col-10>
-<<<<<<< HEAD
-        <ion-input #myInput (keydown.enter)="sendMessage()" (ionChange)="typing()" style="background: white;padding-left: 4px;border-radius: 4px;width: 98%;color: black;"
-=======
         <ion-input (ionBlur)="consultar();" (focus)="foodd()" #myInput (keydown.enter)="sendMessage()" (ionChange)="typing()" style="background: white;padding-left: 4px;border-radius: 4px;width: 98%;color: black;"
->>>>>>> develop
           type="text" placeholder="Type a message" [(ngModel)]="message" name="message">
         </ion-input>
       </ion-col>

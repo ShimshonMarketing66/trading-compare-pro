@@ -11,6 +11,7 @@ import { Deeplinks } from '@ionic-native/deeplinks';
 import { CodePush } from '@ionic-native/code-push';
 import { Storage } from '@ionic/storage';
 import { Firebase } from '@ionic-native/firebase';
+import { TrackProvider } from '../providers/track/track';
 
 @Component({
   templateUrl: 'app.html'
@@ -22,7 +23,8 @@ export class MyApp implements AfterViewInit {
   firstTime: boolean = true;
   _id: string;
 
-  constructor(
+  constructor( public track:TrackProvider,
+    
     private toastCtrl: ToastController,
     public storage: Storage,
     public codePush: CodePush,
@@ -146,6 +148,7 @@ export class MyApp implements AfterViewInit {
       position: 'bottom'
     });
     this.rootPage = "default-page";
+    this.track.setUserId(this.authData.user._id);
     this.statusBar.styleDefault();
     console.log("this.splashScreen.hide()");
     

@@ -8,6 +8,7 @@ import { GlobalProvider } from '../../providers/global/global';
 import { ToastController } from 'ionic-angular/components/toast/toast-controller';
 import { AuthDataProvider } from '../../providers/auth-data/auth-data';
 import { AdMobPro } from '@ionic-native/admob-pro';
+import { TrackProvider } from '../../providers/track/track';
 
 @HostListener('scroll', ['$event'])
 @HostListener("click", ["$event"])
@@ -97,7 +98,7 @@ export class LiveFeedPage implements AfterViewInit {
   public Segments: Array<string> = [this.STOCK, this.FOREX, this.CRYPTO, this.WATCHLIST];
 
 
-  constructor(
+  constructor( public track:TrackProvider,
     public events: Events,
     private admob: AdMobPro,
     public authData: AuthDataProvider,

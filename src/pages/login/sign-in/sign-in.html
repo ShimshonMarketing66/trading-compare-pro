@@ -21,7 +21,7 @@
 
     <div style="text-align: center;margin-top: 30px;margin-bottom: 20px;">--------------------- OR ---------------------</div>
 
-    <ion-grid style="background: #2b2b2b;">
+    <ion-grid style="background: #2b2b2b;margin-bottom:10px;">
         <div style="color: red;text-align: center;">
             {{error}}
         </div>
@@ -50,4 +50,9 @@
             </div>
         </ion-row>
     </ion-grid>
+
+    <div style="text-align: center;padding-top: 17px;color: #949494;" (click)="navCtrl.push('main-tabs')">
+        CONTINUE AS GUEST
+      </div>
+
 </ion-content>

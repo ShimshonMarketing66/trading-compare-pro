@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams, ViewController, Keyboard, Searchba
 import { ViewChild } from '@angular/core'
 import { StockProvider } from '../../../providers/stock/stock';
 import { RmPointPipe } from '../../../pipes/rm-point/rm-point';
+import { TrackProvider } from '../../../providers/track/track';
 
 @IonicPage({
   name: "search-stock-page"
@@ -25,7 +26,7 @@ export class SearchCoinStock implements AfterViewInit {
   @ViewChild('searchbar') searchbar: Searchbar;
   array: any[] = [];
   myInput: string = ""
-  constructor(
+  constructor( public track:TrackProvider,
     public zone: NgZone,
     public stockProvider: StockProvider,
     public viewCtrl: ViewController,

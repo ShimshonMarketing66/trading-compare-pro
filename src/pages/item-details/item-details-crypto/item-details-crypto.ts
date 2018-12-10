@@ -4,6 +4,7 @@ import { IonicPage, NavController, NavParams, Slides } from 'ionic-angular';
 import { Http } from '@angular/http';
 import { CryptoProvider } from '../../../providers/crypto/crypto';
 import { GlobalProvider } from '../../../providers/global/global';
+import { TrackProvider } from '../../../providers/track/track';
 
 @IonicPage({
   name: "item-details-crypto"
@@ -18,7 +19,7 @@ export class ItemDetailsCryptoPage {
   Segments: string[];
   selectedSegment: string = "CHAT";
   tweetsdata;
-  constructor(    public globalProvider:GlobalProvider,
+  constructor( public track:TrackProvider,    public globalProvider:GlobalProvider,
     public http: Http, public navCtrl: NavController, public navParams: NavParams, public cryptoProvider: CryptoProvider) {
     this.item = navParams.get("item");    
     this.tweetCall();

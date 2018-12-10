@@ -10,6 +10,7 @@ import { Vibration } from '@ionic-native/vibration';
 import * as $ from 'jquery'
 import { Clipboard } from '@ionic-native/clipboard';
 import { AdMobPro } from '@ionic-native/admob-pro';
+import { TrackProvider } from '../../../providers/track/track';
 
 @IonicPage({
   name: "item-details-stock"
@@ -42,7 +43,7 @@ export class ItemDetailsStockPage {
   showScrollButton: boolean;
   header_stock: boolean = true;
 
-  constructor(
+  constructor( public track:TrackProvider,
     public admob:AdMobPro,
     public modalCrl:ModalController,
     private toastCtrl: ToastController,
@@ -83,11 +84,13 @@ export class ItemDetailsStockPage {
   consultar(){
     document.getElementById("header_stock").style.display = "unset"
     this.header_stock = true;
+    this.admob.showBanner(this.admob.AD_POSITION.BOTTOM_CENTER);
   }
 
   foodd(){
     document.getElementById("header_stock").style.display = "none"
     this.header_stock = false;
+    this.admob.hideBanner();
   }
 
   async get_item() {
@@ -123,7 +126,7 @@ export class ItemDetailsStockPage {
         this.globalProvider.loading("load comments");
         this.selectedSegment = "CHAT";
         setTimeout(() => {      
-          let y = ((document.getElementById(this.navParams.get("primary_key")).parentNode.parentNode)as HTMLElement) .offsetTop;
+          let y = ((document.getElementById(this.navParams.get("primary_key")).parentNode.parentNode)as HTMLElement).offsetTop;
           this.content_detail.scrollTo(0, y - 50);
           this.globalProvider.dismiss_loading();
         }, 2000)
@@ -175,9 +178,8 @@ export class ItemDetailsStockPage {
   }
 
   foo() {
-    console.log(this.comments);
-
-    this.scrollTo(571)
+    this.admob.showInterstitial();
+    // this.scrollTo(571)
   }
 
   scrollTo(elementId: number) {

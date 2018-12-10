@@ -19,7 +19,7 @@
 
 
 
-  <ion-grid style="background: #2b2b2b;">
+  <ion-grid style="background: #2b2b2b;margin-bottom:10px;">
     <div style="color: red;text-align: center;">
       {{error}}
     </div>
@@ -108,16 +108,10 @@
       </div>
     </ion-row>
   </ion-grid>
-  <div (click)="goToTremsAndConditions()" style="color: #00aeef; height:35px;text-align:   center;width: 70%;    margin-left: 15%;">{{'By_hitting_register
-    you_are_aggreein_ to_our_terms _and_conditions'|translate}}</div>
-  <ion-grid style="margin-top: 5%;">
-    <ion-row>
-      <ion-col col-7 style="color:#4a4a4a;">{{'Already_have_an_account?'|translate}}</ion-col>
-      <ion-col style="    text-align: center;">
-        <button (click)="goTologin()" style="font-size: 14px;margin-top: -10px; height: 35px;width: 70%;text-align: center; color: white;background: #fd943c;border-radius: 20px;">{{'Login'|translate}}</button>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+
+  <div style="text-align: center;padding-top: 17px;color: #949494;" (click)="navCtrl.push('main-tabs')">
+    CONTINUE AS GUEST
+  </div>
 
 
 </ion-content>

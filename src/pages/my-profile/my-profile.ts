@@ -2,6 +2,7 @@ import { Component, trigger, transition, animate, keyframes, style, ViewChild, A
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { AuthDataProvider } from '../../providers/auth-data/auth-data';
 import { GlobalProvider } from '../../providers/global/global';
+import { TrackProvider } from '../../providers/track/track';
 
 
 @IonicPage({
@@ -49,7 +50,7 @@ export class MyProfilePage {
   watchlist_length: number = 0;
   followers_length=0;
   following_length= 0;
-  constructor(
+  constructor( public track:TrackProvider,
     public globalProvider: GlobalProvider,
     public navCtrl: NavController,
     public navParams: NavParams,

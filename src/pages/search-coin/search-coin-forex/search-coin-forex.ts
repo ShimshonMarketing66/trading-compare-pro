@@ -2,6 +2,7 @@ import { Component, AfterViewInit, NgZone } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController, Searchbar } from 'ionic-angular';
 import { ViewChild } from '@angular/core'
 import { ForexProvider } from '../../../providers/forex/forex';
+import { TrackProvider } from '../../../providers/track/track';
 
 @IonicPage({
   name: "search-forex-page"
@@ -24,7 +25,7 @@ export class SearchCoinForex implements AfterViewInit {
   @ViewChild('searchbar') searchbar: Searchbar;
   array: any[] = [];
   myInput: string = ""
-  constructor(
+  constructor( public track:TrackProvider,
     public zone: NgZone,
     public forexProvider: ForexProvider,
     public viewCtrl: ViewController,

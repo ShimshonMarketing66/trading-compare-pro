@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { TrackProvider } from '../../providers/track/track';
 
 @IonicPage({
   name:"chat-general"
@@ -10,7 +11,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class ChatGeneralPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor( public track:TrackProvider,public navCtrl: NavController, public navParams: NavParams) {
   }
 
   ionViewDidLoad() {

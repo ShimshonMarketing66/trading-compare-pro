@@ -5,6 +5,7 @@ import { StockProvider } from '../../providers/stock/stock';
 import { CryptoProvider } from '../../providers/crypto/crypto';
 import { ForexProvider } from '../../providers/forex/forex';
 import { AuthDataProvider } from '../../providers/auth-data/auth-data';
+import { TrackProvider } from '../../providers/track/track';
 
 @IonicPage({
   name: "sentiments"
@@ -21,7 +22,7 @@ export class SentimentsPage {
   closed_sentiments: any[] = [];
   opened_sentiments: any[] = [];
   total_profit: number = 0;
-  constructor(
+  constructor( public track:TrackProvider,
     public authData:AuthDataProvider,
     public forexProvider: ForexProvider,
     public cryptoProvider: CryptoProvider,

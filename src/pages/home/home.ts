@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { GlobalProvider } from '../../providers/global/global';
 import { AuthDataProvider } from '../../providers/auth-data/auth-data';
+import { TrackProvider } from '../../providers/track/track';
 
 
 @IonicPage()
@@ -24,7 +25,8 @@ export class HomePage {
    }[] = [];
   selectedSegmentSocialFeeds: string = "Following";
   AllLeaderboard: boolean = false;
-  constructor(
+  constructor( 
+    public track:TrackProvider,
     public authData : AuthDataProvider,
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -80,6 +82,7 @@ export class HomePage {
   seeAllLeaderboard() {
     if (this.AllLeaderboard) return;
     this.AllLeaderboard = true;
+    this.track.log_event("homeClick",{name:"test_shimshon"})
   }
 
   go_to_user_page(user){

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { TrackProvider } from '../../providers/track/track';
 
 /**
  * Generated class for the AlertsPage page.
@@ -15,7 +16,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class AlertsPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor( public track:TrackProvider,public navCtrl: NavController, public navParams: NavParams) {
   }
 
   ionViewDidLoad() {

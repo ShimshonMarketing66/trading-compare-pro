@@ -41,6 +41,7 @@ import { Clipboard } from '@ionic-native/clipboard';
 import { Deeplinks } from '@ionic-native/deeplinks';
 import { CodePush } from '@ionic-native/code-push';
 import { IonicStorageModule  } from '@ionic/storage';
+import { TrackProvider } from '../providers/track/track';
 
 
 const firebaseConfig = {
@@ -103,7 +104,8 @@ export function createTranslateLoader(http: HttpClient) {
     Deeplinks,
     CodePush,
     AdMobPro,
-    Firebase
+    Firebase,
+    TrackProvider
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

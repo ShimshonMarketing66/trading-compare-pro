@@ -1,5 +1,6 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {ChartService} from '../chart_service/chart.service';
+import { TrackProvider } from '../../../providers/track/track';
 
 
 
@@ -23,7 +24,7 @@ export class ChartComponent implements OnInit {
   sampleData: any[];
   chartSeries:any[];
 
-  constructor(private chartService: ChartService) {
+  constructor( public track:TrackProvider,private chartService: ChartService) {
     this.chartSeries=[];
   };
 

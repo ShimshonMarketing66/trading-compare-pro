@@ -1,7 +1,8 @@
 import { Component, trigger, transition, animate, keyframes, style } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
 import { AuthDataProvider } from '../../providers/auth-data/auth-data';
 import { GlobalProvider } from '../../providers/global/global';
+import { TrackProvider } from '../../providers/track/track';
 
 
 @IonicPage({
@@ -46,6 +47,8 @@ export class ProfilePage {
   following_length = 0;
 
   constructor(
+    public viewCtrl:ViewController, 
+    public track:TrackProvider,
     public authData: AuthDataProvider,
     public globalProvider: GlobalProvider,
     public navCtrl: NavController,
@@ -144,7 +147,7 @@ export class ProfilePage {
 
   add_follow() {
     if (!this.globalProvider.isAuth()) {
-      this.globalProvider.open_login_alert();
+      this.globalProvider.open_login_alert(this.viewCtrl);
       return;
     }
     this.is_follow = true;

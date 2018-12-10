@@ -2,6 +2,7 @@ import { Component, AfterViewInit, NgZone } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController, Searchbar } from 'ionic-angular';
 import { ViewChild } from '@angular/core'
 import { CryptoProvider } from '../../../providers/crypto/crypto';
+import { TrackProvider } from '../../../providers/track/track';
 
 @IonicPage({
   name: "search-crypto-page"
@@ -26,7 +27,7 @@ export class SearchCoinCrypto implements AfterViewInit {
   canSearch = true;
   myInput: string = "";
   timout:any;
-  constructor(
+  constructor( public track:TrackProvider,
     public zone: NgZone,
     public cryptoProvider: CryptoProvider,
     public viewCtrl: ViewController,

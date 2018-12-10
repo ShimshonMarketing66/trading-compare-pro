@@ -4,6 +4,7 @@ import { IonicPage, NavController, NavParams, Slides } from 'ionic-angular';
 import { Http } from '@angular/http';
 import { ForexProvider } from '../../../providers/forex/forex';
 import { GlobalProvider } from '../../../providers/global/global';
+import { TrackProvider } from '../../../providers/track/track';
 
 @IonicPage({
   name: "item-details-forex"
@@ -18,7 +19,7 @@ export class ItemDetailsForexPage {
   Segments: string[];
   symbol:string;
   tweetsdata;
-  constructor(    public globalProvider:GlobalProvider,
+  constructor( public track:TrackProvider,    public globalProvider:GlobalProvider,
     public http: Http, public navCtrl: NavController, public navParams: NavParams, public forexProvider: ForexProvider) {
     this.item = navParams.get("item");
 

@@ -4,6 +4,7 @@ import { AuthDataProvider } from '../../../providers/auth-data/auth-data';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { MyApp } from '../../../app/app.component';
 import { Profile } from '../../../models/profile-model';
+import { TrackProvider } from '../../../providers/track/track';
 
 @IonicPage({
   name: "sign-in"
@@ -16,7 +17,7 @@ export class SignInPage {
   email: string = "";
   password: string = "";
   error: string = "";
-  constructor(
+  constructor( public track:TrackProvider,
     public app: App,
     public splashscreen: SplashScreen,
     public alertCtrl: AlertController,
