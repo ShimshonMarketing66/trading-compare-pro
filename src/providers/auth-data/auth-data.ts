@@ -4,7 +4,6 @@ import { Profile } from '../../models/profile-model';
 import { ModalController, Platform, Loading } from 'ionic-angular';
 import { Facebook } from '@ionic-native/facebook';
 import { GooglePlus } from '@ionic-native/google-plus';
-import { InAppPurchase2, IAPProduct } from '@ionic-native/in-app-purchase-2';
 import firebase from 'firebase';
 import { CountryModel } from '../../models/country-model';
 
@@ -17,6 +16,7 @@ export class AuthDataProvider {
   user_firebase: any
   localCountry: CountryModel = new CountryModel();
   isAuth: boolean = false
+  isFinishRegistration: boolean = false;
   user: Profile = new Profile();
   platform: any = "browser";
   idToken: any;
@@ -38,7 +38,7 @@ export class AuthDataProvider {
     }else{
       params += '/' + undefined
     }
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/is-nickname-exist/" + params).toPromise().then((data: boolean) => {
         resolve(data);
       }).catch((err) => {

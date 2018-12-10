@@ -1,32 +1,152 @@
 
-<ion-header>
-
-  <ion-navbar>
-    <ion-title>menu</ion-title>
-  </ion-navbar>
-
-</ion-header>
 
 
 <ion-content padding>
 
 <ion-grid>
-  <ion-row (click)="open_sentiment()">
-    <ion-col>
-        
+  <ion-row (click)="open_sentiment()" style="height: 42px;">
+    <ion-col col-1 style="text-align: center;margin: auto">
+      <ion-icon name="home-v"></ion-icon>
     </ion-col>
-    <ion-col>
-      Sentiment
+    <ion-col style="text-align: left;margin: auto;padding-left: 37px;">
+      Home
       </ion-col>
   </ion-row>
 
-  <ion-row (click)="logout()">
-    <ion-col>
-        
+  <ion-row (click)="open_sentiment()" style="height: 42px;">
+    <ion-col col-1 style="text-align: center;margin: auto">
+      <ion-icon name="feed-v"></ion-icon>
     </ion-col>
-    <ion-col>
-      logout
+    <ion-col style="text-align: left;margin: auto;padding-left: 37px;">
+      Live Feed
       </ion-col>
   </ion-row>
+
+  <ion-row (click)="open_sentiment()" style="height: 42px;">
+    <ion-col col-1 style="text-align: center;margin: auto">
+      <ion-icon name="feed-v"></ion-icon>
+    </ion-col>
+    <ion-col style="text-align: left;margin: auto;padding-left: 37px;">
+      Watchlist
+      </ion-col>
+  </ion-row>
+
+  <ion-row (click)="open_sentiment()" style="height: 42px;">
+    <ion-col col-1 style="text-align: center;margin: auto">
+      <ion-icon name="feed-v"></ion-icon>
+    </ion-col>
+    <ion-col style="text-align: left;margin: auto;padding-left: 37px;">
+      Alerts
+      </ion-col>
+  </ion-row>
+
+  <ion-row (click)="open_sentiment()" style="height: 42px;">
+    <ion-col col-1 style="text-align: center;margin: auto">
+      <ion-icon name="feed-v"></ion-icon>
+    </ion-col>
+    <ion-col style="text-align: left;margin: auto;padding-left: 37px;">
+      Chat
+      </ion-col>
+  </ion-row>
+
+  <ion-row (click)="open_sentiment()" style="height: 42px;">
+    <ion-col col-1 style="text-align: center;margin: auto">
+      <ion-icon name="feed-v"></ion-icon>
+    </ion-col>
+    <ion-col style="text-align: left;margin: auto;padding-left: 37px;">
+      Leaderboard
+      </ion-col>
+  </ion-row>
+
+  <ion-row (click)="open_sentiment()" style="height: 42px;">
+    <ion-col col-1 style="text-align: center;margin: auto">
+      <ion-icon name="feed-v"></ion-icon>
+    </ion-col>
+    <ion-col style="text-align: left;margin: auto;padding-left: 37px;">
+      Social Sentiment
+      </ion-col>
+  </ion-row>
+
+  <ion-row (click)="open_sentiment()" style="height: 42px;">
+    <ion-col col-1 style="text-align: center;margin: auto">
+      <ion-icon name="feed-v"></ion-icon>
+    </ion-col>
+    <ion-col style="text-align: left;margin: auto;padding-left: 37px;">
+      Brokers
+      </ion-col>
+  </ion-row>
+
+  <ion-row (click)="open_sentiment()" style="height: 42px;">
+    <ion-col col-1 style="text-align: center;margin: auto">
+      <ion-icon name="feed-v"></ion-icon>
+    </ion-col>
+    <ion-col style="text-align: left;margin: auto;padding-left: 37px;">
+      Notifications
+      </ion-col>
+  </ion-row>
+
+  
+  <ion-row (click)="open_sentiment()" style="height: 42px;">
+    <ion-col col-1 style="text-align: center;margin: auto">
+      <ion-icon name="feed-v"></ion-icon>
+    </ion-col>
+    <ion-col style="text-align: left;margin: auto;padding-left: 37px;">
+      Settings
+      </ion-col>
+  </ion-row>
+
+  
+  <ion-row (click)="open_sentiment()" style="height: 42px;">
+    <ion-col col-1 style="text-align: center;margin: auto">
+      <ion-icon name="feed-v"></ion-icon>
+    </ion-col>
+    <ion-col style="text-align: left;margin: auto;padding-left: 37px;">
+      Contact Us
+      </ion-col>
+  </ion-row>
+
+  
+  <ion-row (click)="open_sentiment()" style="height: 42px;">
+    <ion-col col-1 style="text-align: center;margin: auto">
+      <ion-icon name="feed-v"></ion-icon>
+    </ion-col>
+    <ion-col style="text-align: left;margin: auto;padding-left: 37px;">
+      Share
+      </ion-col>
+  </ion-row>
+
+  
+  
+  <ion-row (click)="open_sentiment()" style="height: 42px;">
+    <ion-col col-1 style="text-align: center;margin: auto">
+      <ion-icon name="feed-v"></ion-icon>
+    </ion-col>
+    <ion-col style="text-align: left;margin: auto;padding-left: 37px;">
+      Rate Us
+      </ion-col>
+  </ion-row>
+
+  
+  
+  <ion-row (click)="open_sentiment()" style="height: 42px;">
+    <ion-col col-1 style="text-align: center;margin: auto">
+      <ion-icon name="feed-v"></ion-icon>
+    </ion-col>
+    <ion-col style="text-align: left;margin: auto;padding-left: 37px;">
+      Language
+      </ion-col>
+  </ion-row>
+
+<ion-row (click)="logout()" style="height: 42px;">
+  <ion-col col-1 style="text-align: center;margin: auto">
+    <ion-icon name="sign-out-v"></ion-icon>
+  </ion-col>
+  <ion-col *ngIf="globalProvider.isAuth()" style="text-align: left;margin: auto;padding-left: 37px;">
+    Sign Out
+    </ion-col>
+    <ion-col  *ngIf="!globalProvider.isAuth()" style="text-align: left;margin: auto;padding-left: 37px;">
+      Sign in
+      </ion-col>
+</ion-row>
 </ion-grid>
 </ion-content>
