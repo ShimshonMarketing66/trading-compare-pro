@@ -1,19 +1,43 @@
 
-<ion-header>
 
-  <ion-navbar>
-    <ion-title>onboarding</ion-title>
-  </ion-navbar>
+<ion-content style="background: #2b2b2b;color: #373737;">
+    <div style="height: 20px;"></div>
+    <div style="text-align: center;   ">
+        <button style="background: #6ae5f5; color:#2b2b2b;height: 45px;width: 90%;font-size: 23px;border-radius: 6px;" (click)="navCtrl.push('login-tabs')" >REGISTER</button></div>
+        <div style="height: 20px;"></div>
 
-</ion-header>
-
-
-<ion-content padding>
-  <button ion-button (click)="navCtrl.setRoot('login-tabs')">
-    signin
-  </button>
-
-  <button ion-button (click)="navCtrl.setRoot('main-tabs')">
-    continue as guest.
-  </button>
+        <div style="text-align: center;color: #9b9b9b;font-size: 16px;"(click)="navCtrl.push('default-page')">Continue as Guest</div>
+        <div style="height: 10px;"></div>
+<ion-slides  pager  (ionSlideDidChange)="slideChanged()">
+    <ion-slide>
+            <div style="color:white;    font-size: 16px;
+            font-weight: 200;">View the profit leaderboard, and discover new traders to follow and connect with</div>
+<div style="height:40px"></div>
+      <img src="assets/imgs/onboarding/android1.png" class="onboarding" >
+    </ion-slide>
+    <ion-slide>
+            <div style="color:white;    font-size: 16px;
+            font-weight: 200;">View the latest Forex, Stock, and Crypto prices and create a custom watchlist</div>
+<div style="height:40px"></div>
+      <img src="assets/imgs/onboarding/android2.png" class="onboarding" >
+    </ion-slide>
+    <ion-slide>
+            <div style="color:white;    font-size: 16px;
+            font-weight: 200;">Vote BEARISH or BULLISH on trading instruments and chat with other traders </div>
+<div style="height:40px"></div>
+      <img src="assets/imgs/onboarding/android3.png" class="onboarding" >
+    </ion-slide>
+    <ion-slide>
+            <div style="color:white;    font-size: 16px;
+            font-weight: 200;">Customize your own, as well as view other  traders’ profiles for even more insight</div>
+<div style="height:40px"></div>
+      <img src="assets/imgs/onboarding/android4.png" class="onboarding" >
+    </ion-slide>  <ion-slide>
+    <div style="color:white;    font-size: 16px;
+    font-weight: 200;">Set alerts to be notified of price changes on the go</div>
+<div style="height:40px"></div>
+<img src="assets/imgs/onboarding/android5.png" class="onboarding" >
+</ion-slide>
+</ion-slides>
+  
 </ion-content>

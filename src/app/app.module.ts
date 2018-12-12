@@ -7,6 +7,7 @@ import { Keyboard } from '@ionic-native/keyboard';
 // import { AmChartsModule } from "@amcharts/amcharts3-angular";
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { AdMobPro } from '@ionic-native/admob-pro';
+import { AppRate } from '@ionic-native/app-rate';
 
 import { MyApp } from './app.component';
 import { StockProvider } from '../providers/stock/stock';
@@ -105,7 +106,8 @@ export function createTranslateLoader(http: HttpClient) {
     CodePush,
     AdMobPro,
     Firebase,
-    TrackProvider
+    TrackProvider,
+    AppRate
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

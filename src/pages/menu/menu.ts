@@ -6,6 +6,7 @@ import { MyApp } from '../../app/app.component';
 import { GlobalProvider } from '../../providers/global/global';
 import { TrackProvider } from '../../providers/track/track';
 import { SocialSharing } from '@ionic-native/social-sharing';
+import { AppRate } from '@ionic-native/app-rate';
 
 @IonicPage({
   name: "menu"
@@ -17,6 +18,7 @@ import { SocialSharing } from '@ionic-native/social-sharing';
 export class MenuPage {
 
   constructor( 
+    private appRate: AppRate,
     public socialSharing:SocialSharing,
     public track:TrackProvider,
     public globalProvider:GlobalProvider,
@@ -50,10 +52,20 @@ export class MenuPage {
   }
 
 share() {
-    this.globalProvider.loading()
-  
+   this.globalProvider.loading()
    this.socialSharing.share(null, null, null, "https://tradingcompare.page.link/naxz").then(() => {
-    this.globalProvider.dismiss_loading()
+   this.globalProvider.dismiss_loading()
    })
   }
+
+  open_ratus(){
+    this.appRate.preferences.storeAppURL = {
+      ios: 'id1406118849',
+      android: 'market://details?id=com.tradingcompare.app'
+      
+    };
+    
+    this.appRate.navigateToAppStore();
+  }
+
 }

@@ -1,47 +1,40 @@
 page-onboarding {
+    
+    .swiper-slide {
+          overflow-y: scroll;
+         display: block;
+    }
+    .swiper-pagination-fraction, .swiper-pagination-custom, .swiper-container-horizontal > .swiper-pagination-bullets {
+     top: 57px;
+    }
+        .swiper-pagination-bullet-active {
+         background: #12a6f9;
+        }
+        .swiper-pagination-bullet{
+             background: #12a6f9;
+        }
 
-    .diag {
-        position: absolute;
-        z-index: 1;
-        width:100%;
-        top: 0;
-        height:66%;
-      }
-      
-      ion-icon {
-          margin-top: 40%;
-          font-size:7em;
-      }
-      
-      h2 {
-          margin-top:80% !important;
-          font-weight:bold;
-          font-size:1em;
-      }
-      
-      p {
-          width:80%;
-          display:block;
-          margin: 0 auto;
-          font-size:.9em;
-      }
-      
-      .swiper-pagination-bullet-active {
-          background:#C400FF;
-      }
-      
-      .swiper-pagination {
-          bottom: 12% !important;
-      }
-      
-      #skip {
-          position:absolute;
-          bottom: 20px;
-          width:100%;
-          background:none !important;
-          text-align:center;
-          cursor:pointer;
-          z-index:5;
-      }
-
+@media screen and (max-height :540px){
+    .onboarding{
+        height: 300px;
+    }
 }
+@media screen and (max-height :600px){
+    .onboarding{
+        max-height: 450px;
+        margin-top: 20px;
+
+    }
+}
+@media screen and (max-height :800px){
+    .onboarding{
+        max-height: 125%;
+        margin-top: 40px;
+
+    }
+}
+
+.scroll-content {
+   margin-top: 0px!important; 
+}
+} 
