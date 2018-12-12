@@ -7,7 +7,6 @@ import firebase from 'firebase';
 import { AuthDataProvider } from '../providers/auth-data/auth-data';
 import { Profile } from '../models/profile-model';
 import { GlobalProvider } from '../providers/global/global';
-import { Deeplinks } from '@ionic-native/deeplinks';
 import { CodePush } from '@ionic-native/code-push';
 import { Storage } from '@ionic/storage';
 import { Firebase } from '@ionic-native/firebase';
@@ -16,7 +15,7 @@ import { TrackProvider } from '../providers/track/track';
 @Component({
   templateUrl: 'app.html'
 })
-export class MyApp implements AfterViewInit {
+export class MyApp {
   @ViewChild(Nav) navCtrl: Nav;
   rootPage: any;
   onAuthStateChangedCalled: boolean = false;
@@ -28,7 +27,6 @@ export class MyApp implements AfterViewInit {
     private toastCtrl: ToastController,
     public storage: Storage,
     public codePush: CodePush,
-    private deeplinks: Deeplinks,
     public global: GlobalProvider,
     public authData: AuthDataProvider,
     private firebase_plugin: Firebase,
@@ -57,23 +55,6 @@ export class MyApp implements AfterViewInit {
 
     translate.setDefaultLang('english');
   }
-
-
-
-
-
-  ngAfterViewInit() {
-    this.platform.ready().then(() => {
-      this.deeplinks.routeWithNavController(this.navCtrl, {
-        '/about-us': "AboutPage",
-        '/hats/:hatId': "HatDetailPage"
-      });
-    });
-  }
-
-
-
-
 
   loop() {
     setTimeout(() => {

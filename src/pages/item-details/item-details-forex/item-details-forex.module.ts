@@ -15,7 +15,7 @@ import { DirectivesModule } from '../../../directives/directives.module';
     IonicPageModule.forChild(ItemDetailsForexPage),
     PipesModule,
     ComponentsModule,
-    DirectivesModule
+    DirectivesModule 
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

@@ -12,7 +12,7 @@ export class ProgressBarComponent {
     
   }
   ngOnInit() {
-    console.log('This if the value for user-id: ' + this.color);
+    console.log('This if the value for user-id: ' + this.color,onprogress);
 }
 
 }

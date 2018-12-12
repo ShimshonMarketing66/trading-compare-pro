@@ -9,12 +9,17 @@ import { ToastController, AlertController, LoadingController, Loading, App, View
 @Injectable()
 export class GlobalProvider {
   
+  
   private Loading: Loading;
   sentiments = [];
   watchlists = [];
   my_following = [];
   my_followers = [];
-
+  sponcer:{
+    img:string,
+    name:string,
+    link:string
+  }
   constructor
     (
     public app: App,
@@ -27,7 +32,25 @@ export class GlobalProvider {
     public forexProvider: ForexProvider,
     public authData: AuthDataProvider
     ) {
+      this.get_sponcer()
+      
+  }
 
+  async get_sponcer(){
+    if (this.authData.user.countryData.country === '') {
+      this.authData.user.countryData=   await this.authData.getContry() 
+    }
+    let data={
+      platform_name: this.authData.user.platform,
+      country_name:this.authData.user.countryData.country
+    }
+   this.http.post("https://xosignals.herokuapp.com/api2/getSponserLink",data).toPromise().then((data:{
+    img:string,
+    name:string,
+    link:string
+  })=>{
+    this.sponcer =  data;
+   })
   }
 
   loading(m_message?: string) {
@@ -48,6 +71,11 @@ export class GlobalProvider {
     this.Loading.dismiss()
   }
 
+  get_sentiment_by_symbol(symbol):Promise<any>{
+    console.log("https://xosignals.herokuapp.com/trading-compare-v2/get-sentiment-by-symbol/" +symbol);
+    
+     return this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-sentiment-by-symbol/" +symbol).toPromise()
+  }
 
 
   add_sentiment(symbol: string, type: string, symbol_type: string, price: number): Promise<any> {
@@ -162,7 +190,6 @@ export class GlobalProvider {
         resolve([]);
         return;
       }
-      if (this.sentiments.length == 0) {
 
         this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-sentiments-by-user/" + _id).toPromise().then((data: any) => {
           this.sentiments = data;
@@ -170,9 +197,7 @@ export class GlobalProvider {
         }).catch((err) => {
           reject(err)
         })
-      } else {
-        resolve(this.sentiments);
-      }
+     
     })
   }
 
@@ -427,7 +452,6 @@ export class GlobalProvider {
   }
 
   isAuth():boolean{
-    
     return this.authData.isFinishRegistration;
   }
   
@@ -448,12 +472,7 @@ export class GlobalProvider {
         {
           text: 'Sign In',
           handler: () => {
-            // this.app.getActiveNavs()[0].removeView(viewCtrl).then(()=>{
-            //     this.app.getActiveNavs()[0].setRoot("login-tabs");
-            // })
             this.app.getActiveNavs()[0].push("login-tabs");
-
-            
           } 
         }
       ]
@@ -515,6 +534,8 @@ export class GlobalProvider {
           let flag = false;
           for (let j = 0; j < this.watchlists.length; j++) {
             if (this.watchlists[j].symbol == data[index].symbol) {
+              console.log(data[index].symbol);
+              
               data[index]["is_in_watchlist"] = true;
               break;
             }

@@ -10,9 +10,11 @@ progress-bar {
     }
  
     .progress-inner {
+        -webkit-transition: width 2s ease-in-out;
         height: 20px;
         white-space: nowrap;
         // background-color: #00aeef;
+        transition: width 1s ease-in-out;
     }
  
 }

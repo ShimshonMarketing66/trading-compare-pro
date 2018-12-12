@@ -1,17 +1,15 @@
 
 
-<ion-header>
+<ion-header id="header_forex" (click)="foo()">
 
   <ion-navbar>
     <ion-title>{{item.pair}}</ion-title>
-    <!-- <ion-buttons end> <img alt="logo" height="40" width="40" style="border-radius: 50px;" src="assets/imgs/flags/{{item.country}}.png">
-    </ion-buttons> -->
-
   </ion-navbar>
 
 </ion-header>
 
-<ion-content>
+<ion-content [style.top]="header_forex?'0px':'-40px'" #content_detail>
+
   <ion-grid style="padding:16px;">
     <ion-row>
       <ion-col col-3>
@@ -55,37 +53,76 @@
       BEARISH
     </span>
 
-    <div style="width: 40%;">
-      <div style="font-size: 8px;">
-        SENTIMENT: 63% BEARISH
+    <div style="width: 40%;" *ngIf="sentiment != undefined && !(sentiment[0].count == 0 && sentiment[1].count == 0)">
+        <div style="font-size: 8px;">
+          SENTIMENT: <span >{{(sentiment[0].count>sentiment[1].count ?( (sentiment[0].count/ (sentiment[0].count+ sentiment[1].count))*100 | tofixe):((sentiment[1].count / (sentiment[0].count+ sentiment[1].count))*100) | tofixe)}}%</span> <span>{{sentiment[0].count>sentiment[1].count ? 'BULLISH':'BEARISH'}} </span>
+        </div>
+        <div >
+          <progress-bar [progress]="(sentiment[0].count > sentiment[1].count) ? (sentiment[0].count/(sentiment[0].count+sentiment[1].count))*100 : (sentiment[1].count/(sentiment[0].count+sentiment[1].count))*100" [color]="sentiment[0].count > sentiment[1].count?'#91c353': '#e34c47'"></progress-bar>
+        </div>
       </div>
-      <div>
-        <progress-bar [progress]="20" [color]="'#e34c47'"></progress-bar>
-      </div>
+  </div>
+
+
+  <div class="container" style="position: sticky;top: 0;z-index:1000;background: #2b2b2b;">
+      <table>
+        <thead>
+          <tr>
+            <th class="th-segments" (click)="changeSegment('CHAT')" [ngStyle]="selectedSegment == 'CHAT' && {'border-bottom': '2px solid #12a6f9','color':'#12a6f9'} || selectedSegment != 'CHAT' && {'border-bottom': 'unset','color':'#707070'} ">CHAT</th>
+            <th class="th-segments" (click)="changeSegment('OVERVIEW')" [ngStyle]="selectedSegment == 'OVERVIEW' && {'border-bottom': '2px solid #12a6f9','color':'#12a6f9'} || selectedSegment != 'OVERVIEW' && {'border-bottom': 'unset','color':'#707070'} ">OVERVIEW</th>
+            <th class="th-segments" (click)="changeSegment('CHART')" [ngStyle]="selectedSegment == 'CHART' && {'border-bottom': '2px solid #12a6f9','color':'#12a6f9'} || selectedSegment != 'CHART' && {'border-bottom': 'unset','color':'#707070'} ">CHART</th>
+            <th class="th-segments" (click)="changeSegment('SOCIAL')" [ngStyle]="selectedSegment == 'SOCIAL' && {'border-bottom': '2px solid #12a6f9','color':'#12a6f9'} || selectedSegment != 'SOCIAL' && {'border-bottom': 'unset','color':'#707070'} ">SOCIAL</th>
+            <!-- <th class="th-segments" (click)="changeSegment('NEWS')" [ngStyle]="selectedSegment == 'NEWS' && {'border-bottom': '2px solid #12a6f9','color':'#12a6f9'} || selectedSegment != 'NEWS' && {'border-bottom': 'unset','color':'#707070'} ">NEWS</th> -->
+          </tr>
+        </thead>
+      </table>
     </div>
-  </div>
-
-
-  <div class="container">
-    <table>
-      <thead>
-        <tr>
-          <th class="th-segments" (click)="changeSegment('CHAT')" [ngStyle]="selectedSegment == 'CHAT' && {'border-bottom': '2px solid #12a6f9','color':'#12a6f9'} || selectedSegment != 'CHAT' && {'border-bottom': 'unset','color':'#707070'} ">CHAT</th>
-          <th class="th-segments" (click)="changeSegment('OVERVIEW')" [ngStyle]="selectedSegment == 'OVERVIEW' && {'border-bottom': '2px solid #12a6f9','color':'#12a6f9'} || selectedSegment != 'OVERVIEW' && {'border-bottom': 'unset','color':'#707070'} ">OVERVIEW</th>
-          <th class="th-segments" (click)="changeSegment('CHART')" [ngStyle]="selectedSegment == 'CHART' && {'border-bottom': '2px solid #12a6f9','color':'#12a6f9'} || selectedSegment != 'CHART' && {'border-bottom': 'unset','color':'#707070'} ">CHART</th>
-          <th class="th-segments" (click)="changeSegment('SOCIAL')" [ngStyle]="selectedSegment == 'SOCIAL' && {'border-bottom': '2px solid #12a6f9','color':'#12a6f9'} || selectedSegment != 'SOCIAL' && {'border-bottom': 'unset','color':'#707070'} ">SOCIAL</th>
-          <th class="th-segments" (click)="changeSegment('NEWS')" [ngStyle]="selectedSegment == 'NEWS' && {'border-bottom': '2px solid #12a6f9','color':'#12a6f9'} || selectedSegment != 'NEWS' && {'border-bottom': 'unset','color':'#707070'} ">NEWS</th>
-        </tr>
-      </thead>
-    </table>
-  </div>
 
   <div [ngSwitch]="selectedSegment" swipeSegment [tabsList]="Segments" [(currentTab)]="selectedSegment" (tabChanged)="onTabChanged($event)"
     class="swipe-area">
 
-    <div *ngSwitchCase="'CHAT'">
-      cxvcc
-    </div>
+    <div *ngSwitchCase="'CHAT'" style="padding-bottom: 70px;">
+        <div style="text-align: center;font-size: 16px;color: #9B9B9B;margin-top: 35px;font-weight: 300;" *ngIf="comments.length==0">
+          Be the first to comment!
+        </div>
+        <div [style.opacity]="is_typing == 'nobodyyy'?'0':'1'" style="margin-top: 3px;height:16px;text-align: center;font-weight: 100;color: #ababab;">
+          Someone is typing ...
+        </div>
+        <ion-grid style="padding: 8px;padding-bottom: unset;" [style.min-height.px]="height - 350">
+          <ion-row *ngFor="let comment of comments;let i = index" style="margin-bottom: 19px;">
+            <ion-col col-2 style="text-align: right;" (click)="go_to_profile(comment)">
+              <div>
+                <img alt="logo" height="50" width="50" style="border-radius: 50px;vertical-align:middle;" src="assets/imgs/flags/{{comment?.country}}.png">
+              </div>
+            </ion-col>
+            <ion-col col-10>
+              <div class="comment" [id]="comment.primary_key" (press)="released(comment.primary_key,comment)">
+                <div style="display: inline">
+                  <ion-grid>
+                    <ion-row>
+                      <ion-col (click)="go_to_profile(comment)" style="font-size:14px;font-weight: 800;">
+                        {{comment?.nickname}}
+                      </ion-col>
+                      <ion-col style="font-size: 12px;font-weight: 400;color: #9b9b9b;text-align: right;">
+                        {{comment?.date_from_now}}
+                      </ion-col>
+                    </ion-row>
+                  </ion-grid>
+  
+                </div>
+                <div style="font-size:14px;font-weight: 300;">
+                  {{comment.txt}}
+                </div>
+                <div style="padding-top: 5px;text-align: end;">
+                  <div *ngIf="comment.user_id != authData.user._id" (click)="reply(comment)" style="font-size:14px;font-weight: 500;color:#6ae5f5">
+                    Reply
+                  </div>
+                </div>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
 
 
     <div *ngSwitchCase="'OVERVIEW'" style="padding: 16px;">
@@ -107,28 +144,12 @@
         Bid: {{item['bid']}}
         <br>
         Point : {{item.point}}
-        <!-- <br>
-        Change Pct : {{item.change_pct}}
-        <br>
-        Close Yesterday : {{item.close_yesterday}}
-        <br>
-        Market Cap : {{item.market_cap}}
-        <br>
-        Volume : {{ item.volume}}
-        <br>
-        Shares : {{item.shares}}
-        <br>
-        Stock Exchange : {{item.stock_exchange_long}}
-        <br>
-        Timezone : {{ item.timezone_name}}
-        <br>
-        Last Trade: {{item.last_trade_time}} -->
       </div>
     </div>
 
     <div *ngSwitchCase="'CHART'">
       <div style="height:350px; position: relative !important;">
-        <chart-ui [symbol]="symbol" [exchDisp]="'none'" [group]="'forex'" class="ciq-night"></chart-ui>
+        <chart-ui [symbol]="symbol_chart" [exchDisp]="'none'" [group]="'forex'" class="ciq-night"></chart-ui>
       </div>
     </div>
 
@@ -160,10 +181,27 @@
       </ion-grid>
     </div>
 
-    <div *ngSwitchCase="'NEWS'">
-      <h1>slideNews</h1>
-    </div>
-
-
   </div>
 </ion-content>
+
+<div class="msg" *ngIf="selectedSegment == 'CHAT'">
+    <ion-grid>
+      <ion-row style="padding:10px">
+        <ion-col col-10>
+          <ion-input (ionBlur)="consultar();" (focus)="foodd()" #myInput (keydown.enter)="sendMessage()" (ionChange)="typing()" style="background: white;padding-left: 4px;border-radius: 4px;width: 98%;color: black;"
+            type="text" placeholder="Type a message" [(ngModel)]="message" name="message">
+          </ion-input>
+        </ion-col>
+        <ion-col [style.background]="message === ''?'#6c6c6c':'#12a6f9'" col-2 (click)="sendMessage()" style="text-align: center;padding-top: 12px;border-radius: 3px;">
+          POST
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  
+  </div>
+  <ion-fab (tap)="scroll_up()" *ngIf="showScrollButton && selectedSegment == 'CHAT'" right bottom>
+    <button style="background: #12a6f9;width: 35px;height: 35px;color: white;" ion-fab color="light" click>
+      <ion-icon name="md-arrow-round-up"></ion-icon>
+    </button>
+  </ion-fab>
+  

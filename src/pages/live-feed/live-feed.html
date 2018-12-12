@@ -11,8 +11,10 @@
 
 
   <div style="background: #2b2b2b;position: sticky;top: 0;z-index: 999;">
-    <div style="height: 35px;">
-      THE SPONSER
+    <div style="height: 35px;background: #6ae5f5;text-align: center;height: 35px;padding: 5px;">
+      <a href="globalProvider.sponcer.link">
+        <img style="vertical-align:middle;" [src]="globalProvider.sponcer.img">
+     </a>
     </div>
 
     <div class="container" #containerSegment>
@@ -147,7 +149,7 @@
 
         <div style=" overflow: hidden">
 
-          <div style="text-align: center;float:left;padding-top: 12px;width: 45%;height: 170px;margin:2.5%;background: #373737;border-radius: 5px;"
+          <div style="text-align: center;float:left;padding-top: 12px;width: 45%;height: 153px;;margin:2.5%;background: #373737;border-radius: 5px;"
             *ngFor="let stock of stockProvider.stocks;let i = index;" (click)="goToDetailsStock(i)">
             <!-- <object [data]="getImgStock(i)" type="image/png" style="width: 37px;height: 37px;border-radius: 50px;">
               <img src="assets/imgs/flags/flag general.png" style="width: 37px;height: 37px;border-radius: 50px;" alt="example">
@@ -156,7 +158,7 @@
             <img style="width: 37px;height: 37px;border-radius: 50px;" [src]="stock.logo" (error)="errorHandler($event)">
 
 
-            <div style="margin-bottom: 14px;">
+            <div style="margin-bottom: 4px;">
               <span>
                 <ion-icon *ngIf="stock.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist($event,stock)"></ion-icon>
                 <ion-icon *ngIf="!stock.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist($event,stock)"></ion-icon>
@@ -177,17 +179,20 @@
                 {{stock.change_pct|tofixe}}%
               </span>
             </div>
-            <div style="text-align: center;;margin-top: 3px;width: 100%;padding-top: unset;margin-bottom: 4px;">
+            <div style="text-align: center;   margin-top: 13px;width: 100%;padding-top: unset;">
               <span (click)="change_sentiment('BULLISH',i,$event)" [ngClass]="stock.sentiment == 'BULLISH' && stock.status == 'OPEN' ? 'bullish-active' : 'bullish-disable'">
                 BULLISH
+              </span>
+              <span>
+                &nbsp;
               </span>
               <span (click)="change_sentiment('BEARISH',i,$event)" [ngClass]="stock.sentiment == 'BEARISH' && stock.status == 'OPEN' ? 'bearish-active' :  'bearish-disable'">
                 BEARISH
               </span>
             </div>
-            <div>
+            <!-- <div>
               <progress-bar [progress]="20" [color]="'#e34c47'"></progress-bar>
-            </div>
+            </div> -->
           </div>
         </div>
 
@@ -247,10 +252,10 @@
 
         <div style="overflow: hidden">
 
-          <div style="text-align: center;float:left;padding-top: 12px;width: 45%;height: 170px;margin:2.5%;background: #373737;border-radius: 5px;"
+          <div style="text-align: center;float:left;padding-top: 12px;width: 45%;height:153px;margin:2.5%;background: #373737;border-radius: 5px;"
             *ngFor="let forex of forexProvider.forexs;let i = index;" (click)="goToDetailsForex(i)">
             <img src={{forex.logo}} style="width: 37px;height: 37px;border-radius: 50px;">
-            <div style="margin-bottom: 14px;">
+            <div style="margin-bottom: 4px;">
               <span>
                 <ion-icon *ngIf="forex.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist($event,forex)"></ion-icon>
                 <ion-icon *ngIf="!forex.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist($event,forex)"></ion-icon>
@@ -271,16 +276,16 @@
                 {{forex.change24|tofixe}}%
               </span>
             </div>
-            <div style="text-align: center;;margin-top: 3px;width: 100%;padding-top: unset;margin-bottom: 4px;">
+            <div style="text-align: center;margin-top: 13px;width: 100%;padding-top: unset;">
               <span (click)="change_sentiment('BULLISH',i,$event)" [ngClass]="forex.sentiment == 'BULLISH' && forex.status == 'OPEN' ? 'bullish-active' :  'bullish-disable'">
                 BULLISH
+              </span>
+               <span>
+                &nbsp;
               </span>
               <span (click)="change_sentiment('BEARISH',i,$event)" [ngClass]="forex.sentiment == 'BEARISH' && forex.status == 'OPEN' ? 'bearish-active' : 'bearish-disable'">
                 BEARISH
               </span>
-            </div>
-            <div>
-              <progress-bar [progress]="20" [color]="'#e34c47'"></progress-bar>
             </div>
           </div>
         </div>
@@ -329,10 +334,10 @@
 
         <div style="overflow: hidden">
 
-          <div style="text-align: center;float:left;padding-top: 12px;width: 45%;height: 170px;margin:2.5%;background: #373737;border-radius: 5px;"
+          <div style="text-align: center;float:left;padding-top: 12px;width: 45%;height: 153px;margin:2.5%;background: #373737;border-radius: 5px;"
             *ngFor="let crypto of cryptoProvider.cryptos;let i = index;" (click)="goToDetailsCrypto(i)">
             <img src={{crypto.logo}} style="width: 37px;height: 37px;border-radius: 50px;">
-            <div style="margin-bottom: 14px;">
+            <div style="margin-bottom: 4px;">
               <span>
                 <ion-icon *ngIf="crypto.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist($event,crypto)"></ion-icon>
                 <ion-icon *ngIf="!crypto.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist($event,crypto)"></ion-icon>
@@ -354,16 +359,13 @@
                 {{crypto.change24|tofixe}}%
               </span>
             </div>
-            <div style="text-align: center;;margin-top: 3px;width: 100%;padding-top: unset;margin-bottom: 4px;">
+            <div style="text-align: center;margin-top: 13px;width: 100%;padding-top: unset;">
               <span (click)="change_sentiment('BULLISH',i,$event)" [ngClass]="crypto.sentiment == 'BULLISH' && crypto.status == 'OPEN' ? 'bullish-active' : 'bullish-disable'">
                 BULLISH
               </span>
               <span (click)="change_sentiment('BEARISH',i,$event)" [ngClass]="crypto.sentiment == 'BEARISH' && crypto.status == 'OPEN' ? 'bearish-active' : 'bearish-disable'">
                 BEARISH
               </span>
-            </div>
-            <div>
-              <progress-bar [progress]="20" [color]="'#e34c47'"></progress-bar>
             </div>
           </div>
         </div>
@@ -380,7 +382,7 @@
           </div>
 
   <div style="margin-top: 22px;text-align: center;margin-bottom: 10px;">
-    <button ion-button style="background: #12a6f9;font-size: 14px;">START YOUR WATCHLIST</button>
+    <button (click)="startWatchlist()" ion-button style="background: #12a6f9;font-size: 14px;">START YOUR WATCHLIST</button>
   </div>  
 
       </div>
@@ -445,11 +447,11 @@
 
         <div style="overflow: hidden">
 
-          <div style="text-align: center;float:left;padding-top: 12px;width: 45%;height: 170px;margin:2.5%;background: #373737;border-radius: 5px;"
+          <div style="text-align: center;float:left;padding-top: 12px;width: 45%;height: 153px;margin:2.5%;background: #373737;border-radius: 5px;"
             *ngFor="let watchlist of globalProvider.watchlists;let i = index;" (click)="goToDetails(watchlist,i)">
             <img [src]="watchlist.logo" (error)="errorHandler($event)" style="width: 37px;height: 37px;border-radius: 50px;">
 
-            <div style="margin-bottom: 14px;">
+            <div style="margin-bottom: 4px;">
               <span>
                 <ion-icon *ngIf="watchlist?.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist($event,watchlist)"></ion-icon>
                 <ion-icon *ngIf="!watchlist?.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist($event,watchlist)"></ion-icon>
@@ -502,16 +504,13 @@
                 </span>
               </span>
             </div>
-            <div style="text-align: center;margin-top: 3px;width: 100%;padding-top: unset;margin-bottom: 4px;">
+            <div style="text-align: center;margin-top: 13px;width: 100%;padding-top: unset;">
               <span (click)="change_sentiment('BULLISH',i,$event)" [ngClass]="watchlist.sentiment == 'BULLISH' && watchlist.status == 'OPEN' ? 'bullish-active' : 'bullish-disable'">
                 BULLISH
               </span>
               <span (click)="change_sentiment('BEARISH',i,$event)" [ngClass]="watchlist.sentiment == 'BEARISH' && watchlist.status == 'OPEN'  ?'bearish-active' : 'bearish-disable'">
                 BEARISH
               </span>
-            </div>
-            <div>
-              <progress-bar [progress]="20" [color]="'#e34c47'"></progress-bar>
             </div>
           </div>
         </div>

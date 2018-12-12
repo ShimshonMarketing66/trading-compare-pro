@@ -1,7 +1,7 @@
-import { Component, ViewChild, AfterViewInit, OnInit, NgZone, HostListener } from '@angular/core';
-import { IonicPage, NavController, NavParams, Slides, Content, AlertController, ToastController, ModalController, ModalOptions } from 'ionic-angular';
+import { Component, ViewChild, NgZone, HostListener } from '@angular/core';
+import { IonicPage, NavController, NavParams, Content, AlertController, ToastController, ModalController } from 'ionic-angular';
 
-import { Http, Headers } from '@angular/http';
+import { Http } from '@angular/http';
 import { StockProvider } from '../../../providers/stock/stock';
 import { GlobalProvider } from '../../../providers/global/global';
 import * as io from "socket.io-client";
@@ -42,7 +42,8 @@ export class ItemDetailsStockPage {
   shouldScrollDown: boolean;
   showScrollButton: boolean;
   header_stock: boolean = true;
-
+sentiment:any;
+  news: any=[];
   constructor( public track:TrackProvider,
     public admob:AdMobPro,
     public modalCrl:ModalController,
@@ -57,7 +58,15 @@ export class ItemDetailsStockPage {
     public navCtrl: NavController,
     public navParams: NavParams,
     public stockProvider: StockProvider) {
-      console.log("constructor");
+      let symbol;
+      if (this.navParams.get("symbol") != undefined) {
+        symbol = this.navParams.get("symbol");
+      }else{
+        symbol = this.navParams.get("item").symbol
+      }
+     this.globalProvider.get_sentiment_by_symbol(symbol).then((data)=>{
+      this.sentiment=data;
+     })
       var admobid = {
         banner: 'ca-app-pub-7144298839495795/2206101991',
         interstitial: 'ca-app-pub-7144298839495795/4257550264'
@@ -125,12 +134,14 @@ export class ItemDetailsStockPage {
       if (this.navParams.get("primary_key") != undefined) {
         this.globalProvider.loading("load comments");
         this.selectedSegment = "CHAT";
-        setTimeout(() => {      
+        setTimeout(() => {
           let y = ((document.getElementById(this.navParams.get("primary_key")).parentNode.parentNode)as HTMLElement).offsetTop;
           this.content_detail.scrollTo(0, y - 50);
           this.globalProvider.dismiss_loading();
         }, 2000)
 
+      }else{
+        this.selectedSegment = "CHART";
       }
     })
       .catch((err) => {
@@ -182,16 +193,14 @@ export class ItemDetailsStockPage {
     // this.scrollTo(571)
   }
 
-  scrollTo(elementId: number) {
-    let y = document.getElementById(elementId.toString()).offsetTop;
-    this.content_detail.scrollTo(0, y - 50);
-  }
+
 newsCall(){
   
   this.http.get("https://api.iextrading.com/1.0/stock/"+ this.item.symbol.toLowerCase() + "/news")
   .toPromise()
-  .then((data)=>{
-    console.log(data)
+  .then((data:any)=>{
+    console.log(JSON.parse(data._body));
+    this.news=JSON.parse(data._body);
 
   })
  
@@ -232,24 +241,18 @@ newsCall(){
     if (this.selectedSegment == segment) return;
     switch (segment) {
       case "CHAT":
-        console.log("CHAT");
-        this.content_detail.scrollToBottom(1000);
         this.selectedSegment = "CHAT";
         break;
       case "OVERVIEW":
-        console.log("OVERVIEW");
         this.selectedSegment = "OVERVIEW";
         break;
       case "CHART":
-        console.log("CHART");
         this.selectedSegment = "CHART";
         break;
       case "SOCIAL":
-        console.log("SOCIAL");
         this.selectedSegment = "SOCIAL";
         break;
       case "NEWS":
-        console.log("NEWS");
         this.selectedSegment = "NEWS";
         break;
       default:
@@ -262,7 +265,10 @@ newsCall(){
     window.open("https://twitter.com/i/web/status/" + this.tweetsdata[i].id_str);
 
   }
+  openNew(i) {
+    window.open(this.news[i].url);
 
+  }
   getImgStock() {
     return this.item["logo"];
   }
@@ -272,26 +278,19 @@ newsCall(){
     event.target.src = "assets/imgs/flags/flag general.png";
   }
 
-
-  makeRandomDataProvider() {
-    const dataProvider = [];
-
-    // Generate random data
-    for (let year = 1950; year <= 2005; ++year) {
-      dataProvider.push({
-        year: '' + year,
-        value: Math.floor(Math.random() * 100) - 50
-      });
-    }
-
-    return dataProvider;
-  }
-
-
   change_sentiment(type) {
+    
     if (!this.globalProvider.isAuth()) {
       this.globalProvider.open_login_alert();
       return;
+    }
+    if (this.item.status == "OPEN") {
+      return;
+    }
+    if (type == "BULLISH") {
+      this.sentiment[0].count++;
+    }else{
+      this.sentiment[1].count++;
     }
     if (this.navParams.get("i") == undefined) {
       if (this.item.status == "CLOSE" || this.item.sentiment == 'none') {
@@ -305,6 +304,11 @@ newsCall(){
             }
           }
         }
+        let toast = this.toastCtrl.create({
+          message:this.item.shortName + " has been added to your sentiments.",
+          duration:2000
+        })
+        toast.present();
         this.globalProvider.add_sentiment(this.item.symbol, type, this.item.type, this.item.price)
           .then(() => {
 

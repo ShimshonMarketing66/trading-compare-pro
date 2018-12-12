@@ -5,6 +5,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { MyApp } from '../../app/app.component';
 import { GlobalProvider } from '../../providers/global/global';
 import { TrackProvider } from '../../providers/track/track';
+import { SocialSharing } from '@ionic-native/social-sharing';
 
 @IonicPage({
   name: "menu"
@@ -15,7 +16,9 @@ import { TrackProvider } from '../../providers/track/track';
 })
 export class MenuPage {
 
-  constructor( public track:TrackProvider,
+  constructor( 
+    public socialSharing:SocialSharing,
+    public track:TrackProvider,
     public globalProvider:GlobalProvider,
     public app:App,
     public splashscreen:SplashScreen,
@@ -42,4 +45,15 @@ export class MenuPage {
     this.navCtrl.push("sentiments",{user:this.authData.user})
   }
 
+  open_leaderboard(){
+    this.navCtrl.push("leaderboard")
+  }
+
+share() {
+    this.globalProvider.loading()
+  
+   this.socialSharing.share(null, null, null, "https://tradingcompare.page.link/naxz").then(() => {
+    this.globalProvider.dismiss_loading()
+   })
+  }
 }

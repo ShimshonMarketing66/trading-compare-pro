@@ -60,6 +60,7 @@ page-item-details-forex{
        padding-top: 6px;
        color: #e34c47;
  }
+
     .toolbar-title {
         text-overflow: unset;
         white-space: unset;
@@ -94,4 +95,69 @@ ion-slides {
     height: auto;
   
   }
+
+
+  .comment{
+    max-height: 221px;
+    width: -webkit-fill-available;
+        display:inline-block;
+        padding:6px 8px 6px 5px;
+        border-radius: 6px;
+        float: left;
+        margin-left: 34px;
+        color:white;
+        background-color:#373737;
+        position: relative;
+  }
+
+  .comment:after {
+      
+    content: "";
+    position:absolute;
+    margin-top: 6px;
+    margin-right:-5px;
+    border-right: 12px solid transparent;
+    border-left: 12px solid transparent;
+    border-bottom: 12px solid #373737;
+    transform:rotate(45deg);
+    left: -15px; 
+    top: 10px;
+  }
+
+
+.comment:active {
+  background: #808080;
+     }
+
+
+
+     @keyframes bgcolorchange {
+       100% {background: #808080;}
+     }
+     /* Chrome, Safari, Opera */
+      @-webkit-keyframes bgcolorchange {
+           100% {background: #808080;}
+      }
+
+       .msg {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 500;
+    width: 100%;
+    background: #373737;
+ 
+  }
+  ion-fab {
+    bottom: 65px !important;
+    
+}
+
+@keyframes buttonClickAnimation {
+  0% {transform: scale(0.8);}
+  100% {transform: scale(1);}
+}
+.animated-button {
+  animation: buttonClickAnimation 0.5s;
+}
 }

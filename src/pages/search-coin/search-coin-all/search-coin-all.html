@@ -1,11 +1,11 @@
-<ion-header>
+<ion-header (click)="foo()">
   <ion-navbar>
     <ion-buttons left>
       <button ion-button icon-only (click)="viewCtrl.dismiss()" class="my-style-for-modal">
         <ion-icon name="arrow-back"></ion-icon>
       </button>
     </ion-buttons>
-    <ion-searchbar style="width: 50%;" #searchbar (ionInput)="search()" [(ngModel)]="myInput" (window:keydown)="onKey($event)"></ion-searchbar>
+    <ion-searchbar style="width: 50%;" #searchbar [(ngModel)]="myInput" (window:keydown)="onKey($event)"></ion-searchbar>
   </ion-navbar>
 </ion-header>
 
@@ -27,32 +27,30 @@
       <ion-col style="margin:auto;text-align: left;overflow: hidden;
       white-space: nowrap; /* Don't forget this one */
       text-overflow: ellipsis;">
-        <span style="padding-left: 3px;">
-          <img style="border-radius: 50%;vertical-align:middle" src="{{element.logo}}" height="30" width="30">
-        <!-- <object [data]="getImgStock(i)" type="image/png" style="border-radius: 50%;vertical-align:middle;height:30px ;width:30px;">
-            <img src="assets/imgs/flags/flag general.png" style="border-radius: 50%;vertical-align:middle;height:30px ;width:30px;" alt="example">
-          </object> -->
+        <span [ngSwitch]="element.type" style="padding-left: 3px;">
+          <img  *ngSwitchCase="'STOCK'" style="border-radius: 50%;vertical-align:middle;height:30px; width:30px;" [src]="element.logo" (error)="errorHandler($event)">
+          <img  *ngSwitchCase="'STOCK'"  style="border-radius: 50%;vertical-align:middle" src="assets/imgs/flags/{{element.country}}.png" height="30" width="30">
+          <img  *ngSwitchCase="'CRYPTO'" style="border-radius: 50%;vertical-align:middle" src="{{element.logo}}" height="30" width="30">
+          <img  *ngSwitchCase="'FOREX'" style="border-radius: 50%;vertical-align:middle" src="{{element.logo}}" height="30" width="30">
+
         </span>
-        <span style="font-size:14px;font-weight: 700;white-space: nowrap;">
-          {{element.name}}
+        <span [ngSwitch]="element.type" style="font-size:14px;font-weight: 700;white-space: nowrap;">
+            <span *ngSwitchCase="'STOCK'"> 
+                {{element.display_name}}
+             </span> 
+             <span *ngSwitchCase="'CRYPTO'"> 
+                {{element.name}}
+             </span> 
+             <span *ngSwitchCase="'FOREX'"> 
+                {{element.name}}
+             </span> 
         </span>
       </ion-col>
-      <!-- <ion-col style="text-align: center;margin:auto;">
-        <div style="font-size:14px;">
-          {{element.price}} {{element.currency|currencySymbol}}
-        </div>
-        <div style="font-size:12px;">
-          {{element.day_high}} ({{element.change_pct}}%)
-        </div>
-      </ion-col> -->
-      <!-- <ion-col style="text-align: center;margin:auto;font-size:16px;">
-        <div>
-          {{element.day_high}}
-        </div>
-      </ion-col> -->
+
       <ion-col col-3 style="text-align: end;padding-right: 3px;margin:auto;font-size:11px;">
         <div>
-          {{element.price}} {{element.toSymbol|currencySymbol}}
+          {{element.price}} 
+          <!-- {{element.toSymbol|currencySymbol}} -->
         </div>
       </ion-col>
     </ion-row>

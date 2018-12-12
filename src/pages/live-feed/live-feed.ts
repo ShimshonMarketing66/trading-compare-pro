@@ -96,6 +96,7 @@ export class LiveFeedPage implements AfterViewInit {
 
   public selectedSegment: string = this.STOCK;
   public Segments: Array<string> = [this.STOCK, this.FOREX, this.CRYPTO, this.WATCHLIST];
+  sponser_img: string;
 
 
   constructor( public track:TrackProvider,
@@ -113,7 +114,7 @@ export class LiveFeedPage implements AfterViewInit {
     public navCtrl: NavController,
     public navParams: NavParams
   ) {
-   
+  
   }
 
 
@@ -180,7 +181,7 @@ export class LiveFeedPage implements AfterViewInit {
             
             this.startWS(this.FOREX);
             this.addCoinWebsocketForex(arr);
-          }
+          } 
         })
         break;
       case this.CRYPTO:
@@ -215,19 +216,23 @@ export class LiveFeedPage implements AfterViewInit {
       case this.CRYPTO:
         profileModal = this.modalCtrl.create("search-crypto-page");
         break;
-      case this.WATCHLIST:
-        // this.selectedSegment = this.WATCHLIST;
-        break;
       case this.TRENDING:
         // this.selectedSegment = this.TRENDING;
         break;
         case this.WATCHLIST:
-        profileModal = this.modalCtrl.create("search-all-page");
-        break;
+        if (this.authData.isFinishRegistration) {
+          profileModal = this.modalCtrl.create("search-all");
+        }else{
+          this.globalProvider.open_login_alert();
+        }
+        
       default:
         break;
     }
-    profileModal.present();
+    if (profileModal != undefined) {
+      profileModal.present();
+    }
+   
   }
 
   openCountries() {
@@ -330,67 +335,6 @@ export class LiveFeedPage implements AfterViewInit {
     })
   }
 
-  buildWatchlist(): Promise<any> {
-    return new Promise((resolve) => {
-      let promises = [this.forexProvider.getAllForex(), this.cryptoProvider.getCrypto()];
-      for (let index = 0; index < this.authData.user.watchlist.length; index++) {
-        if (this.authData.user.watchlist[index].type == this.STOCK) {
-          promises.push(this.stockProvider.get_stock_by_symbol(this.authData.user.watchlist[index].symbol));
-        }
-      }
-      Promise.all(promises).then((data: any[]) => {
-        console.log(data);
-
-        for (let i = 0; i < this.authData.user.watchlist.length; i++) {
-          switch (this.authData.user.watchlist[i].type) {
-            case this.FOREX:
-              for (let j = 0; j < data[0].length; j++) {
-                if (data[0][j].symbol == this.authData.user.watchlist[i].symbol) {
-                  this.globalProvider.watchlists.push(data[0][j]);
-                  break;
-                }
-              }
-              break;
-            case this.CRYPTO:
-              for (let j = 0; j < data[1].length; j++) {
-                if (data[1][j].symbol == this.authData.user.watchlist[i].symbol) {
-                  this.globalProvider.watchlists.push(data[1][j]);
-                  break;
-                }
-              }
-              break;
-            case this.STOCK:
-            console.log(data,this.globalProvider.sentiments);
-            
-              for (let j = 2; j < data.length; j++) {
-                if (data[j].symbol == this.authData.user.watchlist[i].symbol) {
-                  for (let aaa = 0; aaa < this.globalProvider.sentiments.length; aaa++) {
-                   if (this.globalProvider.sentiments[aaa].symbol == data[j].symbol) {
-                     if (this.globalProvider.sentiments[aaa].status == "OPEN") {
-                      data[j]["status"]= "OPEN";
-                      data[j]["sentiment"]= this.globalProvider.sentiments[aaa].type;
-                      break;
-                     }else{
-                      data[j]["status"]= "CLOSE";
-                      data[j]["sentiment"]= this.globalProvider.sentiments[aaa].type;
-                     }
-                   }
-                  }
-                  this.globalProvider.watchlists.push(data[j]);
-                  break;
-                }
-              }
-              break;
-
-            default:
-              break;
-          }
-        }
-        resolve();
-
-      })
-    })
-  }
  
   buildForex(): Promise<any> {
     return new Promise((resolve) => {
@@ -449,25 +393,8 @@ export class LiveFeedPage implements AfterViewInit {
     })
   }
   foo() {
-    if (AdMobPro) {
-      this.admob.showInterstitial();
-  }
-    // this.platform.ready().then(()=>{
-    //   let adId;
-    //   if(this.platform.is('android')) {
-    //     adId = 'ca-app-pub-7144298839495795/4257550264';
-    //   } else if (this.platform.is('ios')) {
-    //     adId = 'YOUR_ADID_IOS';
-    //   }
-    //   this.admob.prepareInterstitial({adId: adId})
-    //     .then(() => {
-    //       console.log("prepareInterstitial done");
-    //               this.admob.showInterstitial(); }).catch((err)=>{
-    //                 console.log(err);
-                    
-    //               })
-    // })
-   
+    
+console.log(this.globalProvider.watchlists);
 
   }
 
@@ -645,6 +572,9 @@ export class LiveFeedPage implements AfterViewInit {
         })
         break;
       case this.WATCHLIST:      
+      if (this.watchlists.length == 0) {
+        return;
+      }
       this.socketStockWL = io.connect("https://ws-api.iextrading.com/1.0/last");
       this.socketForexWL = io.connect("https://forex-websocket.herokuapp.com/", {
         path: "/socket/forex/livefeed"
@@ -829,21 +759,35 @@ export class LiveFeedPage implements AfterViewInit {
     this.content.scrollTop = 0;
     switch (this.selectedSegment) {
       case "FOREX":
-      this.socketForex.disconnect()
+      if ( this.socketForex!=undefined) {
+        this.socketForex.disconnect()
+      }
         break;
 
         case "CRYPTO":
-        this.socketCrypto.disconnect()
+        if ( this.socketCrypto!=undefined) {
+          this.socketCrypto.disconnect()
+        }
+        
         break;
 
         case "STOCK":
-        this.socketStock.disconnect()
+        if ( this.socketStock!=undefined) {
+          this.socketStock.disconnect()
+        }
+        
         break;
 
         case "WATCHLIST":
-        this.socketCryptoWL.disconnect();
-        this.socketForexWL.disconnect();
-        this.socketStockWL.disconnect();
+        if ( this.socketStock!=undefined) {
+          this.socketStock.disconnect()
+        }
+        if ( this.socketCrypto!=undefined) {
+          this.socketCrypto.disconnect()
+        }
+        if ( this.socketForex!=undefined) {
+          this.socketForex.disconnect()
+        }
         break;
     
       default:
@@ -1142,36 +1086,15 @@ export class LiveFeedPage implements AfterViewInit {
         console.error(err);
       })
     }
-    // else if(arr[i].sentiment == type){
-    //   arr[i].sentiment = "none";
-    //   this.globalProvider.remove_sentiment(arr[i].symbol,type)
-    //   .then(()=>{
+  }
 
-    //   })
-    //   .catch((err)=>{
-    //     console.error(err);
-    //   })
-    // }else if(arr[i].sentiment != type){
-    //   let tmp = arr[i].sentiment;
-    //   arr[i].sentiment = type;
-    //   this.globalProvider.remove_sentiment(arr[i].symbol,tmp)
-    //   .then(()=>{
-    //     this.globalProvider.add_sentiment( arr[i].symbol,type,arr[i].type,arr[i].price)
-    //   .then(()=>{
-    //     console.log("change from " + tmp +" to " +arr[i].sentiment);
-        
-    //   })
-    //   .catch((err)=>{
-    //     console.error(err);
-    //   })
-
-    //   })
-    //   .catch((err)=>{
-    //     console.error(err);
-    //   })
-      
-
-    // }
+  startWatchlist(){
+    console.log(this.authData.isFinishRegistration);
+    if (this.authData.isFinishRegistration) {
+      this.openSearch();
+    }else{
+      this.globalProvider.open_login_alert()
+    }
   }
 
 }

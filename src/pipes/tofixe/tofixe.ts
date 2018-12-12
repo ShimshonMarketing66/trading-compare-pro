@@ -53,11 +53,11 @@ export class TofixePipe implements PipeTransform {
             }
             return isPositive ? Number(num.toFixed(4)) : Number(num.toFixed(4)) * -1
           }
-          return isPositive ? Number(num.toFixed(4)) : Number(num.toFixed(4)) * -1
+          return isPositive ? Number(num.toFixed(3)) : Number(num.toFixed(3)) * -1
         }
-        return isPositive ? Number(num.toFixed(4)) : Number(num.toFixed(4)) * -1
+        return isPositive ? Number(num.toFixed(2)) : Number(num.toFixed(2)) * -1
       }
-      return isPositive ? Number(num.toFixed(3)) : Number(num.toFixed(3)) * -1
+      return isPositive ? Number(num.toFixed(1)) : Number(num.toFixed(1)) * -1
     }
     if (num > 10000) {
       return isPositive ? Number(num.toFixed(1)) : Number(num.toFixed(1)) * -1

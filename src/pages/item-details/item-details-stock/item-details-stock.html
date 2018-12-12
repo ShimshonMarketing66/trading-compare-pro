@@ -10,10 +10,7 @@
 
 </ion-header>
 
-
 <ion-content [style.top]="header_stock?'0px':'-40px'" #content_detail>
-
-
 
   <ion-grid style="padding:16px;">
     <ion-row>
@@ -58,12 +55,12 @@
       BEARISH
     </span>
 
-    <div style="width: 40%;">
+    <div style="width: 40%;" *ngIf="sentiment != undefined && !(sentiment[0].count == 0 && sentiment[1].count == 0)">
       <div style="font-size: 8px;">
-        SENTIMENT: 63% BEARISH
+        SENTIMENT: <span >{{(sentiment[0].count>sentiment[1].count ?( (sentiment[0].count/ (sentiment[0].count+ sentiment[1].count))*100 | tofixe):((sentiment[1].count / (sentiment[0].count+ sentiment[1].count))*100) | tofixe)}}%</span> <span>{{sentiment[0].count>sentiment[1].count ? 'BULLISH':'BEARISH'}} </span>
       </div>
-      <div>
-        <progress-bar [progress]="20" [color]="'#e34c47'"></progress-bar>
+      <div >
+        <progress-bar [progress]="(sentiment[0].count > sentiment[1].count) ? (sentiment[0].count/(sentiment[0].count+sentiment[1].count))*100 : (sentiment[1].count/(sentiment[0].count+sentiment[1].count))*100" [color]="sentiment[0].count > sentiment[1].count?'#91c353': '#e34c47'"></progress-bar>
       </div>
     </div>
   </div>
@@ -130,12 +127,6 @@
         </ion-row>
       </ion-grid>
 
-
-
-
-
-
-
     </div>
 
 
@@ -197,7 +188,31 @@
     </div>
 
     <div *ngSwitchCase="'NEWS'">
-      <h1>slideNews</h1>
+    <ion-grid style="padding: 5px;">
+      <ion-row (click)="openNew(i)" style="padding-top: 5px;padding-bottom: 5px;border-bottom: 1px solid #4a4a4a;" *ngFor="let new of news;let i = index">
+        <ion-col  style="padding: 10px;">
+          <ion-grid>
+            <ion-row style="padding-bottom: 9px;">
+              <ion-col  style="margin: auto;font-size: 16px;overflow: hidden;max-height: 57px;">
+                {{new.headline}}
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col  >
+                <span style="color: #9b9b9b;font-style: italic;font-size: 12px;font-weight: 600;" >
+                  {{new.source}} &nbsp;| 
+                </span>
+                <span  style="color: #9b9b9b;text-align: left;font-size: 12px;">
+                {{new.datetime|time}}
+                </span>
+             
+  
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
     </div>
 
 
@@ -217,25 +232,10 @@
       </ion-col>
     </ion-row>
   </ion-grid>
-  <!-- <div class="sender">
-      <label for="inputID" class="send-chat">send</label>
-    
-      <input id="inputID" type="text" ng-model="..." class="...">
-      <div class="button-send">
-     
-      </div>
-      </div> -->
+
 </div>
 <ion-fab (tap)="scroll_up()" *ngIf="showScrollButton && selectedSegment == 'CHAT'" right bottom>
   <button style="background: #12a6f9;width: 35px;height: 35px;color: white;" ion-fab color="light" click>
     <ion-icon name="md-arrow-round-up"></ion-icon>
   </button>
 </ion-fab>
-<!-- 
-  <div class="msg">
-      <input type="text" placeholder="Message ..." [(ngModel)]="msg" (keydown.enter)="sendMessage()">
-      <button small (click)="sendMessage()" 
-                    [disabled]="msg === ''">
-        Send
-      </button>  
-    </div> -->

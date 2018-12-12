@@ -34,12 +34,6 @@
       white-space: nowrap; /* Don't forget this one */
       text-overflow: ellipsis;">
         <span style="padding-left: 3px;">
-          <!-- <ion-icon name="star-v-a"></ion-icon> -->
-          <!-- <img *ngIf="element.logo" style="border-radius: 50%;vertical-align:middle" src="{{element.logo}}" height="30" width="30"  (error)="updateUrl(i)"> -->
-          <!-- <object [data]="getImgStock(i)" type="image/png" style="border-radius: 50%;vertical-align:middle;height:30px; width:30px;">
-            <img src="assets/imgs/flags/flag general.png" style="border-radius: 50%;vertical-align:middle;height:30px; width:30px;" alt="example">
-          </object> -->
-
           <img style="border-radius: 50%;vertical-align:middle;height:30px; width:30px;" [src]="element.logo" (error)="errorHandler($event)">
 
           <img style="border-radius: 50%;vertical-align:middle" src="assets/imgs/flags/{{element.country}}.png" height="30" width="30">

@@ -3,7 +3,6 @@ import { IonicPageModule } from 'ionic-angular';
 import { PipesModule } from '../../../pipes/pipes.module';
 import { ComponentsModule } from '../../../components/components.module';
 import { ItemDetailsStockPage } from './item-details-stock';
-import { LongPressModule } from 'ionic-long-press';
 
 import { DirectivesModule } from '../../../directives/directives.module';
 
@@ -16,9 +15,7 @@ import { DirectivesModule } from '../../../directives/directives.module';
     IonicPageModule.forChild(ItemDetailsStockPage),
     PipesModule,
     ComponentsModule,
-    DirectivesModule,
-    LongPressModule 
-  ],
+    DirectivesModule  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
   
 })

@@ -107,7 +107,7 @@ export class ProfilePage {
   check_done() {
     this.counter_promises_returned += 1;
     if (this.counter_promises_returned == 2) {
-      this.globalProvider.dismiss_loading()
+      this.globalProvider.dismiss_loading();
     }
   }
 
@@ -209,7 +209,7 @@ export class ProfilePage {
       nickname_following: this.authData.user.nickname,
       nickname_followed: profile.nickname,
       country_following: this.authData.user.countryData.country,
-      country_followed: profile.country,
+      country_followed: profile.country
     }
     this.authData.add_follow(follow);
   }
@@ -264,16 +264,13 @@ export class ProfilePage {
   go_to_profile(user) {
     this.navCtrl.pop({ animate: false });
     if (user._id == this.authData.user._id) {
-      this.navCtrl.push('my-profile')
+      this.navCtrl.push('my-profile');
     } else {
-      this.navCtrl.push('profile', { user: user })
-
+      this.navCtrl.push('profile', { user: user });
     }
   }
 
   go_to_sentiment() {
-    console.log(this.profile);
-    
     this.navCtrl.push("sentiments", {
       user: this.profile
     });

@@ -79,10 +79,10 @@ export class HomePage {
     }
   }
 
-  seeAllLeaderboard() {
-    if (this.AllLeaderboard) return;
-    this.AllLeaderboard = true;
-    this.track.log_event("homeClick",{name:"test_shimshon"})
+  seeAllLeaderboard() {    
+   this.navCtrl.push("leaderboard",{
+      all_user:this.all_users
+   });
   }
 
   go_to_user_page(user){

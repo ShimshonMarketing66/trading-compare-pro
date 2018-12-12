@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthDataProvider } from '../auth-data/auth-data';
-import { GlobalProvider } from '../global/global';
 
 declare var require: any;
 

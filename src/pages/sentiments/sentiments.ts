@@ -15,15 +15,16 @@ import { TrackProvider } from '../../providers/track/track';
   templateUrl: 'sentiments.html',
 })
 export class SentimentsPage {
-  user:any;
+  user: any;
   private readonly STOCK: string = "STOCK";
   private readonly FOREX: string = "FOREX";
   private readonly CRYPTO: string = "CRYPTO";
   closed_sentiments: any[] = [];
   opened_sentiments: any[] = [];
   total_profit: number = 0;
-  constructor( public track:TrackProvider,
-    public authData:AuthDataProvider,
+  constructor(
+    public track: TrackProvider,
+    public authData: AuthDataProvider,
     public forexProvider: ForexProvider,
     public cryptoProvider: CryptoProvider,
     public stockProvider: StockProvider,
@@ -32,6 +33,8 @@ export class SentimentsPage {
     public navParams: NavParams
   ) {
     this.user = this.navParams.get("user");
+    console.log(this.user);
+
     let sentiments_from_server = new Array();
 
     this.globalProvider.get_sentiments(this.user._id).then((promsData) => {
@@ -41,7 +44,6 @@ export class SentimentsPage {
         for (const key in promsData[index]) {
           sentiments_from_server[index][key] = promsData[index][key];
         }
-
       }
       let promises = [];
       for (let index = 0; index < sentiments_from_server.length; index++) {
@@ -58,7 +60,6 @@ export class SentimentsPage {
           default:
             break;
         }
-
       }
 
       Promise.all(promises).then((data2) => {
@@ -132,8 +133,18 @@ export class SentimentsPage {
   get_percent(open_num, curr_num): Number {
     open_num = Number(open_num);
     curr_num = Number(curr_num);
+    if (open_num == 0 || curr_num == 0 ) {
+      return 0;
+    }
     let a = ((curr_num - open_num) / open_num) * 100;
     return a;
+  }
+
+  go_to_sentiment(){
+    this.navCtrl.goToRoot({}).then(()=>{
+      this.navCtrl.parent.select(0);
+      this.navCtrl.push("leaderboard");
+    })
   }
 
 }

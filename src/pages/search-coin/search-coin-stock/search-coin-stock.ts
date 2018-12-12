@@ -51,20 +51,10 @@ export class SearchCoinStock implements AfterViewInit {
     if (this.myInput == "")
       return;
     this.stockProvider.searchStock(this.myInput).then((arr :any)=> {
-      // console.log(arr);
+
 
       this.array = arr;
-      // for (let index = 0; index < arr.length; index++) {
-      //   this.stockProvider.getLogo(aa.transform(arr[index].symbol)).then((logo) => {
-      //     console.log(logo,index);
-      //     this.zone.run(() => {
-      //       this.array[index]["logo"] = logo;
-      //     })
-      //   })
-      //     .catch((err) => {
-      //       // console.log(err);
 
-      //     });
     
     })
   }
