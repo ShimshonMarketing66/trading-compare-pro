@@ -142,7 +142,7 @@ export class SignUpPage {
     this.error = "";
 
     let alert = this.alertCtrl.create({
-      message: "A message will send to you with this phone number.",
+      message: "An SMS will be sent to this phone number",
       buttons: [
         {
           text: "Accept",

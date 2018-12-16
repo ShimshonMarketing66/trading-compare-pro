@@ -151,8 +151,8 @@
             <ion-row style="border-bottom: 1px solid #4a4a4a;height: 40px;" *ngFor="let watchlist of globalProvider.watchlists;let i = index;" (click)="goToDetails(watchlist)">
               <ion-col style="overflow: hidden;margin:auto;text-align: left;white-space: nowrap;">
                 <span style="padding-left: 3px;">
-                  <ion-icon *ngIf="watchlist.is_in_watchlist" name="star-v-a"  (click)="globalProvider.remove_from_watchlist($event,watchlist);watchlist_length = watchlist_length -1"></ion-icon>
-                  <ion-icon *ngIf="!watchlist.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist($event,watchlist)"></ion-icon>
+                  <ion-icon *ngIf="watchlist.is_in_watchlist" name="star-v-a"  (click)="globalProvider.remove_from_watchlist($event,watchlist,'my-profile');watchlist_length = watchlist_length -1"></ion-icon>
+                  <ion-icon *ngIf="!watchlist.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist($event,watchlist,'my-profile')"></ion-icon>
                 </span>
                 <span style="font-size:16px;font-weight: 700;white-space: nowrap;">
                  <span [ngSwitch]="watchlist.type">

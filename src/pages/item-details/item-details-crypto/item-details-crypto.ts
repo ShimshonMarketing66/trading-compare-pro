@@ -8,9 +8,9 @@ import { AuthDataProvider } from '../../../providers/auth-data/auth-data';
 import { Vibration } from '@ionic-native/vibration';
 import * as $ from 'jquery'
 import { Clipboard } from '@ionic-native/clipboard';
-import { AdMobPro } from '@ionic-native/admob-pro';
 import { TrackProvider } from '../../../providers/track/track';
 import { CryptoProvider } from '../../../providers/crypto/crypto';
+import { AdmobProvider } from '../../../providers/admob/admob';
 
 
 @HostListener('focus', ['$event.target.value'])
@@ -47,7 +47,7 @@ sentiment:any;
   news: any=[];
 
   constructor( public track:TrackProvider,
-    public admob:AdMobPro,
+    public admob:AdmobProvider,
     public modalCrl:ModalController,
     private toastCtrl: ToastController,
     private clipboard: Clipboard,
@@ -69,23 +69,10 @@ sentiment:any;
      this.globalProvider.get_sentiment_by_symbol(symbol).then((data)=>{
       this.sentiment=data;
      })
-      var admobid = {
-        banner: 'ca-app-pub-7144298839495795/2206101991',
-        interstitial: 'ca-app-pub-7144298839495795/4257550264'
-    };
-  
-    this.admob.createBanner({
-        adId: admobid.banner,
-        isTesting: true,
-        autoShow: false,
-        position: this.admob.AD_POSITION.POS_XY
-    })
-    this.admob.showBanner(this.admob.AD_POSITION.BOTTOM_CENTER);
-    this.admob.prepareInterstitial({
-        adId: admobid.interstitial,
-        isTesting: true,
-        autoShow: false
-    })
+     track.log_screen("item-details-crypto-" + symbol);
+
+    this.admob.showBanner();
+   
   
      
   
@@ -95,7 +82,7 @@ sentiment:any;
   consultar(){
     document.getElementById("header_crypto").style.display = "unset"
     this.header_crypto = true;
-    this.admob.showBanner(this.admob.AD_POSITION.BOTTOM_CENTER);
+    this.admob.showBanner();
   }
 
   foodd(){
@@ -216,6 +203,10 @@ sentiment:any;
 
 
   openUrl(i) {
+    this.track.log_event("open_tweet",{
+      screen:"item-details-crypto-" + this.item.symbol,
+      new_title:this.tweetsdata[i].id_str
+    })
     window.open("https://twitter.com/i/web/status/" + this.tweetsdata[i].id_str);
   }
 
@@ -275,7 +266,7 @@ sentiment:any;
             duration:2000
           })
           toast.present();
-          this.globalProvider.add_sentiment(this.item.symbol, type, this.item.type, this.item.price)
+          this.globalProvider.add_sentiment(this.item.symbol, type, this.item.type, this.item.price,"item-details-crypto")
             .then(() => {
   
             })
@@ -308,12 +299,15 @@ sentiment:any;
   }
 
   open_alert(comment) {
-    var buttons = [{
-      text: 'Share',
-      handler: () => {
-       this.openShareModal(comment);
-      }
-    }, {
+    var buttons = [
+    //   {
+    //   text: 'Share',
+    //   handler: () => {
+    //    this.openShareModal(comment);
+    //   }
+    // }
+    // ,
+    {
       text: 'Copy',
       handler: () => {
         this.clipboard.copy(comment.txt).then(() => {
@@ -353,6 +347,10 @@ sentiment:any;
     });
     alert.present();
   }
+  
+  open_borker(){
+    window.open(this.globalProvider.sponcer.link);
+  }
 
   openShareModal(comment){
     let modal = this.modalCrl.create("share-comment",{
@@ -378,6 +376,10 @@ sentiment:any;
     if (this.message === '') {
       return;
     }
+    
+    this.track.log_event("post_comment",{
+      screen:"item-details-crypto-" + this.item.symbol
+    })
     
     var data = {
       nickname: this.authData.user.nickname,
@@ -423,7 +425,10 @@ sentiment:any;
   }
 
   go_to_profile(comment) {
-    console.log(comment);
+    this.track.log_event("go_to_profil",{
+      screen:"item-details-crypto-" + this.item.symbol,
+      nickname_to_visit:comment.nickname
+    })
     comment["_id"] = comment.user_id
     if (comment.user_id == this.authData.user._id) {
       this.navCtrl.push('my-profile')

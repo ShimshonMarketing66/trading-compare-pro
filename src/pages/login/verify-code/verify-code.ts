@@ -166,6 +166,9 @@ export class VerifyCodePage {
         setTimeout(() => {
           loading.setContent("wait please...");
           setTimeout(() => {
+            this.track.log_event("finish_registration",{
+              screen:"verify-code-page"
+            });
             this.splashscreen.show();
             window.location.replace("localhost:8080");
             window.location.reload();
@@ -174,7 +177,7 @@ export class VerifyCodePage {
       } else {
         loading.dismiss();
         let toast = this.toastCtrl.create({
-          message: 'The code you enter is wrong',
+          message: 'The code you entered is wrong',
           duration: 3000,
           position: 'bottom'
         });

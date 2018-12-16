@@ -6,6 +6,7 @@ import {TimezoneDialog} from '../timezone_dialog_component/timezone.dialog.compo
 import {Colorpicker} from '../colorpicker_component/colorpicker'
 import {OverlayMenu} from '../overlay_menu_component/overlay.menu'
 import { OnInit } from '@angular/core/src/metadata/lifecycle_hooks';
+import { GlobalProvider } from '../../../providers/global/global';
 
 declare var CIQ;
 
@@ -32,7 +33,7 @@ export class ChartUI implements AfterViewChecked,OnInit{
   @Input() exchDisp:string;
   @Input() group:string;
   
-  constructor(private zone: NgZone){
+  constructor(public globalProvider:GlobalProvider,private zone: NgZone){
     this.periodicity="5 min";
     this.chartType="mountain";
    
@@ -40,6 +41,9 @@ export class ChartUI implements AfterViewChecked,OnInit{
   }
   ngAfterViewChecked(){
     this.chartLayout=this.getChartLayout();
+  }
+  open_broker(){
+    window.open(this.globalProvider.sponcer.link);
   }
   changeSymbol() {
     this.chartComponent.ciq.newChart(this.symbolInput, this.chartComponent.sampleData);

@@ -107,7 +107,6 @@ export class SentimentsPage {
 
   }
 
-
   close(item, i) {
     item["status"] = "CLOSE";
     var d = new Date();
@@ -115,14 +114,11 @@ export class SentimentsPage {
     item["close_price"] = item["price"];
     this.closed_sentiments.push(item);
     this.opened_sentiments.splice(i, 1);
-    this.globalProvider.close_sentiment(item.symbol, item.type, item.price);
-    console.log(item);
+    this.globalProvider.close_sentiment(item.symbol, item.type, item.price,"sentiments-page");
     if (item.type == "STOCK") {
       for (let index = 0; index < this.stockProvider.allStocks.length; index++) {
         for (let j = 0; j < this.stockProvider.allStocks[index].data.length; j++) {
           if (this.stockProvider.allStocks[index].data[j].symbol == item.symbol) {
-            console.log(item);
-
             this.stockProvider.allStocks[index].data[j]["status"] = "CLOSE";
           }
         }

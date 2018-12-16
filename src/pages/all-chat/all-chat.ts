@@ -1,9 +1,14 @@
 import { Component, ViewChild, NgZone, AfterContentInit } from '@angular/core';
-import { IonicPage, NavController, NavParams, Content } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Content, AlertController, ToastController, ModalController } from 'ionic-angular';
 import { GlobalProvider } from '../../providers/global/global';
 import { AuthDataProvider } from '../../providers/auth-data/auth-data';
-import { AdMobPro } from '@ionic-native/admob-pro';
 import * as io from "socket.io-client";
+import { TrackProvider } from '../../providers/track/track';
+import { Vibration } from '@ionic-native/vibration';
+import { Clipboard } from '@ionic-native/clipboard';
+import * as $ from 'jquery'
+import { AdmobProvider } from '../../providers/admob/admob';
+
 declare var require: any;
 
 @IonicPage({
@@ -23,8 +28,20 @@ export class AllChatPage implements AfterContentInit {
   message: string="";
   moment: any;
   showScrollButton: boolean;
-  constructor(public zone:NgZone,public admob:AdMobPro,public navCtrl: NavController, public navParams: NavParams,public globalProvider:GlobalProvider,public authData:AuthDataProvider) {
-   
+  constructor(
+    public modalCrl:ModalController,
+    public toastCtrl:ToastController,
+    public clipboard:Clipboard,
+    public vibration:Vibration,
+    public alertCtrl:AlertController,
+    public zone:NgZone,
+    public admob:AdmobProvider,
+    public navCtrl: NavController, 
+    public navParams: NavParams,
+    public globalProvider:GlobalProvider,
+    public authData:AuthDataProvider,
+    public track :TrackProvider) {
+      track.log_screen("all-chat");
   }
 
   ngAfterContentInit() {
@@ -138,6 +155,10 @@ export class AllChatPage implements AfterContentInit {
     if (this.message === '') {
       return;
     }
+
+    this.track.log_event("post_comment",{
+      screen:"all-chat-page"
+    })
     
     var data = {
       nickname: this.authData.user.nickname,
@@ -162,11 +183,11 @@ export class AllChatPage implements AfterContentInit {
     console.log('ionViewDidLoad AllChatPage');
   }
   consultar(){
-    this.admob.showBanner(this.admob.AD_POSITION.BOTTOM_CENTER);
+    this.admob.showBanner()
   }
 
   foodd(){
-    this.admob.hideBanner();
+    this.admob.hideBanner()
   }
 
   scrollTo(elementId: number) {
@@ -175,13 +196,102 @@ export class AllChatPage implements AfterContentInit {
   }
 
   go_to_profile(comment){
-    console.log(comment);
+    this.track.log_event("go_to_profil",{
+      screen:"all-chat-page",
+      nickname_to_visit:comment.nickname
+    })
     comment["_id"] = comment.user_id
     if (comment.user_id == this.authData.user._id) {
       this.navCtrl.push('my-profile')
     } else {
       this.navCtrl.push('profile', { user: comment })
     }
+  }
+
+  timeout_press: any;
+  released(comment_id, comment) {
+
+    clearTimeout(this.timeout_press);
+
+    this.timeout_press = setTimeout(() => {
+      console.log($("#" + comment_id).is(':active'));
+      if ($("#" + comment_id).is(':active')) {
+        this.vibration.vibrate(200);
+        this.open_alert(comment);
+      }
+    }, 500)
+  }
+
+  open_alert(comment) {
+    var buttons = [{
+      text: 'Share',
+      handler: () => {
+       this.openShareModal(comment);
+      }
+    }, {
+      text: 'Copy',
+      handler: () => {
+        this.track.log_event("copy_comment",{
+          screen:"all-chat-page",
+          comment_id:comment.primary_key
+        })
+        this.clipboard.copy(comment.txt).then(() => {
+          let toast = this.toastCtrl.create({
+            message: 'Message Copied!',
+            duration: 1500,
+            position: 'bottom'
+          });
+          toast.present();
+        })
+
+      }
+    }];
+    if (comment.user_id == this.authData.user._id && comment.primary_key != undefined && comment.primary_key != null && comment.primary_key !== "") {
+      buttons.push({
+        text: 'Delete',
+        handler: () => {
+          for (let index = 0; index < this.comments.length; index++) {
+            if (this.comments[index].primary_key == comment.primary_key) {
+              this.comments.splice(index, 1);
+              let toast = this.toastCtrl.create({
+                message: 'Message Copied!',
+                duration: 1500,
+                position: 'middle'
+              });
+              toast.present();
+            }
+          }
+          this.track.log_event("remove_comment",{
+            screen:"all-chat-page",
+            comment_id:comment.primary_key
+          })
+          this.authData.deleteComment(comment);
+        }
+      })
+    }
+
+    let alert = this.alertCtrl.create({
+      title: "Message Options",
+      buttons: buttons
+    });
+    alert.present();
+  }
+
+  openShareModal(comment){
+    let modal = this.modalCrl.create("share-comment",{
+      comment:comment
+    },{
+      cssClass:"share-comment",
+      enableBackdropDismiss:true,
+      showBackdrop:true,
+    })
+    modal.present()
+    modal.onDidDismiss(comment=>{
+      this.track.log_event("share_comment",{
+        screen:"all-chat-page",
+        comment_id:comment.primary_key
+      })
+    })
   }
 
 

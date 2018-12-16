@@ -22,8 +22,8 @@ export class MyApp {
   firstTime: boolean = true;
   _id: string;
 
-  constructor( public track:TrackProvider,
-    
+  constructor( 
+    public track:TrackProvider,
     private toastCtrl: ToastController,
     public storage: Storage,
     public codePush: CodePush,
@@ -39,6 +39,7 @@ export class MyApp {
     firebase.auth().onAuthStateChanged(user => {
       this.onAuthStateChangedCalled = true;
       if (user) {
+        this._id = user.uid;
         this.authData.isAuth = true;
         this.authData.user_firebase = user;
         firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function (idToken) {
@@ -61,47 +62,56 @@ export class MyApp {
 
 
 
-      // this.codePush.sync().subscribe((syncStatus) => console.log("syncStatus", syncStatus));
-      // const downloadProgress = (progress) => { console.log(`Downloaded ${progress.receivedBytes} of ${progress.totalBytes}`); }
-      // this.codePush.sync({}, downloadProgress).subscribe((syncStatus) => console.log(syncStatus));
+    
+     
 
       if (this.onAuthStateChangedCalled) {
+        this.track.setUserId(this._id );
         this.platform.ready().then(() => {
           if (this.platform.is("cordova")) {
             this.codePush.checkForUpdate().then(data => {
-              console.log(data);
-            })
-          }
-          if (this.authData.isAuth) {
-            this.authData.getProfileFromServer(this._id).then((user: Profile) => {
-              user.countryData.country = user.countryData.country.toLowerCase().replace(" ", "-");
-              this.authData.user = user;
-              if (user.verifyData.is_phone_number_verified) {
-                this.global.initialProviders().then(() => {
-                  this.platform.ready().then(() => {
-                    this.initial_app_when_login();
-                  })
-                })
-              } else {
-                this.platform.ready().then(() => {
-                  this.rootPage = "enter-phone";
-                })
-              }
 
-
+                this.splashScreen.show();
+                const downloadProgress = (progress) => {
+                   console.log(`Downloaded ${progress.receivedBytes} of ${progress.totalBytes}`);
+                  }
+                this.codePush.sync({}, downloadProgress).subscribe((syncStatus) => console.log(syncStatus)); 
             })
-              .catch((err) => {
-                console.log("err this.authData.getProfileFromServer app commponnent");
-                this.rootPage = "onboarding";
-              })
-          } else {
-            this.initial_app_when_log_out();
           }
         })
+        this.continue_after_check_update()
       } else {
         this.loop();
       }
     }, 1000 * 2)
+  }
+
+  continue_after_check_update(){
+    if (this.authData.isAuth) {
+      this.authData.getProfileFromServer(this._id).then((user: Profile) => {
+        user.countryData.country = user.countryData.country.toLowerCase().replace(" ", "-");
+        this.authData.user = user;
+        if (user.verifyData.is_phone_number_verified) {
+          this.global.initialProviders().then(() => {
+            this.platform.ready().then(() => {
+              this.initial_app_when_login();
+            })
+          })
+        } else {
+          this.platform.ready().then(() => {
+            this.rootPage = "enter-phone";
+          })
+        }
+
+
+      })
+        .catch((err) => {
+          console.log("err this.authData.getProfileFromServer app commponnent");
+          this.rootPage = "onboarding";
+        })
+    } else {
+      this.initial_app_when_log_out();
+    }
   }
 
   initial_app_when_login() {
@@ -124,12 +134,11 @@ export class MyApp {
     }
 
     let toast = this.toastCtrl.create({
-      message: this.authData.user.provider + ' sign in success',
+      message: this.authData.user.provider + ' Sign in was successful',
       duration: 2000,
       position: 'bottom'
     });
     this.rootPage = "default-page";
-    this.track.setUserId(this.authData.user._id);
     this.statusBar.styleDefault();
     console.log("this.splashScreen.hide()");
     

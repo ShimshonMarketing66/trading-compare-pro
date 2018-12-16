@@ -9,8 +9,9 @@ import { AuthDataProvider } from '../../../providers/auth-data/auth-data';
 import { Vibration } from '@ionic-native/vibration';
 import * as $ from 'jquery'
 import { Clipboard } from '@ionic-native/clipboard';
-import { AdMobPro } from '@ionic-native/admob-pro';
 import { TrackProvider } from '../../../providers/track/track';
+import { AdmobProvider } from '../../../providers/admob/admob';
+import { SocialSharing } from '@ionic-native/social-sharing';
 
 @IonicPage({
   name: "item-details-stock"
@@ -42,11 +43,13 @@ export class ItemDetailsStockPage {
   shouldScrollDown: boolean;
   showScrollButton: boolean;
   header_stock: boolean = true;
-sentiment:any;
-  news: any=[];
-  constructor( public track:TrackProvider,
-    public admob:AdMobPro,
-    public modalCrl:ModalController,
+  sentiment: any;
+  news: any = [];
+  constructor(
+    public socialSharing: SocialSharing,
+    public track: TrackProvider,
+    public admob: AdmobProvider,
+    public modalCrl: ModalController,
     private toastCtrl: ToastController,
     private clipboard: Clipboard,
     public alertCtrl: AlertController,
@@ -58,45 +61,31 @@ sentiment:any;
     public navCtrl: NavController,
     public navParams: NavParams,
     public stockProvider: StockProvider) {
-      let symbol;
-      if (this.navParams.get("symbol") != undefined) {
-        symbol = this.navParams.get("symbol");
-      }else{
-        symbol = this.navParams.get("item").symbol
-      }
-     this.globalProvider.get_sentiment_by_symbol(symbol).then((data)=>{
-      this.sentiment=data;
-     })
-      var admobid = {
-        banner: 'ca-app-pub-7144298839495795/2206101991',
-        interstitial: 'ca-app-pub-7144298839495795/4257550264'
-    };
-  
-    this.admob.createBanner({
-        adId: admobid.banner,
-        isTesting: true,
-        autoShow: false,
-        position: this.admob.AD_POSITION.POS_XY
+    let symbol;
+    if (this.navParams.get("symbol") != undefined) {
+      symbol = this.navParams.get("symbol");
+    } else {
+      symbol = this.navParams.get("item").symbol
+    }
+    this.globalProvider.get_sentiment_by_symbol(symbol).then((data) => {
+      this.sentiment = data;
     })
-    this.admob.showBanner(this.admob.AD_POSITION.BOTTOM_CENTER);
-    this.admob.prepareInterstitial({
-        adId: admobid.interstitial,
-        isTesting: true,
-        autoShow: false
-    })
-  
-     
-  
+
+    this.admob.showBanner();
+    track.log_screen("item-details-stock-" + symbol);
+
     this.initialize()
   }
 
-  consultar(){
+  consultar() {
     document.getElementById("header_stock").style.display = "unset"
     this.header_stock = true;
-    this.admob.showBanner(this.admob.AD_POSITION.BOTTOM_CENTER);
+    this.admob.showBanner();
   }
-
-  foodd(){
+  open_borker(){
+    window.open(this.globalProvider.sponcer.link);
+  }
+  foodd() {
     document.getElementById("header_stock").style.display = "none"
     this.header_stock = false;
     this.admob.hideBanner();
@@ -135,12 +124,12 @@ sentiment:any;
         this.globalProvider.loading("load comments");
         this.selectedSegment = "CHAT";
         setTimeout(() => {
-          let y = ((document.getElementById(this.navParams.get("primary_key")).parentNode.parentNode)as HTMLElement).offsetTop;
+          let y = ((document.getElementById(this.navParams.get("primary_key")).parentNode.parentNode) as HTMLElement).offsetTop;
           this.content_detail.scrollTo(0, y - 50);
           this.globalProvider.dismiss_loading();
         }, 2000)
 
-      }else{
+      } else {
         this.selectedSegment = "CHART";
       }
     })
@@ -171,13 +160,13 @@ sentiment:any;
 
     this.socket.on("on_message", (data) => {
       if (this.socket.id != data.id) {
-        data.country = data.country.replace(" ","-");
+        data.country = data.country.replace(" ", "-");
         this.comments.unshift(data);
       }
     });
 
 
-    this.socket.on("on_primary_key", (data) => {      
+    this.socket.on("on_primary_key", (data) => {
       for (let index = this.comments.length - 1; index > -1; index--) {
         if (data.user_id == this.comments[index].user_id) {
           this.comments[index]["primary_key"] = data.primary_key;
@@ -194,17 +183,17 @@ sentiment:any;
   }
 
 
-newsCall(){
-  
-  this.http.get("https://api.iextrading.com/1.0/stock/"+ this.item.symbol.toLowerCase() + "/news")
-  .toPromise()
-  .then((data:any)=>{
-    console.log(JSON.parse(data._body));
-    this.news=JSON.parse(data._body);
+  newsCall() {
 
-  })
- 
-}
+    this.http.get("https://api.iextrading.com/1.0/stock/" + this.item.symbol.toLowerCase() + "/news")
+      .toPromise()
+      .then((data: any) => {
+        console.log(JSON.parse(data._body));
+        this.news = JSON.parse(data._body);
+
+      })
+
+  }
   tweetCall() {
     this.http.get('https://xosignals.herokuapp.com/search/' + this.item.symbol + "/en").toPromise().then((res) => {
 
@@ -262,11 +251,20 @@ newsCall(){
 
 
   openUrl(i) {
+    this.track.log_event("open_tweet", {
+      screen: "item-details-stock-" + this.item.symbol,
+      new_title: this.tweetsdata[i].id_str
+    })
     window.open("https://twitter.com/i/web/status/" + this.tweetsdata[i].id_str);
 
   }
   openNew(i) {
-    window.open(this.news[i].url);
+
+    this.track.log_event("open_new", {
+      screen: "item-details-stock-" + this.item.symbol,
+      new_title: this.news[i].headline
+    })
+    // window.open(this.news[i].url);
 
   }
   getImgStock() {
@@ -279,7 +277,7 @@ newsCall(){
   }
 
   change_sentiment(type) {
-    
+
     if (!this.globalProvider.isAuth()) {
       this.globalProvider.open_login_alert();
       return;
@@ -289,7 +287,7 @@ newsCall(){
     }
     if (type == "BULLISH") {
       this.sentiment[0].count++;
-    }else{
+    } else {
       this.sentiment[1].count++;
     }
     if (this.navParams.get("i") == undefined) {
@@ -305,11 +303,11 @@ newsCall(){
           }
         }
         let toast = this.toastCtrl.create({
-          message:this.item.shortName + " has been added to your sentiments.",
-          duration:2000
+          message: this.item.shortName + " has been added to your sentiments.",
+          duration: 2000
         })
         toast.present();
-        this.globalProvider.add_sentiment(this.item.symbol, type, this.item.type, this.item.price)
+        this.globalProvider.add_sentiment(this.item.symbol, type, this.item.type, this.item.price,"item-details-stock")
           .then(() => {
 
           })
@@ -343,12 +341,15 @@ newsCall(){
   }
 
   open_alert(comment) {
-    var buttons = [{
-      text: 'Share',
-      handler: () => {
-       this.openShareModal(comment);
-      }
-    }, {
+    var buttons = [
+    //   {
+    //   text: 'Share',
+    //   handler: () => {
+    //     this.openShareModal(comment);
+    //   }
+    // }
+    // , 
+    {
       text: 'Copy',
       handler: () => {
         this.clipboard.copy(comment.txt).then(() => {
@@ -389,22 +390,33 @@ newsCall(){
     alert.present();
   }
 
-  openShareModal(comment){
-    let modal = this.modalCrl.create("share-comment",{
-      comment:comment
-    },{
-      cssClass:"share-comment",
-      enableBackdropDismiss:true,
-      showBackdrop:true,
-    })
-    modal.present()
-    modal.onDidDismiss(comment=>{
-      console.log(comment);
+  openShareModal(comment) {
+    let symbol = comment.symbol as string;
+    let symbol_type = this.globalProvider.get_symbol_type(symbol);
+    let img;
+    switch (symbol_type) {
+      case "STOCK":
+        img = "https://storage.googleapis.com/iex/api/logos/" + symbol + ".png";
+        break;
+      case "CRYPTO":
+        img = "https://cloud-marketing66.herokuapp.com/logo/" + symbol;
+        break;
+      case "FOREX":
+        img = "https://xosignals.herokuapp.com/api2/sendImgByName/" + (symbol.charAt(0) + symbol.charAt(1) + symbol.charAt(2)).toLowerCase() + "%20" + (symbol.charAt(3) + symbol.charAt(4) + symbol.charAt(5)).toLowerCase();
+        break;
+
+      default:
+        break;
+    }
+    // this.socialSharing.shareVia(app_id,this.navParams.get("comment").txt,this.navParams.get("comment").symbol,img,)
+    this.socialSharing.share("Check out this message on Trading Compare! https://tradingcompare.com/stock/INTC", "Trading Compare", img ).then((data) => {
+    // this.socialSharing.shareViaWhatsApp("Check out this message on Trading Compare! ", img, "tradingcompare://"  + symbol_type + "/" + symbol)
+
     })
   }
 
   sendMessage() {
-    
+
     if (!this.globalProvider.isAuth()) {
       this.globalProvider.open_login_alert();
       return;
@@ -413,7 +425,12 @@ newsCall(){
     if (this.message === '') {
       return;
     }
-    
+
+    this.track.log_event("post_comment", {
+      screen: "item-details-stock-" + this.item.symbol
+    })
+
+
     var data = {
       nickname: this.authData.user.nickname,
       txt: this.message,
@@ -458,7 +475,10 @@ newsCall(){
   }
 
   go_to_profile(comment) {
-    console.log(comment);
+    this.track.log_event("go_to_profil", {
+      screen: "item-details-stock-" + this.item.symbol,
+      nickname_to_visit: comment.nickname
+    })
     comment["_id"] = comment.user_id
     if (comment.user_id == this.authData.user._id) {
       this.navCtrl.push('my-profile')

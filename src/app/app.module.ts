@@ -6,7 +6,6 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { Keyboard } from '@ionic-native/keyboard';
 // import { AmChartsModule } from "@amcharts/amcharts3-angular";
 import { SocialSharing } from '@ionic-native/social-sharing';
-import { AdMobPro } from '@ionic-native/admob-pro';
 import { AppRate } from '@ionic-native/app-rate';
 
 import { MyApp } from './app.component';
@@ -43,6 +42,8 @@ import { Deeplinks } from '@ionic-native/deeplinks';
 import { CodePush } from '@ionic-native/code-push';
 import { IonicStorageModule  } from '@ionic/storage';
 import { TrackProvider } from '../providers/track/track';
+import { AdMobFree } from '@ionic-native/admob-free';
+import { AdmobProvider } from '../providers/admob/admob';
 
 
 const firebaseConfig = {
@@ -104,10 +105,11 @@ export function createTranslateLoader(http: HttpClient) {
     AndroidPermissions,
     Deeplinks,
     CodePush,
-    AdMobPro,
     Firebase,
     TrackProvider,
-    AppRate
+    AppRate,
+    AdmobProvider,
+    AdMobFree
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

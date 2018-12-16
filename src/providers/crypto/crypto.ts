@@ -49,10 +49,6 @@ export class CryptoProvider {
               data[key]["symbol"] = data[key]["pair"];
               data[key]["type"] = "CRYPTO";
               
-
-              // await this.global.get_sentiments();
-              // console.log(this.global.sentiments)
-              
               for (let index = 0; index < this.authData.user.watchlist.length; index++) {
                 if (this.authData.user.watchlist[index].type == "CRYPTO") {
                   if ( data[key].symbol == this.authData.user.watchlist[index].symbol) {

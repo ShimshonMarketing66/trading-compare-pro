@@ -89,11 +89,10 @@ export class SignInPage {
           window.location.reload();
         } else {
           let alert = this.alertCtrl.create({
-            message: "need to complete registration",
+            message: "Please fill in all fields to complete registration",
             buttons: [
               {
-                text: "complete registration",
-                role: 'cancel',
+                text: "Complete",
                 handler: () => {
                   this.navCtrl.setRoot("verify-code");
                 }
@@ -108,11 +107,10 @@ export class SignInPage {
         this.authData.deleteProfile(_id).then(()=>{
           console.log("user deleted");
           let alert = this.alertCtrl.create({
-            message: "Sorry, please complet registretion.",
+            message: "Please fill in all fields to complete registration",
             buttons: [
               {
-                text: "complete registration",
-                role: 'cancel',
+                text: "Complete",
                 handler: () => {
                   this.authData.user.password = this.password;
                   this.authData.user.email = this.email;

@@ -102,9 +102,6 @@
     <plugin name="cordova-plugin-platform-replace" spec="1.0.0" />
     <plugin name="cordova-plugin-vibration" spec="3.1.0" />
     <plugin name="cordova-clipboard" spec="1.2.1" />
-    <plugin name="cordova-plugin-admobpro" spec="2.35.3">
-        <variable name="PLAY_SERVICES_VERSION" value="16.0.0" />
-    </plugin>
     <plugin name="cordova-plugin-x-socialsharing" spec="5.4.3">
         <variable name="ANDROID_SUPPORT_V4_VERSION" value="24.1.1+" />
     </plugin>
@@ -130,6 +127,14 @@
     <plugin name="cordova-plugin-zip" spec="^3.1.0" />
     <plugin name="cordova-plugin-firebase" spec="2.0.5" />
     <plugin name="cordova-plugin-apprate" spec="1.4.0" />
+    <plugin name="cordova-plugin-file" spec="^4.3.3" />
+    <plugin name="cordova-plugin-file-transfer" spec="^1.6.3" />
+    <plugin name="cordova-plugin-admob-free" spec="0.24.0">
+        <variable name="ADMOB_APP_ID" value="ca-app-pub-7144298839495795~1276163708" />
+    </plugin>
+    <plugin name="cordova-plugin-admobpro" spec="2.35.3">
+        <variable name="PLAY_SERVICES_VERSION" value="16.0.0" />
+    </plugin>
     <engine name="ios" spec="4.5.5" />
     <engine name="android" spec="7.1.1" />
 </widget>

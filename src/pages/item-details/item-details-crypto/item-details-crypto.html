@@ -41,8 +41,8 @@
         </div>
       </ion-col>
       <ion-col col-1>
-        <ion-icon *ngIf="item.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist(undefined,item)"></ion-icon>
-        <ion-icon *ngIf="!item.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist(undefined,item)"></ion-icon>
+        <ion-icon *ngIf="item.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist(undefined,item,'item-details-crypto')"></ion-icon>
+        <ion-icon *ngIf="!item.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist(undefined,item,'item-details-crypto')"></ion-icon>
     </ion-col>
     </ion-row>
   </ion-grid>
@@ -131,7 +131,7 @@
 
 
     <div *ngSwitchCase="'OVERVIEW'" style="padding: 16px;">
-      <button ion-button style="background: #12a6f9;height: 30px;" block>Trade Now</button>
+        <button (click)="open_broker()" ion-button style="background: #12a6f9;height: 30px;" block>Trade Now</button>
 
       <div style="text-align: left;font-size: 15px; line-height: 1.8;">
         Price : {{item.price}}

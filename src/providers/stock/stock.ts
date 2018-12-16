@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IStock } from '../../models/stock';
-import { DomSanitizer } from '@angular/platform-browser';
 import { AuthDataProvider } from '../auth-data/auth-data';
 
 

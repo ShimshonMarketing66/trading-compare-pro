@@ -25,7 +25,7 @@ export class ShareComment {
 
     }
 
-    share(app_id:string){
+    share(){
         let symbol = this.navParams.get("comment").symbol as string;
         let symbol_type = this.globalProvider.get_symbol_type(symbol);
         let img;
@@ -43,6 +43,10 @@ export class ShareComment {
             default:
                 break;
         }
-        this.socialSharing.shareVia(app_id,this.navParams.get("comment").txt,this.navParams.get("comment").symbol,img,)
+        // this.socialSharing.shareVia(app_id,this.navParams.get("comment").txt,this.navParams.get("comment").symbol,img,)
+
+        this.socialSharing.share("Check out this message on Trading Compare!", null, img, "tradingcompare://tradingcompare.com/"+symbol_type + "/"+symbol).then((data) => {
+
+        })
     }
 }

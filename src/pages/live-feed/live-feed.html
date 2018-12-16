@@ -1,7 +1,7 @@
 <ion-header (click)="foo()">
 
   <ion-navbar>
-    <ion-title>live-feed</ion-title>
+    <ion-title>live-feed-shimmiiiiii</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -118,8 +118,8 @@
             (click)="goToDetailsStock(i)">
             <ion-col style="margin:auto;text-align: left;white-space: nowrap;">
               <span style="padding-left: 3px;">
-                <ion-icon *ngIf="stock.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist($event,stock)"></ion-icon>
-                <ion-icon *ngIf="!stock.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist($event,stock)"></ion-icon>
+                <ion-icon *ngIf="stock.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist($event,stock,'live-feed')"></ion-icon>
+                <ion-icon *ngIf="!stock.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist($event,stock,'live-feed')"></ion-icon>
               </span>
               <span style="font-size:16px;font-weight: 700;">
                 {{stock["display_name"]}}
@@ -160,8 +160,8 @@
 
             <div style="margin-bottom: 4px;">
               <span>
-                <ion-icon *ngIf="stock.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist($event,stock)"></ion-icon>
-                <ion-icon *ngIf="!stock.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist($event,stock)"></ion-icon>
+                <ion-icon *ngIf="stock.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist($event,stock,'live-feed')"></ion-icon>
+                <ion-icon *ngIf="!stock.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist($event,stock,'live-feed')"></ion-icon>
               </span>
               <span style="font-size: 14px">
                 {{stock["shortName"]}}
@@ -211,8 +211,8 @@
             (click)="goToDetailsForex(i)">
             <ion-col style="margin:auto;text-align: left;white-space: nowrap;">
               <span style="padding-left: 3px;">
-                <ion-icon *ngIf="forex.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist($event,forex)"></ion-icon>
-                <ion-icon *ngIf="!forex.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist($event,forex)"></ion-icon>
+                <ion-icon *ngIf="forex.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist($event,forex,'live-feed')"></ion-icon>
+                <ion-icon *ngIf="!forex.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist($event,forex,'live-feed')"></ion-icon>
               </span>
               <span style="font-size:16px;font-weight: 700;white-space: nowrap;">
                 {{forex.fromSymbol}}
@@ -257,8 +257,8 @@
             <img src={{forex.logo}} style="width: 37px;height: 37px;border-radius: 50px;">
             <div style="margin-bottom: 4px;">
               <span>
-                <ion-icon *ngIf="forex.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist($event,forex)"></ion-icon>
-                <ion-icon *ngIf="!forex.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist($event,forex)"></ion-icon>
+                <ion-icon *ngIf="forex.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist($event,forex,'live-feed')"></ion-icon>
+                <ion-icon *ngIf="!forex.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist($event,forex,'live-feed')"></ion-icon>
               </span>
               <span style="font-size: 14px;">
                 {{forex.pair}}
@@ -302,8 +302,8 @@
             (click)="goToDetailsCrypto(i)">
             <ion-col style="overflow: hidden;margin:auto;text-align: left;white-space: nowrap;">
               <span style="padding-left: 3px;">
-                <ion-icon *ngIf="crypto.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist($event,crypto)"></ion-icon>
-                <ion-icon *ngIf="!crypto.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist($event,crypto)"></ion-icon>
+                <ion-icon *ngIf="crypto.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist($event,crypto,'live-feed')"></ion-icon>
+                <ion-icon *ngIf="!crypto.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist($event,crypto,'live-feed')"></ion-icon>
               </span>
               <span style="font-size:16px;font-weight: 700;white-space: nowrap;">
                 {{crypto.name}}
@@ -339,8 +339,8 @@
             <img src={{crypto.logo}} style="width: 37px;height: 37px;border-radius: 50px;">
             <div style="margin-bottom: 4px;">
               <span>
-                <ion-icon *ngIf="crypto.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist($event,crypto)"></ion-icon>
-                <ion-icon *ngIf="!crypto.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist($event,crypto)"></ion-icon>
+                <ion-icon *ngIf="crypto.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist($event,crypto,'live-feed')"></ion-icon>
+                <ion-icon *ngIf="!crypto.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist($event,crypto,'live-feed')"></ion-icon>
               </span>
               <span style="font-size: 14px;">
                 {{crypto.shortName}}
@@ -392,8 +392,8 @@
             (click)="goToDetails(watchlist)">
             <ion-col style="overflow: hidden;margin:auto;text-align: left;white-space: nowrap;">
               <span style="padding-left: 3px;">
-                <ion-icon *ngIf="watchlist.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist($event,watchlist)"></ion-icon>
-                <ion-icon *ngIf="!watchlist.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist($event,watchlist)"></ion-icon>
+                <ion-icon *ngIf="watchlist.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist($event,watchlist,'live-feed')"></ion-icon>
+                <ion-icon *ngIf="!watchlist.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist($event,watchlist,'live-feed')"></ion-icon>
               </span>
               <span style="font-size:16px;font-weight: 700;white-space: nowrap;">
                 <span [ngSwitch]="watchlist.type">
@@ -453,8 +453,8 @@
 
             <div style="margin-bottom: 4px;">
               <span>
-                <ion-icon *ngIf="watchlist?.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist($event,watchlist)"></ion-icon>
-                <ion-icon *ngIf="!watchlist?.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist($event,watchlist)"></ion-icon>
+                <ion-icon *ngIf="watchlist?.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist($event,watchlist,'live-feed')"></ion-icon>
+                <ion-icon *ngIf="!watchlist?.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist($event,watchlist,'live-feed')"></ion-icon>
               </span>
               <span style="font-size: 16px;">
 

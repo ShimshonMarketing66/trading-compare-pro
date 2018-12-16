@@ -7,8 +7,8 @@ import { CryptoProvider } from '../../providers/crypto/crypto';
 import { GlobalProvider } from '../../providers/global/global';
 import { ToastController } from 'ionic-angular/components/toast/toast-controller';
 import { AuthDataProvider } from '../../providers/auth-data/auth-data';
-import { AdMobPro } from '@ionic-native/admob-pro';
 import { TrackProvider } from '../../providers/track/track';
+import { AdmobProvider } from '../../providers/admob/admob';
 
 @HostListener('scroll', ['$event'])
 @HostListener("click", ["$event"])
@@ -101,7 +101,7 @@ export class LiveFeedPage implements AfterViewInit {
 
   constructor( public track:TrackProvider,
     public events: Events,
-    private admob: AdMobPro,
+    private admob: AdmobProvider,
     public authData: AuthDataProvider,
     public toastCtrl: ToastController,
     public globalProvider: GlobalProvider,
@@ -1078,7 +1078,7 @@ console.log(this.globalProvider.watchlists);
     if (arr[i].status == "CLOSE" || arr[i].sentiment == "none") {
       arr[i].sentiment = type;
       arr[i].status = "OPEN";
-      that2.globalProvider.add_sentiment( arr[i].symbol,type,arr[i].type,arr[i].price)
+      that2.globalProvider.add_sentiment( arr[i].symbol,type,arr[i].type,arr[i].price,"live-feed")
       .then(()=>{
         
       })

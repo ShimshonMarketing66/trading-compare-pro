@@ -5,6 +5,7 @@ import { CryptoProvider } from '../crypto/crypto';
 import { ForexProvider } from '../forex/forex';
 import { AuthDataProvider } from '../auth-data/auth-data';
 import { ToastController, AlertController, LoadingController, Loading, App, ViewController } from 'ionic-angular';
+import { TrackProvider } from '../track/track';
 
 @Injectable()
 export class GlobalProvider {
@@ -22,6 +23,7 @@ export class GlobalProvider {
   }
   constructor
     (
+      public track:TrackProvider,
     public app: App,
     public loadingCtrl: LoadingController,
     public alertCtrl: AlertController,
@@ -78,7 +80,7 @@ export class GlobalProvider {
   }
 
 
-  add_sentiment(symbol: string, type: string, symbol_type: string, price: number): Promise<any> {
+  add_sentiment(symbol: string, type: string, symbol_type: string, price: number,page?:string): Promise<any> {
     if (!this.isAuth()) {
       this.open_login_alert();
       return;
@@ -92,6 +94,12 @@ export class GlobalProvider {
         price: price
       }
 
+      this.track.log_event("add_sentiment",{
+        screen:page,
+        symbol:symbol,
+        type_sentiment:type,
+        price:Number(price)
+      });
       dataToSend["close_date"] = null;
       dataToSend["close_price"] = null;
       dataToSend["status"] = "OPEN"
@@ -115,11 +123,18 @@ export class GlobalProvider {
   }
 
 
-  close_sentiment(symbol: string, symbol_type: string, close_price: number): Promise<any> {
+  close_sentiment(symbol: string, symbol_type: string, close_price: number,page?:string): Promise<any> {
     if (!this.isAuth()) {
       this.open_login_alert();
       return;
     }
+
+    this.track.log_event("add_sentiment",{
+      screen:page,
+      symbol:symbol,
+      price:Number(close_price)
+    });
+
     return new Promise((resolve, reject) => {
       var dataToSend = {
         _id: this.authData.user._id,
@@ -316,7 +331,7 @@ export class GlobalProvider {
   }
 
 
-  add_to_watchlist(event: any, item) {
+  add_to_watchlist(event: any, item,page?:string) {
   
 
     if (event != undefined) {
@@ -328,21 +343,25 @@ export class GlobalProvider {
       return;
     }
 
+ 
+
     if (this.authData.user.watchlist.length + 1 > 10 && this.authData.user.state == "unknown") {
 
       let alert = this.alertCtrl.create({
-        title: 'your watchlist is full',
-        subTitle: 'you have to be vip to make your watchlist greaten.',
+        title: 'Your watchlist is full.',
+        subTitle: 'Upgrade to VIP to add more currencies to your watchlist',
         buttons: [
           {
             text: 'Cancel',
             role: 'cancel'
           },
           {
-            text: 'Go to vip',
+            text: 'Learn More',
             handler: () => {
-              let nav = this.app.getActiveNav();
-              nav.setRoot("login-tabs")
+              this.toastCtrl.create({
+                message:"coming soon.",
+                duration:2000
+              }).present()
 
             }
           }
@@ -352,13 +371,19 @@ export class GlobalProvider {
       return;
     }
 
+    this.track.log_event("add_to_watchlist",{
+      screen:page,
+      symbol:item.symbol
+    })
+
     if (this.watchlists.length != 0) {
       this.watchlists.push(item);
     }
+
     item.is_in_watchlist = true;
 
     let toast = this.toastCtrl.create({
-      message: item.symbol + ' was added successfully',
+      message: item.symbol + ' was added to watchlist successfully',
       duration: 2000,
       position: 'bottom'
     });
@@ -392,7 +417,7 @@ export class GlobalProvider {
   }
 
 
-  remove_from_watchlist(event: any, item: any) {
+  remove_from_watchlist(event: any, item: any,page?:string) {
     if (event != undefined) {
       event.stopPropagation();
     }
@@ -401,6 +426,12 @@ export class GlobalProvider {
       this.open_login_alert();
       return;
     }
+
+    this.track.log_event("remove_from_watchlist",{
+      screen:page,
+      symbol:item.symbol
+    })
+
 
     item.is_in_watchlist = false;
 

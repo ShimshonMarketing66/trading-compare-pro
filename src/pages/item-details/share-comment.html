@@ -6,7 +6,7 @@
 <ion-content>
         
     <ion-grid>
-        <ion-row (click)="share('com.facebook.katana')">
+        <ion-row (click)="share('com.facebook.orca')">
             <ion-col col-2>
                     <ion-icon style="font-size: 40px;color: blue;" name="logo-facebook"></ion-icon>
             </ion-col>
@@ -15,7 +15,7 @@
                 Facebook
                 </ion-col>
         </ion-row>
-        <ion-row>
+        <ion-row (click)="share('com.whatsapp')">
                 <ion-col col-2>
                         <ion-icon style="font-size: 40px;color: green;" name="logo-whatsapp"></ion-icon>
 
@@ -35,7 +35,18 @@
                             Twitter
                         </ion-col>
                 </ion-row>
-    
+
+                <ion-row (click)="share('org.telegram.messenger')">
+                        <ion-col  col-2>
+                                <ion-icon style="font-size: 40px;color: pink;" name="logo-twitter"></ion-icon>
+        
+                        </ion-col>
+            
+                        <ion-col style="margin: auto;">
+                                Telegram
+                            </ion-col>
+                    </ion-row>
+                
 
     </ion-grid>
 </ion-content>

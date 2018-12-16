@@ -109,10 +109,10 @@ console.log(this.authData.user);
 
     
     let alert = this.alertCtrl.create({
-      message: "A message will send to you with this phone number.",
+      message: "An SMS will be sent to this phone number",
       buttons: [
         {
-          text: "Accept",
+          text: "Okay",
           handler: () => {
             let loading = this.loadingCtrl.create({
               content: "checking data..."
@@ -136,13 +136,13 @@ console.log(this.authData.user);
                 let message = "";
                 switch (err.status) {
                   case "10":
-                  message = "A message sent to you already. if you not see it please wait the sms arrive or try in 10 minutes";
+                  message = "A message has been sent to your phone. If you don't see it for 10 minutes or longer please try again.";
                     break;
                     case "15":
-                  message = "The destination number is not in a supported network";
+                  message = "The phone number does not exist";
                     break;
                   default:
-                  message = "an error occured plese try letter";
+                  message = "An error occurred, please try again later";
                     break;
                 }
                 let alert = this.alertCtrl.create({
