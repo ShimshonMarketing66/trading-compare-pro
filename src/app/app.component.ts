@@ -1,4 +1,4 @@
-import { Component, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, AfterViewInit, NgZone } from '@angular/core';
 import { Platform, Nav, ToastController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -22,8 +22,9 @@ export class MyApp {
   firstTime: boolean = true;
   _id: string;
 
-  constructor( 
-    public track:TrackProvider,
+  constructor(
+    public zone:NgZone,
+    public track: TrackProvider,
     private toastCtrl: ToastController,
     public storage: Storage,
     public codePush: CodePush,
@@ -59,34 +60,51 @@ export class MyApp {
 
   loop() {
     setTimeout(() => {
-
-
-
-    
-     
-
       if (this.onAuthStateChangedCalled) {
-        this.track.setUserId(this._id );
+        this.track.setUserId(this._id);
         this.platform.ready().then(() => {
           if (this.platform.is("cordova")) {
             this.codePush.checkForUpdate().then(data => {
-
-                this.splashScreen.show();
+              if (data) {
+                
+                this.splashScreen.hide();
+                this.rootPage = "update-page";
                 const downloadProgress = (progress) => {
-                   console.log(`Downloaded ${progress.receivedBytes} of ${progress.totalBytes}`);
-                  }
-                this.codePush.sync({}, downloadProgress).subscribe((syncStatus) => console.log(syncStatus)); 
+                  this.zone.run(()=>{
+                    this.global.update_progress = (Number(progress.receivedBytes) / Number(progress.totalBytes)) * 100;
+                  })
+                  
+                  console.log(`Downloaded ${progress.receivedBytes} of ${progress.totalBytes}`);
+                }
+                this.codePush.sync({}, downloadProgress).subscribe((syncStatus) =>{
+                   console.log(syncStatus)
+                   if (syncStatus == 1) {
+                    this.codePush.restartApplication()
+                    // this.splashScreen.show();
+                    // window.location.replace("localhost:8080");
+                    // window.location.reload();
+                   }
+                   if (syncStatus == 0) {
+                    this.continue_after_check_update()
+                   }
+                  });
+              } else {
+                this.continue_after_check_update()
+              }
+
             })
+          } else {
+            this.continue_after_check_update()
           }
         })
-        this.continue_after_check_update()
+
       } else {
         this.loop();
       }
     }, 1000 * 2)
   }
 
-  continue_after_check_update(){
+  continue_after_check_update() {
     if (this.authData.isAuth) {
       this.authData.getProfileFromServer(this._id).then((user: Profile) => {
         user.countryData.country = user.countryData.country.toLowerCase().replace(" ", "-");
@@ -124,9 +142,9 @@ export class MyApp {
     } else if (this.platform.is("ios")) {
       this.authData.platform = "ios";
     }
-    
 
-  
+
+
     this.authData.isFinishRegistration = true;
     if (!this.platform.is("cordova")) {
       this.rootPage = "main-tabs";
@@ -141,11 +159,11 @@ export class MyApp {
     this.rootPage = "default-page";
     this.statusBar.styleDefault();
     console.log("this.splashScreen.hide()");
-    
+
     this.splashScreen.hide();
-    
+
     toast.present()
-   
+
     this.firebase_plugin.onNotificationOpen().subscribe(data => {
       if (data.wasTapped) {
         console.log("Received in background");
@@ -153,13 +171,13 @@ export class MyApp {
         console.log("Received in foreground");
       };
     });
-    
+
     var x = this.authData.user.token_notification;
 
 
 
     if (x == undefined || x == null || x === '') {
-      
+
       this.firebase_plugin.getToken().then(token => {
         this.authData.updateFields({
           token_notification: token

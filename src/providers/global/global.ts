@@ -9,8 +9,7 @@ import { TrackProvider } from '../track/track';
 
 @Injectable()
 export class GlobalProvider {
-  
-  
+  update_progress:number=0;
   private Loading: Loading;
   sentiments = [];
   watchlists = [];

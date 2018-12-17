@@ -82,7 +82,7 @@ export class ItemDetailsStockPage {
     this.header_stock = true;
     this.admob.showBanner();
   }
-  open_borker(){
+  open_broker(){
     window.open(this.globalProvider.sponcer.link);
   }
   foodd() {
