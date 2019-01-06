@@ -37,6 +37,9 @@ export class VerifyCodePage {
     public androidPermissions: AndroidPermissions,
     public navCtrl: NavController,
     public navParams: NavParams) {
+
+      this.track.log_screen("verify-code");
+
     platform.ready().then(() => {
       if (platform.is("cordova")) {
         if (platform.is("ios")) {

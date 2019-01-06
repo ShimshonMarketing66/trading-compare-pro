@@ -31,6 +31,8 @@ export class SignUpPage {
     public loadingCtrl: LoadingController,
     private app: App
   ) {
+    this.track.log_screen("sign-ip");
+
     authData.getContry().then(data => {
       this.authData.user.countryData = data;
       if (this.authData.platform == "browser") {
@@ -56,6 +58,7 @@ export class SignUpPage {
   }
 
   loginUserWithProvider(m_provider: string) {
+    console.log("loginUserWithProvider",m_provider);
     
     let loading = this.loadingCtrl.create({
       content:"login via " + m_provider + "..."
@@ -71,25 +74,24 @@ export class SignUpPage {
           loading.dismiss();
           if (user.verifyData.is_phone_number_verified) {
             this.splashscreen.show();
-           
-            this.navCtrl
-      .push("main-tabs")
-      .then(() => {
-        window.location.replace("localhost:8080/");
-        window.location.reload();
+            this.navCtrl.push("main-tabs").then(() => {
+               window.location.replace("localhost:8080/");
+                window.location.reload();
         // first we find the index of the current view controller:
-        const index = this.viewCtrl.index;
+               const index = this.viewCtrl.index;
         // then we remove it from the navigation stack
-        this.navCtrl.remove(index);
-      });
+                this.navCtrl.remove(index);
+             });
           } else {
             this.app.getRootNavs()[0].setRoot("enter-phone");
           }
         }, 2000);
       })
       .catch(()=>{
-        this.authData.getProfileWithFirebaseUser(user1.user);
+        console.log("user1",user1);
+        this.authData.getProfileWithFirebaseUser(user1);
         loading.setContent("create user...");
+        this.authData.user.provider = m_provider;
         this.authData.createUser(this.authData.user)
         .then(()=>{
           loading.dismiss();

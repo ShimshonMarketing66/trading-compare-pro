@@ -32,6 +32,7 @@ export class SentimentsPage {
     public navCtrl: NavController,
     public navParams: NavParams
   ) {
+    this.track.log_screen("sentiments");
     this.user = this.navParams.get("user");
     console.log(this.user);
 

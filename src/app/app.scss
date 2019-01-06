@@ -74,6 +74,11 @@ ion-modal.countries-popup{
    
 }
 
+.segment-button.segment-activated{
+    color: #12a6f9 !important;
+    border-color: #12a6f9 !important;
+}
+
 .back-button {
    color: white!important;
 }
@@ -100,4 +105,9 @@ ion-modal.countries-popup{
 
 .searchbar-clear-icon {
     display: none !important;
+    }
+
+
+    .no-scroll .scroll-content{
+        overflow: hidden;
     }

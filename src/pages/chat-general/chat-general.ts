@@ -12,6 +12,7 @@ import { TrackProvider } from '../../providers/track/track';
 export class ChatGeneralPage {
 
   constructor( public track:TrackProvider,public navCtrl: NavController, public navParams: NavParams) {
+    track.log_screen("chat-general");
   }
 
   ionViewDidLoad() {

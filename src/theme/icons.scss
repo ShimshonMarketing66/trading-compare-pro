@@ -35,6 +35,32 @@
   }
   }
 
+  @mixin makeIcon_blue_menu($arg, $val) {
+    .#{$arg}:before ,
+    .ion-ios-#{$arg}:before ,
+    .ion-ios-#{$arg}-outline:before ,
+    .ion-md-#{$arg}:before ,
+    .ion-md-#{$arg}-outline:before {
+    content: $val;
+    color: #12a6f9;
+    font-size:18px;
+    }
+    }
+
+    @mixin makeIcon_yellow_menu($arg, $val) {
+      .#{$arg}:before ,
+      .ion-ios-#{$arg}:before ,
+      .ion-ios-#{$arg}-outline:before ,
+      .ion-md-#{$arg}:before ,
+      .ion-md-#{$arg}-outline:before {
+      content: $val;
+      color: #f8e71c;
+      font-size:18px;
+      }
+      }
+
+    
+
 
   @mixin makeIcon_bars_d($arg, $val) {
     .#{$arg}:before ,
@@ -109,6 +135,30 @@
           }
           }
 
+          @mixin makeIcon_details($arg, $val) {
+            .#{$arg}:before ,
+            .ion-ios-#{$arg}:before ,
+            .ion-ios-#{$arg}-outline:before ,
+            .ion-md-#{$arg}:before ,
+            .ion-md-#{$arg}-outline:before {
+            content: $val;
+            font-size:30px;
+            color: #9b9b9b;
+            }
+            }
+
+            @mixin makeIcon_a_details($arg, $val) {
+              .#{$arg}:before ,
+              .ion-ios-#{$arg}:before ,
+              .ion-ios-#{$arg}-outline:before ,
+              .ion-md-#{$arg}:before ,
+              .ion-md-#{$arg}-outline:before {
+              content: $val;
+              font-size:30px;
+              color: #12a6f9;
+              }
+              }
+
           @include makeIcon_tabs_active(home-tabs-a,"\f015");
           @include makeIcon_tabs_inactive(home-tabs-d,"\f015");
 
@@ -146,6 +196,9 @@
 @include makeIcon(star-v,"\f005");
 @include makeIcon_a(star-v-a,"\f005");
  
+@include makeIcon_details(star-v-details,"\f005");
+@include makeIcon_a_details(star-v-a-details,"\f005");
+
  
 @include makeIcon_white(check-v,"\f00c");
  
@@ -162,7 +215,10 @@
  
 @include makeIcon(arrow-left-v,"\f060");
  
-@include makeIcon(share-v,"\f064");
+@include makeIcon_blue_menu(share-v,"\f064");
+@include makeIcon_blue_menu(star-menu,"\f005");
+@include makeIcon_yellow_menu(star-menu-yellow,"\f005");
+
  
 @include makeIcon(eye-v,"\f06e");
  

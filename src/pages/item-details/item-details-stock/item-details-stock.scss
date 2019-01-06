@@ -79,8 +79,10 @@ page-item-details-stock{
     }
 
     .th-segments {
-        font-size: 16px;
-		padding: .5em 1em;
+      font-size: 16px;
+      padding-top: 7px;
+      width: 20%;
+      padding-bottom: 7px;
     }
     ::-webkit-scrollbar { 
         display: none; 

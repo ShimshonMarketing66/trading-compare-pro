@@ -9,7 +9,15 @@
 
 
 <ion-content>
-  <ion-grid>
+    <ion-segment [(ngModel)]="MODE" color="our-grey">
+        <ion-segment-button value="SENTIMENTS">
+         TOP TRADERS
+        </ion-segment-button>
+        <ion-segment-button value="ALL">
+            ALL USERS
+        </ion-segment-button>
+      </ion-segment>
+  <ion-grid *ngIf="MODE=='SENTIMENTS'">
     <ion-row style="background: #373737;position: sticky;top: 0;">
       <ion-col col-1 style="text-align: center;margin:auto;">
        
@@ -24,7 +32,7 @@
         Profit
       </ion-col>
     </ion-row>
-    <ion-row *ngFor="let user of users;let i = index;" style="padding: 6px;" (click)="go_to_user_page(user)">
+    <ion-row *ngFor="let user of sentiments_users;let i = index;" style="padding: 6px;" (click)="go_to_user_page(user)">
       <ion-col col-1 style="text-align: center;margin:auto;">
         {{i+1}}
       </ion-col>
@@ -38,8 +46,54 @@
         {{user?.nickname}} (You!)
       </ion-col>
       <ion-col style="text-align: right;padding-right: 10px;margin:auto;">
-        {{user?.total_corect_percent}}%
+        {{user?.total_corect_percent|tofixe}}%
       </ion-col>
     </ion-row>
   </ion-grid>
+
+
+
+  <ion-grid *ngIf="MODE=='ALL'">
+      <ion-row style="background: #373737;position: sticky;top: 0;">
+        <ion-col col-1 style="text-align: center;margin:auto;">
+         
+        </ion-col>
+        <ion-col col-2>
+         
+        </ion-col>
+        <ion-col style="margin:auto;">
+          Username
+        </ion-col>
+        <!-- <ion-col style="text-align: right;padding-right: 10px;margin:auto;">
+          Profit
+        </ion-col> -->
+      </ion-row>
+      <ion-row *ngFor="let user of all_users;let i = index;" style="padding: 6px;" (click)="go_to_user_page(user)">
+        <ion-col col-1 style="text-align: center;margin:auto;">
+          {{i+1}}
+        </ion-col>
+        <ion-col col-2>
+          <img style="max-height: 30px;" [src]="'assets/imgs/flags/'+user.country+'.png'">
+        </ion-col>
+        <ion-col *ngIf="user?._id!=authData.user._id" style="margin:auto;">
+          {{user?.nickname}}
+        </ion-col>
+        <ion-col *ngIf="user?._id==authData.user._id" style="margin:auto;">
+          {{user?.nickname}} (You!)
+        </ion-col>
+
+        <ion-col *ngIf="user._id!=authData.user._id" style="text-align: right;">
+          <button *ngIf="user.is_in_my_following" (click)="remove_follow_other(user,$event)" ion-button style="width: 35px;background: #12a6f9;height: 30px;">
+            <ion-icon name="check-v"></ion-icon>
+          </button>
+          <button  *ngIf="!user.is_in_my_following" (click)="add_follow_other(user,$event)" ion-button style="background: transparent;height: 30px;border: 1px solid #12a6f9;width: 76px;">
+            FOLLOW
+          </button>
+          
+        </ion-col>
+      
+       
+      </ion-row>
+    </ion-grid>
+
 </ion-content>

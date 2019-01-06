@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController } from 'ionic-angular';
+import { IonicPage, NavController, Platform } from 'ionic-angular';
 import { TrackProvider } from '../../providers/track/track';
 import { Deeplinks } from '@ionic-native/deeplinks';
 
@@ -19,18 +19,23 @@ export class MainTabsPage {
   chatRoot = 'chat-general'
 
 
-  constructor(public deeplinks:Deeplinks, public track:TrackProvider,public navCtrl: NavController) {
-    this.deeplinks.routeWithNavController(this.navCtrl, {
-      '/all-chat/:primary_key': "all-chat",
-      '/stock/:symbol': "item-details-stock",
-      '/forex/:symbol': "item-details-forex",
-      '/crypto/:symbol': "item-details-crypto"
-    }).subscribe(match => {
-      console.log('Successfully matched route', match);
-      return;
-    }, nomatch => {
-      console.error('Got a deeplink that didn\'t match', nomatch);
-    });
+  constructor(public deeplinks:Deeplinks, public track:TrackProvider,public navCtrl: NavController,public plt:Platform) {
+    if(plt.is("cordova")){
+      this.deeplinks.routeWithNavController(this.navCtrl, {
+        '/all/:primary_key': "all-chat",
+        '/stock/:symbol': "item-details-stock",
+        '/forex/:symbol': "item-details-forex",
+        '/crypto/:symbol': "item-details-crypto",
+        '/stock/:symbol/:primary_key': "item-details-stock",
+        '/forex/:symbol/:primary_key': "item-details-forex",
+        '/crypto/:symbol/:primary_key': "item-details-crypto"
+      }).subscribe(match => {
+        console.log('Successfully matched route', match);
+        return;
+      }, nomatch => {
+        console.error('Got a deeplink that didn\'t match', nomatch);
+      });
+    }
 
   }
 

@@ -9,7 +9,9 @@ import { TrackProvider } from '../track/track';
 
 @Injectable()
 export class GlobalProvider {
-  update_progress:number=0;
+  
+ 
+  update_progress:string="0";
   private Loading: Loading;
   sentiments = [];
   watchlists = [];
@@ -20,6 +22,7 @@ export class GlobalProvider {
     name:string,
     link:string
   }
+  loading_currently_showing =  false;
   constructor
     (
       public track:TrackProvider,
@@ -54,6 +57,22 @@ export class GlobalProvider {
    })
   }
 
+  get_newest_following_comments():Promise<any> {
+    var dataToSend=[];
+    return this.authData.getFollowing(this.authData.user._id).then((data)=>{
+       
+      for (let index = 0; index < data.length; index++) {
+       dataToSend.push({
+         _id:data[index]._id
+       })
+      }
+      console.log(dataToSend);
+      
+      return this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/get-newest-comments",{ids:dataToSend}).toPromise()
+    })
+  
+  }
+
   loading(m_message?: string) {
     let a = "please wait";
     if (m_message != undefined) {
@@ -65,16 +84,23 @@ export class GlobalProvider {
       content: a
     })
     this.Loading.present();
+    this.loading_currently_showing = true;
+    this.Loading.onDidDismiss(function(){
+      this.loading_currently_showing =  false;
+    })
   }
 
   dismiss_loading() {
-    let a = "please wait";
-    this.Loading.dismiss()
+    if (this.loading_currently_showing) {
+      this.Loading.dismiss()
+    }
+  }
+
+  get_newest_comments():Promise<any> {
+      return this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/get-newest-comments",{}).toPromise()   
   }
 
   get_sentiment_by_symbol(symbol):Promise<any>{
-    console.log("https://xosignals.herokuapp.com/trading-compare-v2/get-sentiment-by-symbol/" +symbol);
-    
      return this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-sentiment-by-symbol/" +symbol).toPromise()
   }
 
@@ -213,6 +239,10 @@ export class GlobalProvider {
         })
      
     })
+  }
+
+  get_all_users(): Promise<any> {
+    return this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-users").toPromise()
   }
 
   initialProviders(): Promise<any> {
@@ -581,13 +611,15 @@ export class GlobalProvider {
     })
   }
   get_symbol_type(symbol: string): any {
-  for (let index = 0; index < this.forexProvider.forexs.length; index++) {
-    if (this.forexProvider.forexs[index].symbol == symbol) {
+    console.log(" this.forexProvider.allForex", this.forexProvider.allForex);
+    
+  for (let index = 0; index < this.forexProvider.allForex.length; index++) {    
+    if ( this.forexProvider.allForex[index].symbol == symbol) {
       return "FOREX";
     }
   }
-  for (let index = 0; index < this.cryptoProvider.cryptos.length; index++) {
-    if (this.cryptoProvider.cryptos[index].symbol == symbol) {
+  for (let index = 0; index < this.cryptoProvider.arrAllCrypto.length; index++) {
+    if (this.cryptoProvider.arrAllCrypto[index].symbol == symbol) {
       return "CRYPTO";
     }
   }

@@ -18,7 +18,7 @@
       <ion-col>
         <div>
           <span style="font-size:24px;">
-            {{item.price|tofixe}} {{item.toSymbol|currencySymbol}}
+            {{item.price|tofixed_4}} {{item.toSymbol|currencySymbol}}
 
           </span>
           &nbsp;
@@ -38,8 +38,8 @@
         </div>
       </ion-col>
       <ion-col col-1>
-        <ion-icon *ngIf="item.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist(undefined,item,'item-details-forex')"></ion-icon>
-        <ion-icon *ngIf="!item.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist(undefined,item,'item-details-forex')"></ion-icon>
+        <ion-icon *ngIf="item.is_in_watchlist" name="star-v-a-details" (click)="globalProvider.remove_from_watchlist(undefined,item,'item-details-forex')"></ion-icon>
+        <ion-icon *ngIf="!item.is_in_watchlist"name="star-v-details" (click)="globalProvider.add_to_watchlist(undefined,item,'item-details-forex')"></ion-icon>
     </ion-col>
     </ion-row>
   </ion-grid>

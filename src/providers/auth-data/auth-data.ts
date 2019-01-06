@@ -50,6 +50,7 @@ export class AuthDataProvider {
 
 
   providerLogin(m_provider): Promise<firebase.User> {
+    console.log("in providerLogin",m_provider);
     if (m_provider == "facebook") {
       return new Promise((resolve, reject) => {
         this.facebook.login(['email'])
@@ -67,21 +68,25 @@ export class AuthDataProvider {
       })
     }
     else if (m_provider == "google") {
+      console.log("in providerLogin if (m_provider == 'google')",m_provider);
       return new Promise((resolve, reject) => {
         this.googlePlus.login({
-          'webClientId': '212982281977-nrar31o20thlvs4k7f3civmhtthcg94i.apps.googleusercontent.com',
+          'webClientId': '212982281977-nrar31o20thlvs4k7f3civmhtthcg94i.apps.googleusercontent.com'
         }).then(response => {
-          console.log(response);
+          console.log("response google login",response);
           const googleCrendential = firebase.auth.GoogleAuthProvider
             .credential(response.idToken);
           firebase.auth().signInWithCredential(googleCrendential)
             .then(success => {
+              console.log("success firebase signi google",success);
               resolve(success);
             })
             .catch(err => {
-              alert(err + "error");
+              console.log("err firebase signin google",err);
             })
-        }).catch((error) => { reject(error) });
+        }).catch((error) => { 
+          console.log("error 123456789456213",error);
+         reject(error) });
       })
     }
   }
@@ -175,6 +180,8 @@ export class AuthDataProvider {
 
   createUser(profile: Profile): Promise<Profile> {
     return new Promise((resolve, reject) => {
+      console.log(profile);
+      
       this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/createUser", profile)
         .toPromise()
         .then((newUserServer) => {
@@ -271,6 +278,8 @@ export class AuthDataProvider {
   getProfileFromServer(_id: string): Promise<Profile> {
 
     return new Promise((resolve, reject) => {
+      console.log("_id",_id);
+      
       this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/getUsersById", { _id: _id })
         .toPromise()
         .then((profile: Profile) => {
@@ -307,12 +316,13 @@ export class AuthDataProvider {
     //real device
     if (this.plt.is("cordova")) {
       return new Promise((resolve, reject) => {
+        console.log("in loginUserWithProvider",m_provider);
         this.providerLogin(m_provider).then((profileFireBase) => {
           console.log("profileFireBase",profileFireBase);
           
           resolve(profileFireBase);
         }).catch((err) => {
-          reject(err)
+          reject(err);
         })
       })
     }
@@ -331,10 +341,12 @@ export class AuthDataProvider {
   }
 
   getFollowers(_id): Promise<any> {
+    if (_id==undefined||_id==='') return new Promise((resolve)=>resolve([]))
     return this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-followers/" + _id).toPromise()
   }
 
-  getFollowing(_id?): Promise<any> {
+  getFollowing(_id): Promise<any> {
+    if (_id==undefined||_id==='') return new Promise((resolve)=>resolve([]))
     return this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-following/" + _id).toPromise()
 
   }
@@ -403,7 +415,7 @@ export class AuthDataProvider {
     if (user.displayName != null) {
       this.user.full_name = user.displayName;
     } else {
-      this.user.full_name = "no name";
+      this.user.full_name = "no_name";
     }
     this.user.email = user.email;
     this.user._id = user.uid;

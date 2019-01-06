@@ -114,7 +114,8 @@ export class LiveFeedPage implements AfterViewInit {
     public navCtrl: NavController,
     public navParams: NavParams
   ) {
-  
+   
+
   }
 
 
@@ -315,6 +316,7 @@ export class LiveFeedPage implements AfterViewInit {
   }
 
   goToDetailsStock(i: number) {
+    
     this.navCtrl.push("item-details-stock", {
       item: this.stockProvider.stocks[i], 
       change_sentiment:this.change_sentiment
@@ -705,6 +707,7 @@ console.log(this.globalProvider.watchlists);
 
   ionViewWillEnter()
   {
+    this.track.log_screen("live-feeds");
     switch (this.selectedSegment) {
       case this.STOCK:
       this.sizeOfBody = window.screen.height - (this.platform.is("ios") ? 180 : 199);
@@ -1038,6 +1041,7 @@ console.log(this.globalProvider.watchlists);
       this.globalProvider.open_login_alert();
       return;
     }
+
     var that2;
     if (that != undefined) {
       that2 = that;
@@ -1048,7 +1052,7 @@ console.log(this.globalProvider.watchlists);
     
     switch (that2.selectedSegment) {
       case that2.STOCK:
-        arr = that2.stocks;
+        arr = that2.stockProvider.stocks;
         break;
       case that2.FOREX:
         arr = that2.forexProvider.forexs;

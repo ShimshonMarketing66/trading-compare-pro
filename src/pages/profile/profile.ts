@@ -54,9 +54,10 @@ export class ProfilePage {
     public navCtrl: NavController,
     public navParams: NavParams,
   ) {
+    this.track.log_screen("profile");
     this.globalProvider.loading("get user profile");
     var a = this.navParams.get("user");
-    console.log("a", a);
+    console.log("a", a._id);
 
     this.profile_country = a.country;
 
@@ -73,7 +74,8 @@ export class ProfilePage {
 
 
     this.globalProvider.get_all_information(a._id).then((data) => {
-
+      console.log(data);
+      
       this.profile = data;
       this.posts_length = this.profile.posts.length;
       this.watchlist_length = this.profile.watchlist.length;
@@ -236,9 +238,14 @@ export class ProfilePage {
   }
 
   go_to_comment(comment) {
-    let a = this.globalProvider.get_symbol_type(comment.symbol)
-    console.log(a);
-    let page: string = ""
+    let page: string = ""    
+    if (comment.symbol == "all") {
+      page = "all-chat";
+    }else{
+      let a = this.globalProvider.get_symbol_type(comment.symbol)
+      console.log(a);
+    
+
     switch (a) {
       case "STOCK":
         page = "item-details-stock";
@@ -253,6 +260,7 @@ export class ProfilePage {
       default:
         break;
     }
+  }
     this.navCtrl.pop({ animate: false });
     this.navCtrl.push(page, {
       primary_key: comment.primary_key,

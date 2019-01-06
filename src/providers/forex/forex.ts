@@ -16,6 +16,8 @@ export class ForexProvider {
 
 
  getAllForex(): Promise<any[]> {
+  console.log("jkhjk");
+
     return new Promise((resolve) => {
       if (this.allForex.length < 1) {
         this.http.get("https://forex-websocket.herokuapp.com/all_data")
@@ -57,6 +59,7 @@ export class ForexProvider {
   }
 
   getForex(num:number): Promise<any[]> {
+    
     return new Promise((resolve) => {
       if (this.allForex.length < 1) {
         this.http.get("https://forex-websocket.herokuapp.com/all_data")

@@ -3,7 +3,39 @@
 
 <ion-content padding>
 
+
+
+    <!-- <ion-grid style="padding-top: 10px;min-height: 148px;">
+        <ion-row *ngFor="let user of users;let i = index;" style="padding: 6px;" (click)="go_to_user_page(user)">
+          <ion-col col-1 style="text-align: center;margin:auto;">
+            {{i+1}}
+          </ion-col>
+          <ion-col col-2>
+            <img style="max-height: 30px;" [src]="'assets/imgs/flags/'+user.country+'.png'">
+          </ion-col>
+          <ion-col *ngIf="user._id!=authData.user._id" style="margin:auto;">
+            {{user.nickname}}
+          </ion-col>
+          <ion-col *ngIf="user._id==authData.user._id" style="margin:auto;">
+            {{user.nickname}} (You!)
+          </ion-col>
+          <ion-col style="text-align: right;padding-right: 10px;margin:auto;">
+            {{user.total_corect_percent}}%
+          </ion-col>
+        </ion-row>
+      </ion-grid> -->
 <ion-grid>
+
+    <ion-row *ngIf="authData.isFinishRegistration" (click)="open_profile()" style="height: 42px;border-bottom: 1px solid #4a4a4a;margin-right: -16px;margin-left: -16px;margin-bottom: 18px;">
+        
+        <ion-col style="text-align: left;margin: auto;padding-left: 16px;">
+            <img style="vertical-align: middle;max-height: 30px;" [src]="'assets/imgs/flags/'+authData.user.countryData.country+'.png'">
+         <span style="padding-left: 15px;">
+            My Profile
+         </span> 
+          </ion-col>
+      </ion-row>
+
   <ion-row (click)="open_home()" style="height: 42px;">
     <ion-col col-1 style="text-align: center;margin: auto">
       <ion-icon name="home-v"></ion-icon>
@@ -23,7 +55,7 @@
   </ion-row>
 
   <!-- <ion-row (click)="open_watchlist()" style="height: 42px;">
-    <ion-col col-1 style="text-align: center;margin: auto">
+    <ion-col col-1 style="text-align: center;margin: auto;">
       <ion-icon name="feed-v"></ion-icon>
     </ion-col>
     <ion-col style="text-align: left;margin: auto;padding-left: 37px;">
@@ -67,6 +99,8 @@
       </ion-col>
   </ion-row>
 
+
+
   <!-- <ion-row (click)="open_brokers()" style="height: 42px;">
     <ion-col col-1 style="text-align: center;margin: auto">
       <ion-icon name="feed-v"></ion-icon>
@@ -107,7 +141,7 @@
   </ion-row>
 </a>
   
-  <ion-row (click)="open_share()" style="height: 42px;">
+  <ion-row (click)="share()" style="height: 42px;color:#12a6f9">
     <ion-col col-1 style="text-align: center;margin: auto">
       <ion-icon name="share-v"></ion-icon>
     </ion-col>
@@ -118,12 +152,29 @@
 
   
   
-  <ion-row (click)="open_ratus()" style="height: 42px;">
+  <ion-row (click)="open_ratus()" style="height: 42px;color:#12a6f9;">
     <ion-col col-1 style="text-align: center;margin: auto">
-      <ion-icon name="star-v"></ion-icon>
+      <ion-icon name="star-menu"></ion-icon>
     </ion-col>
     <ion-col style="text-align: left;margin: auto;padding-left: 37px;">
-      Rate Us
+      <span >
+        Rate Us 
+      </span>
+      <span style="padding-left:11px;">
+        <ion-icon name="star-menu-yellow"></ion-icon>
+      </span>
+      <span>
+        <ion-icon name="star-menu-yellow"></ion-icon>
+      </span>
+      <span>
+        <ion-icon name="star-menu-yellow"></ion-icon>
+      </span>
+      <span>
+        <ion-icon name="star-menu-yellow"></ion-icon>
+      </span>
+      <span>
+        <ion-icon name="star-menu-yellow"></ion-icon>
+      </span>
       </ion-col>
   </ion-row>
 

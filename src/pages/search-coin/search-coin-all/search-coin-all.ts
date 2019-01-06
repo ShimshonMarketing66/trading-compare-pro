@@ -38,7 +38,7 @@ export class SearchCoinAll implements AfterViewInit {
     public viewCtrl: ViewController,
     public navCtrl: NavController,
     public navParams: NavParams) {
-
+      this.track.log_screen("search-coin-all");
   }
 
 

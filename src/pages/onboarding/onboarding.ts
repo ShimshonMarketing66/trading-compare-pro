@@ -1,6 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { NavController, IonicPage, App } from 'ionic-angular';
 import { Slides } from 'ionic-angular';
+import { TrackProvider } from '../../providers/track/track';
 
 @IonicPage({
   name:"onboarding"
@@ -13,7 +14,7 @@ export class OnboardingPage {
   currentIndex: number=0;
   @ViewChild(Slides) slides: Slides;
   
-  constructor(public navCtrl: NavController,public app:App) {
+  constructor(public track:TrackProvider, public navCtrl: NavController,public app:App) {
 
   }
   slideChanged() {

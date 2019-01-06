@@ -44,6 +44,8 @@ import { IonicStorageModule  } from '@ionic/storage';
 import { TrackProvider } from '../providers/track/track';
 import { AdMobFree } from '@ionic-native/admob-free';
 import { AdmobProvider } from '../providers/admob/admob';
+import { Appsflyer } from '@ionic-native/appsflyer';
+import { GoogleAnalytics } from '@ionic-native/google-analytics';
 
 
 const firebaseConfig = {
@@ -109,7 +111,9 @@ export function createTranslateLoader(http: HttpClient) {
     TrackProvider,
     AppRate,
     AdmobProvider,
-    AdMobFree
+    AdMobFree,
+    Appsflyer,
+    GoogleAnalytics
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

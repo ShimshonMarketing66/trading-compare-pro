@@ -20,7 +20,7 @@ export class ChartComponent implements OnInit {
   @Input() symbol:string;
   @Input() exchDisp:string;
   @Input() group:string;
-
+  @Input() country:string;
   sampleData: any[];
   chartSeries:any[];
 
@@ -33,10 +33,12 @@ export class ChartComponent implements OnInit {
     this.ciq = new CIQ.ChartEngine({ container: $$$("#chartContainer"),allowZoom:false,axisBorders:false,layout:{"chartType": "mountain"}});
     this.ciq.setPeriodicityV2(1, 60);
     this.chartService.attachQuoteFeed(this.ciq);
+
     var symb = {
       symbol: this.symbol,
       exchDisp:this.exchDisp,
-      group :this.group
+      group :this.group,
+      country:this.country,
     }
     this.ciq.newChart(symb);
   }

@@ -14,7 +14,7 @@
 <ion-grid style="color: white;margin-bottom: 8px;">
   <ion-row style="padding-bottom: 14px;">
     <ion-col style="text-align:left;    border-bottom: 1px solid #484848;">
-        <input style="    width: 100%;
+        <input style="width: 100%;
         text-align: left;
         font-size: 16px;
         color: white;
@@ -44,4 +44,8 @@
   <button (click)="submit()" style="background: #12a6f9;height: 40px;border-radius: 4px;width: 181px;">{{ 'SUBMIT' | translate }}
   </button>
 </div>
+
+<div style="text-align: center;padding-top: 17px;color: #949494;" (click)="navCtrl.push('main-tabs');track.log_event('continue_as_guest',{screen:'enter-phone'})">
+    CONTINUE AS GUEST
+  </div>
 </ion-content>

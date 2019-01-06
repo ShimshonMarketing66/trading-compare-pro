@@ -25,7 +25,7 @@
           Joined {{profile?.createAccountDate}}
         </div>
         <div style="font-size: 12px;letter-spacing: 0.5px;text-align: center;color: #9b9b9b">
-          45 messages sent
+            {{posts_length}} messages sent
         </div>
       </ion-col>
       <ion-col col-3 style="padding-right: 15px;">
@@ -40,8 +40,15 @@
 
     </ion-row>
   </ion-grid>
-  <div style="margin-top: 22px;text-align: center;margin-bottom: 10px;">
-    <button ion-button style="background: #12a6f9;font-size: 14px;">UPGRADE TO PREMIUM</button>
+
+  <div style="margin-top: 22px;text-align: center;margin-bottom: 10px;color: #9b9b9b;">
+     <span *ngIf="profile?.description !== ''">
+        {{profile?.description}}
+     </span>
+
+     <span *ngIf="profile?.description === '' || profile?.description==undefined">
+       Hi, I'm using trading compare.
+           </span> 
   </div>
 
   <div (click)="go_to_sentiment()" style="margin-top: 10px;text-align: center;margin-bottom: 10px;">

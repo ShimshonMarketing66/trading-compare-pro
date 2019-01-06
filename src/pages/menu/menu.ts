@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, App } from 'ionic-angular';
 import { AuthDataProvider } from '../../providers/auth-data/auth-data';
 import { SplashScreen } from '@ionic-native/splash-screen';
-import { MyApp } from '../../app/app.component';
 import { GlobalProvider } from '../../providers/global/global';
 import { TrackProvider } from '../../providers/track/track';
 import { SocialSharing } from '@ionic-native/social-sharing';
@@ -48,7 +47,11 @@ export class MenuPage {
   }
 
   open_leaderboard(){
-    this.navCtrl.push("leaderboard")
+    this.navCtrl.push("leaderboard");
+  }
+
+  open_livefeeds(){
+    this.navCtrl.parent.select(1);
   }
 
 share() {
@@ -66,6 +69,10 @@ share() {
     };
     
     this.appRate.navigateToAppStore();
+  }
+
+  open_profile(){
+      this.navCtrl.push("my-profile")
   }
 
 }

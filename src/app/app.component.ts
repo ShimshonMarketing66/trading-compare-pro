@@ -1,5 +1,5 @@
 import { Component, ViewChild, AfterViewInit, NgZone } from '@angular/core';
-import { Platform, Nav, ToastController } from 'ionic-angular';
+import { Platform, Nav, ToastController, App } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { TranslateService } from '@ngx-translate/core';
@@ -7,10 +7,11 @@ import firebase from 'firebase';
 import { AuthDataProvider } from '../providers/auth-data/auth-data';
 import { Profile } from '../models/profile-model';
 import { GlobalProvider } from '../providers/global/global';
-import { CodePush } from '@ionic-native/code-push';
+import { CodePush, InstallMode } from '@ionic-native/code-push';
 import { Storage } from '@ionic/storage';
 import { Firebase } from '@ionic-native/firebase';
 import { TrackProvider } from '../providers/track/track';
+import { Appsflyer, AppsflyerOptions } from '@ionic-native/appsflyer';
 
 @Component({
   templateUrl: 'app.html'
@@ -23,7 +24,9 @@ export class MyApp {
   _id: string;
 
   constructor(
-    public zone:NgZone,
+    public app:App,
+    private appsflyer: Appsflyer,
+    public zone: NgZone,
     public track: TrackProvider,
     private toastCtrl: ToastController,
     public storage: Storage,
@@ -64,37 +67,80 @@ export class MyApp {
         this.track.setUserId(this._id);
         this.platform.ready().then(() => {
           if (this.platform.is("cordova")) {
-            this.codePush.checkForUpdate().then(data => {
-              if (data) {
-                
-                this.splashScreen.hide();
-                this.rootPage = "update-page";
-                const downloadProgress = (progress) => {
-                  this.zone.run(()=>{
-                    this.global.update_progress = (Number(progress.receivedBytes) / Number(progress.totalBytes)) * 100;
-                  })
-                  
-                  console.log(`Downloaded ${progress.receivedBytes} of ${progress.totalBytes}`);
-                }
-                this.codePush.sync({}, downloadProgress).subscribe((syncStatus) =>{
-                   console.log(syncStatus)
-                   if (syncStatus == 1) {
-                    this.codePush.restartApplication()
-                    // this.splashScreen.show();
-                    // window.location.replace("localhost:8080");
-                    // window.location.reload();
-                   }
-                   if (syncStatus == 0) {
-                    this.continue_after_check_update()
-                   }
-                  });
-              } else {
-                this.continue_after_check_update()
-              }
+            const appsflyerOptions: AppsflyerOptions = {
+              devKey: "SmETXRWQwsJVhLhWbBBfn",
+              onInstallConversionDataListener: true
+            }
+            if (this.platform.is("ios")) {
+              appsflyerOptions.appId = "id1406118849";
+            }
 
-            })
+            this.appsflyer.initSdk(appsflyerOptions);
+
+            this.statusBar.styleDefault();
+            // this.codePush.checkForUpdate().then((data) => {
+            //   if (data) {
+            //     const downloadProgress = (progress) => {
+            //       this.zone.run(() => {
+            //         this.global.update_progress = ((Number(progress.receivedBytes) / Number(progress.totalBytes)) * 100).toFixed(0);
+            //       })
+            //       console.log(`Downloaded ${progress.receivedBytes} of ${progress.totalBytes}`);
+            //     }
+            //     this.codePush.sync({
+            //       installMode: InstallMode.IMMEDIATE,
+            //       updateDialog: true
+            //     }, downloadProgress).subscribe((syncStatus) => {
+            //       if (syncStatus == 7) {
+            //         this.rootPage = "update-page";
+            //       }
+
+
+            //     });
+            //   }
+            // })
+            this.continue_after_check_update();
+            // this.codePush.getCurrentPackage().then((data1)=>{
+            //   console.log("getCurrentPackage",data1);
+            //   if (data1) {
+            //     this.codePush.checkForUpdate().then(data => {
+            //       var version=Number(data.label.slice(1,data.label.length));
+            //       var curr=Number(data1.label.slice(1,data1.label.length));
+            //       console.log("version",version,curr);
+
+            //       if ((version > curr)) {
+            //         this.splashScreen.hide();
+            //         this.rootPage = "update-page";
+            //         const downloadProgress = (progress) => {
+            //           this.zone.run(()=>{
+            //             this.global.update_progress = ((Number(progress.receivedBytes) / Number(progress.totalBytes)) * 100).toFixed(0);
+            //           })
+
+            //           console.log(`Downloaded ${progress.receivedBytes} of ${progress.totalBytes}`);
+            //         }
+            //         this.codePush.sync({}, downloadProgress).subscribe((syncStatus) =>{
+            //            console.log("syncStatus",syncStatus);
+            //            if (syncStatus == 1) {
+            //             // // this.splashScreen.show();
+            //             // // this.codePush.restartApplication();
+            //             // this.splashScreen.show();
+            //             // window.location.replace("localhost:8080");
+            //             // window.location.reload();
+            //            }
+            //            if (syncStatus == 0) {
+            //             // this.continue_after_check_update();
+            //            }
+            //           });
+            //       } else {
+            //         this.continue_after_check_update();
+            //       }
+            //     })
+            //   }else{
+            //     this.continue_after_check_update();
+            //   }
+            // })
+
           } else {
-            this.continue_after_check_update()
+            this.continue_after_check_update();
           }
         })
 
@@ -117,6 +163,7 @@ export class MyApp {
           })
         } else {
           this.platform.ready().then(() => {
+            this.splashScreen.hide();
             this.rootPage = "enter-phone";
           })
         }
@@ -125,6 +172,7 @@ export class MyApp {
       })
         .catch((err) => {
           console.log("err this.authData.getProfileFromServer app commponnent");
+          this.splashScreen.hide();
           this.rootPage = "onboarding";
         })
     } else {
@@ -134,6 +182,7 @@ export class MyApp {
 
   initial_app_when_login() {
     console.log("initial_app_when_login avi1");
+   
 
     if (!this.platform.is("cordova")) {
       this.authData.platform = "browser";
@@ -157,20 +206,60 @@ export class MyApp {
       position: 'bottom'
     });
     this.rootPage = "default-page";
-    this.statusBar.styleDefault();
-    console.log("this.splashScreen.hide()");
+    this.firebase_plugin.onNotificationOpen().subscribe(data => {
+      console.log("onNotificationOpen",data);
+     
+      if (data.tap) {
+        
+        console.log("Received in background");
+        if (data.symbol != undefined) {
+          var page = "";
+          if (data.symbol == "all") {
+            page = "all-chat";
+          }else{
+            switch (this.global.get_symbol_type(data.symbol)) {
+              case "FOREX":
+              page = "item-details-forex";
+                break;
+                case "STOCK":
+                page = "item-details-stock";
+                break;
+                case "CRYPTO":
+                page = "item-details-crypto";
+                break;
+            
+              default:
+              page = "all-chat";
+                break;
+            }
+          }
+   
+          this.global.loading();
+          setTimeout(()=>{
+            this.global.dismiss_loading();
+            this.app.getActiveNavs()[0].push(page,{
+              symbol:data.symbol,
+              primary_key:data.primary_key,
+            });
+          },2000)
+        }else if(data.user != undefined){
+          this.global.loading();
+          setTimeout(()=>{
+            this.global.dismiss_loading();
+            this.app.getActiveNavs()[0].push("profile",{
+                user:JSON.parse(data.user)
+            });
+          },2000)
+        }
+      } else {
+        console.log("Received in foreground");
+      };
+
+    });
 
     this.splashScreen.hide();
 
     toast.present()
-
-    this.firebase_plugin.onNotificationOpen().subscribe(data => {
-      if (data.wasTapped) {
-        console.log("Received in background");
-      } else {
-        console.log("Received in foreground");
-      };
-    });
 
     var x = this.authData.user.token_notification;
 
@@ -215,21 +304,33 @@ export class MyApp {
       this.authData.platform = "ios";
     }
     if (!this.platform.is("cordova")) {
-      // ionic serve
-      this.rootPage = "onboarding";
+      this.global.initialProviders().then(() => {
+        this.platform.ready().then(() => {
+          this.rootPage = "onboarding";
+        })
+      })
+
       return;
     }
     this.platform.ready().then(() => {
       this.storage.get('first_time').then((val) => {
         if (val !== null) {
-          this.rootPage = "onboarding";
-          this.statusBar.styleDefault();
-          this.splashScreen.hide();
+          this.global.initialProviders().then(() => {
+            this.platform.ready().then(() => {
+              this.rootPage = "onboarding";
+              this.splashScreen.hide();
+            })
+          })
+
         } else {
-          this.storage.set('first_time', 'done');
-          this.statusBar.styleDefault();
-          this.splashScreen.hide();
-          this.rootPage = "main-tabs";
+
+          this.global.initialProviders().then(() => {
+            this.platform.ready().then(() => {
+              this.storage.set('first_time', 'done');
+              this.splashScreen.hide();
+              this.rootPage = "main-tabs";
+            })
+          })
         }
       });
     })

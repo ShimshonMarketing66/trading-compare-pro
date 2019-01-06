@@ -144,7 +144,7 @@ sentiment:any;
       })
     // http://localhost:5000/
     // https://xosignals.herokuapp.com/
-    this.socket = io.connect("https://xosignals.herokuapp.com/", { path: "/socket/trading-compare-v2/chat" });
+    this.socket = io.connect("http://localhost:5000/", { path: "/socket/trading-compare-v2/chat" });
 
     this.socket.emit("chat_room", {
       nickname: this.authData.user.nickname,

@@ -46,9 +46,9 @@
           {{user.nickname}} (You!)
         </ion-col>
         <ion-col style="text-align: right;padding-right: 10px;margin:auto;">
-          {{user.total_corect_percent}}%
+          {{user.total_corect_percent | tofixe}}%
         </ion-col>
-      </ion-row>
+      </ion-row> 
     </ion-grid>
   <button *ngIf="!AllLeaderboard" ion-button full style="height: 27px;background: #12a6f9;" (click)="seeAllLeaderboard()">See All</button>
 
@@ -60,26 +60,94 @@
 
   <ion-grid style="padding-bottom:10px;">
     <ion-row style="color:#707070;">
+        <ion-col style="font-size: 20px;text-align: center;font-weight: 900;color:#707070;" (click)="changeSocialFeedSegment('Newest')" [ngStyle]="selectedSegmentSocialFeeds == 'Newest' && {'border-bottom': '1px solid #12a6f9','color':'#12a6f9'}">
+            Newest
+          </ion-col>
+
       <ion-col style="font-size: 20px;text-align: center;font-weight: 900;color:#707070;" (click)="changeSocialFeedSegment('Following')" [ngStyle]="selectedSegmentSocialFeeds == 'Following' && {'border-bottom': '1px solid #12a6f9','color':'#12a6f9'}">
         Following
       </ion-col>
 
-      <ion-col style="font-size: 20px;text-align: center;font-weight: 900;color:#707070;" (click)="changeSocialFeedSegment('Newest')" [ngStyle]="selectedSegmentSocialFeeds == 'Newest' && {'border-bottom': '1px solid #12a6f9','color':'#12a6f9'}">
-        Newest
-      </ion-col>
 
-      <ion-col style="font-size: 20px;text-align: center;font-weight: 900;color:#707070;" (click)="changeSocialFeedSegment('Popular')" [ngStyle]="selectedSegmentSocialFeeds == 'Popular' && {'border-bottom': '1px solid #12a6f9','color':'#12a6f9'}">
+
+      <!-- <ion-col style="font-size: 20px;text-align: center;font-weight: 900;color:#707070;" (click)="changeSocialFeedSegment('Popular')" [ngStyle]="selectedSegmentSocialFeeds == 'Popular' && {'border-bottom': '1px solid #12a6f9','color':'#12a6f9'}">
         Popular
-      </ion-col>
+      </ion-col> -->
     </ion-row>
   </ion-grid>
 
   <div *ngIf="selectedSegmentSocialFeeds == 'Following'" style="text-align: center;color:#707070;">
-      Looks like you aren’t Following any traders. Go to POPULAR or NEWEST tabs to discover new traders!
+      <ion-grid  *ngIf="newest_following_comments.length > 0" style="padding-right: 10px;">
+          <ion-row *ngFor="let comment of newest_following_comments;let i = index" style="margin-bottom: 19px;" >
+            <ion-col (click)="go_to_user_page(comment)" col-2 style="text-align: right;">
+              <div>
+                <img alt="logo" height="35" width="35" style="border-radius: 50px;vertical-align:middle;" src="assets/imgs/flags/{{comment?.country}}.png">
+              </div>
+            </ion-col>
+            <ion-col col-10  (click)="go_to_comment(comment,$event)">
+              <div class="comment">
+                <div style="display: inline">
+                  <ion-grid>
+                    <ion-row>
+                      <ion-col (click)="go_to_user_page(comment,$event)" style="font-size:14px;font-weight: 800;text-align: left;">
+                        {{comment?.nickname}}<span style="font-weight: 400;color: #12a6f9;">
+                          ({{comment.symbol}}) 
+                        </span>
+                      </ion-col>
+                      <ion-col style="font-size: 12px;font-weight: 400;color: #9b9b9b;text-align: right;">
+                        {{comment?.date_from_now}}
+                      </ion-col>
+                    </ion-row>
+                  </ion-grid>
+      
+                </div>
+                <div style="font-size:14px;font-weight: 300;text-align: left;">
+                  {{comment.txt}}
+                </div>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+        <div *ngIf="!authData.isFinishRegistration || newest_following_comments.length == 0" style="text-align: center;color:#707070;">
+            Looks like you aren’t Following any traders. Go to NEWEST tabs to discover new traders!
+        </div>
   </div>
 
   <div *ngIf="selectedSegmentSocialFeeds == 'Newest'" style="text-align: center;color:#707070;">
-      Looks like you aren’t Newest any traders. Go to POPULAR or NEWEST tabs to discover new traders!
+           <ion-grid style="padding-right: 10px;">
+          <ion-row *ngFor="let comment of newest_comments;let i = index" style="margin-bottom: 19px;" >
+            <ion-col (click)="go_to_user_page(comment)" col-2 style="text-align: right;">
+              <div>
+                <img alt="logo" height="35" width="35" style="border-radius: 50px;vertical-align:middle;" src="assets/imgs/flags/{{comment?.country}}.png">
+              </div>
+            </ion-col>
+            <ion-col col-10  (click)="go_to_comment(comment,$event)">
+              <div class="comment">
+                <div style="display: inline">
+                  <ion-grid>
+                    <ion-row>
+                      <ion-col (click)="go_to_user_page(comment,$event)" style="font-size:14px;font-weight: 800;text-align: left;">
+                        {{comment?.nickname}}<span style="font-weight: 400;color: #12a6f9;">
+                          ({{comment.symbol}}) 
+                        </span>
+                      </ion-col>
+                      <ion-col style="font-size: 12px;font-weight: 400;color: #9b9b9b;text-align: right;">
+                        {{comment?.date_from_now}}
+                      </ion-col>
+                    </ion-row>
+                  </ion-grid>
+      
+                </div>
+                <div style="font-size:14px;font-weight: 300;text-align: left;">
+                  {{comment.txt}}
+                </div>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+       
+
   </div>
 
   <div *ngIf="selectedSegmentSocialFeeds == 'Popular'" style="text-align: center;color:#707070;">

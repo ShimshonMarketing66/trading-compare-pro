@@ -46,7 +46,7 @@
 <!-- The components -->
 <div class="ciq-chart-area">
 	<drawing-toolbar #drawingToolbar (launchColorpickerEvent)="colorpicker.launchColorpicker($event)"></drawing-toolbar>
-  <chart #chartComponent [symbol]="symbol" [exchDisp]="exchDisp" [group]="group"></chart>
+  <chart #chartComponent [symbol]="symbol" [exchDisp]="exchDisp" [group]="group" [country]="country"></chart>
 </div>
 <div class="ciq-footer">
   <!-- <div class="quick-link" (click)="chartComponent.set(1, 'all')">All</div> -->
@@ -65,7 +65,7 @@
   <div class="quick-link" (click)="chartComponent.ciq.setPeriodicityV2(15  , 'minute')">15min</div>
   <div class="quick-link" (click)="chartComponent.ciq.setPeriodicityV2(30  , 'minute')">30min</div>
   <div class="quick-link" (click)="chartComponent.ciq.setPeriodicityV2(60  , 'minute')">1H</div>
-  <div class="quick-link" (click)="chartComponent.ciq.setPeriodicityV2(260  , 'minute')">4H</div>
+  <div class="quick-link" (click)="chartComponent.ciq.setPeriodicityV2(240  , 'minute')">4H</div>
   <div class="quick-link" (click)="chartComponent.ciq.setPeriodicityV2(1  , 'day')">1day</div>
   <div class="quick-link" (click)="chartComponent.ciq.setPeriodicityV2(7  , 'day')">1Wk</div>
 </div>

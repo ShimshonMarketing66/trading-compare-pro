@@ -45,6 +45,7 @@ export class ItemDetailsStockPage {
   header_stock: boolean = true;
   sentiment: any;
   news: any = [];
+  country: string;
   constructor(
     public socialSharing: SocialSharing,
     public track: TrackProvider,
@@ -70,7 +71,8 @@ export class ItemDetailsStockPage {
     this.globalProvider.get_sentiment_by_symbol(symbol).then((data) => {
       this.sentiment = data;
     })
-
+    
+    
     this.admob.showBanner();
     track.log_screen("item-details-stock-" + symbol);
 
@@ -96,8 +98,6 @@ export class ItemDetailsStockPage {
     let itemd = await this.stockProvider.get_stock_by_symbol(symbol)
     console.log(itemd);
     this.item = itemd;
-
-
   }
 
 
@@ -105,8 +105,11 @@ export class ItemDetailsStockPage {
     this.item = this.navParams.get("item");
     if (this.item == undefined) {
       await this.get_item();
-    } else {
+    } 
+    if (this.navParams.get("primary_key") == undefined) {
       this.selectedSegment = "CHART";
+    }else{
+      this.selectedSegment = "CHAT";
     }
 
     this.tweetCall();
@@ -115,6 +118,8 @@ export class ItemDetailsStockPage {
     this.symbol = this.item.symbol;
     this.exchDisp = 'none';
     this.group = "stock";
+    this.country = this.item.country
+    
     this.height = window.screen.height;
     this.globalProvider.get_comments(this.symbol).then((data) => {
       for (let index = 0; index < data.length; index++) {
@@ -264,7 +269,7 @@ export class ItemDetailsStockPage {
       screen: "item-details-stock-" + this.item.symbol,
       new_title: this.news[i].headline
     })
-    // window.open(this.news[i].url);
+    window.open(this.news[i].url);
 
   }
   getImgStock() {

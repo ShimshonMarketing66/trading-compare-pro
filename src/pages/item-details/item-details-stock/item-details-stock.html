@@ -3,7 +3,7 @@
   <ion-navbar>
     <ion-title>{{item?.name}}</ion-title>
     <ion-buttons end>
-      <img alt="logo" height="40" width="40" style="border-radius: 50px;" src="assets/imgs/flags/{{item?.country}}.png">
+      <img alt="logo" *ngIf="country!=null" height="40" width="40" style="border-radius: 50px;" src="assets/imgs/flags/{{item?.country}}.png">
     </ion-buttons>
 
   </ion-navbar>
@@ -39,8 +39,8 @@
         </div>
       </ion-col>
       <ion-col col-1>
-        <ion-icon *ngIf="item?.is_in_watchlist" name="star-v-a" (click)="globalProvider.remove_from_watchlist(undefined,item,'item-details-stock')"></ion-icon>
-        <ion-icon *ngIf="!item?.is_in_watchlist" name="star-v" (click)="globalProvider.add_to_watchlist(undefined,item,'item-details-stock')"></ion-icon>
+        <ion-icon *ngIf="item?.is_in_watchlist" name="star-v-a-details" (click)="globalProvider.remove_from_watchlist(undefined,item,'item-details-stock')"></ion-icon>
+        <ion-icon *ngIf="!item?.is_in_watchlist" name="star-v-details" (click)="globalProvider.add_to_watchlist(undefined,item,'item-details-stock')"></ion-icon>
       </ion-col>
 
 
@@ -155,7 +155,7 @@
 
     <div *ngSwitchCase="'CHART'">
       <div style="height:350px; position: relative !important;">
-        <chart-ui [symbol]="symbol" [exchDisp]="'none'" [group]="'stock'" class="ciq-night"></chart-ui>
+        <chart-ui [symbol]="symbol" [exchDisp]="'none'" [group]="'stock'" [country]="country" class="ciq-night"></chart-ui>
       </div>
     </div>
 

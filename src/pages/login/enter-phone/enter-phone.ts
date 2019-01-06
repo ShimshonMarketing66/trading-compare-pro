@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ModalController, AlertController, LoadingController } from 'ionic-angular';
 import { AuthDataProvider } from '../../../providers/auth-data/auth-data';
 import { Sim } from '@ionic-native/sim';
+import { TrackProvider } from '../../../providers/track/track';
 
 @IonicPage({
   name: "enter-phone"
@@ -13,6 +14,7 @@ import { Sim } from '@ionic-native/sim';
 export class EnterPhonePage {
   error: string;
   constructor(
+    public track:TrackProvider,
     public loadingCtrl:LoadingController,
     public alertCtrl:AlertController,
     public modalCtrl:ModalController,
@@ -20,6 +22,8 @@ export class EnterPhonePage {
     public authData:AuthDataProvider,
     public navCtrl: NavController,
     public navParams: NavParams) {
+
+        this.track.log_screen("enter-phone");
       if ( this.authData.user.full_name !== '' ||  this.authData.user.full_name != undefined || this.authData.user.full_name != null) {
         this.authData.user.nickname = this.authData.user.full_name.split(" ")[0];
       }else if (this.authData.user.email !== '' ||  this.authData.user.email != undefined || this.authData.user.email != null){

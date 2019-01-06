@@ -51,7 +51,7 @@
         </ion-row>
     </ion-grid>
 
-    <div style="text-align: center;padding-top: 17px;color: #949494;" (click)="navCtrl.push('main-tabs')">
+    <div style="text-align: center;padding-top: 17px;color: #949494;" (click)="navCtrl.push('main-tabs');track.log_event('continue_as_guest',{screen:'sign-in'})">
         CONTINUE AS GUEST
       </div>
 

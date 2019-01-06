@@ -80,6 +80,8 @@ export class AllChatPage implements AfterContentInit {
         room: "all"
       });
       this.socket.on("on_typing", (data) => {
+        console.log(data,"on_typing");
+        
         if (this.socket.id != data.id) {
           if (this.is_typing == "nobodyyy") {
             this.is_typing = data.nickname;
@@ -146,7 +148,6 @@ export class AllChatPage implements AfterContentInit {
   }
 
   sendMessage() {
-    
     if (!this.globalProvider.isAuth()) {
       this.globalProvider.open_login_alert();
       return;
@@ -223,12 +224,14 @@ export class AllChatPage implements AfterContentInit {
   }
 
   open_alert(comment) {
-    var buttons = [{
-      text: 'Share',
-      handler: () => {
-       this.openShareModal(comment);
-      }
-    }, {
+    var buttons = [
+    //   {
+    //   text: 'Share',
+    //   handler: () => {
+    //    this.openShareModal(comment);
+    //   }
+    // },
+     {
       text: 'Copy',
       handler: () => {
         this.track.log_event("copy_comment",{

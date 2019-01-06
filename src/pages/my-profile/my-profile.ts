@@ -55,7 +55,7 @@ export class MyProfilePage {
     public navCtrl: NavController,
     public navParams: NavParams,
     public authData: AuthDataProvider) {
-
+      this.track.log_screen("my-profile");
       this.globalProvider.loading("get user profile");
       this.authData.getPost(this.authData.user._id)
       .then((data)=>{
@@ -66,6 +66,15 @@ export class MyProfilePage {
       this.followers_length = this.globalProvider.my_followers.length;
       this.following_length = this.globalProvider.my_following.length;
       this.watchlist_length = this.globalProvider.watchlists.length;
+
+      for (let index = 0; index <  this.globalProvider.my_followers.length; index++) {
+        for (let j = 0; j < this.globalProvider.my_following.length; j++) {
+          if (this.globalProvider.my_following[j]._id ==  this.globalProvider.my_followers[index]._id) {
+            this.globalProvider.my_followers[index]["is_in_my_following"] = true;
+          }
+        }
+      }
+      
       
 
   }
@@ -73,6 +82,32 @@ export class MyProfilePage {
   foo() {
     console.log(this.posts);
 
+  }
+
+  add_follow(follower,$event?) {
+    if (event != undefined) {
+      event.stopPropagation();
+    }
+    follower.is_in_my_following = true;
+    this.following_length += 1;
+
+    this.globalProvider.my_following.push({
+      _id: follower._id,
+      nickname: follower.nickname,
+      country: follower.country
+    })
+
+    var follow = {
+      id_following: this.authData.user._id,
+      id_followed: follower._id,
+      nickname_following: this.authData.user.nickname,
+      nickname_followed: follower.nickname,
+      country_following: this.authData.user.countryData.country,
+      country_followed: follower.country,
+    }
+    console.log(follow);
+    
+    this.authData.add_follow(follow)
   }
 
   follow() {
@@ -116,21 +151,26 @@ export class MyProfilePage {
     })
   }
 
-  remove_follow_other(profile){
+  remove_follow_other(profile,ev?){
+    if (ev != undefined) {
+      ev.stopPropagation();
+    }
+    this.following_length -= 1;
+    profile["is_in_my_following"] = false;
     var follow = {
       id_following:this.authData.user._id,
       id_followed:profile._id
     }
 
-    let arr ;
-    if (this.selected_segment == "FOLLOWERS") {
-      arr = this.globalProvider.my_followers;
-    }else{
-      arr = this.globalProvider.my_following;
+    for (let index = 0; index < this.globalProvider.my_following.length; index++) {
+      if (this.globalProvider.my_following[index]._id == profile._id) {
+        this.globalProvider.my_following.splice(index,1);
+      }
     }
-    for (let index = 0; index < arr.length; index++) {
-      if (arr[index]._id == profile._id) {
-        arr.splice(index,1);
+
+    for (let index = 0; index < this.globalProvider.my_followers.length; index++) {
+      if (this.globalProvider.my_followers[index]._id == profile._id) {
+        this.globalProvider.my_followers[index]["is_in_my_following"] = false;
       }
     }
  
@@ -138,23 +178,29 @@ export class MyProfilePage {
   }
 
   go_to_comment(comment){
-    let a = this.globalProvider.get_symbol_type(comment.symbol)
-    console.log(a);
     let page: string = ""    
-     switch (a) {
-       case "STOCK":
-         page = "item-details-stock";
-         break;
-       case "FOREX":
-         page = "item-details-forex";
-         break;
-       case "CRYPTO":
-         page = "item-details-crypto";
-         break;
- 
-       default:
-         break;
-     }
+    if (comment.symbol == "all") {
+      page = "all-chat";
+    }else{
+      let a = this.globalProvider.get_symbol_type(comment.symbol)
+      console.log(a);
+     
+       switch (a) {
+         case "STOCK":
+           page = "item-details-stock";
+           break;
+         case "FOREX":
+           page = "item-details-forex";
+           break;
+         case "CRYPTO":
+           page = "item-details-crypto";
+           break;
+   
+         default:
+           break;
+       }
+    }
+
      this.navCtrl.pop({animate:true,direction: 'forward'});
      this.navCtrl.push(page, {
        primary_key:comment.primary_key,

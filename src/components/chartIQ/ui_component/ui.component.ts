@@ -32,6 +32,7 @@ export class ChartUI implements AfterViewChecked,OnInit{
   @Input() symbol:string;
   @Input() exchDisp:string;
   @Input() group:string;
+  @Input() country:string;
   
   constructor(public globalProvider:GlobalProvider,private zone: NgZone){
     this.periodicity="5 min";

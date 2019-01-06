@@ -24,7 +24,7 @@
               Joined {{authData.user.createAccountDate}}
             </div>
             <div style="font-size: 12px;letter-spacing: 0.5px;text-align: center;color: #9b9b9b">
-              45 messages sent
+                {{posts_length}} messages sent
             </div>
    
         
@@ -35,9 +35,7 @@
 
     </ion-row>
   </ion-grid>
-<div style="margin-top: 22px;text-align: center;margin-bottom: 10px;">
-    <button ion-button style="background: #12a6f9;font-size: 14px;">UPGRADE TO PREMIUM</button>
-</div>
+
 
 <div style="margin-top: 10px;text-align: center;margin-bottom: 10px;">
   <button (click)="go_to_sentiment()" style="height: 30px;font-size: 14px;background: #91c353;" ion-button>Sentiment</button>
@@ -252,6 +250,12 @@
               <ion-icon name="check-v"></ion-icon>
             </button>
           </ion-col>
+
+          <ion-col *ngIf="!follower.is_in_my_following" style="margin: auto;text-align: right;padding-left: 9px;">
+              <button *ngIf="!follower.is_in_my_following" (click)="add_follow(follower,$event)" ion-button style="background: transparent;height: 30px;border: 1px solid #12a6f9;width: 76px;">
+                  FOLLOW
+                </button>
+            </ion-col>
         </ion-row>
       </ion-grid>
 

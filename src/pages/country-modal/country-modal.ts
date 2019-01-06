@@ -13,6 +13,8 @@ import { TrackProvider } from '../../providers/track/track';
 export class CountryModalPage {
   contries :string[] = ["united-states-of-america","china","south-korea","netherlands","mexico","australia","saudi-arabia","india","united-kingdom","france","italy","canada","spain","denmark","switzerland","indonesia","argentina","brazil","new-zealand","austria","belgium","russia","israel","finland","turkey","republic-of-poland","estonia"];
   constructor( public track:TrackProvider,public navCtrl: NavController, public navParams: NavParams,public viewCtrl:ViewController) {
+    track.log_screen("country-modal");
+
   }
 
   ionViewDidLoad() {
