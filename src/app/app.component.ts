@@ -64,9 +64,9 @@ export class MyApp {
   loop() {
     setTimeout(() => {
       if (this.onAuthStateChangedCalled) {
-        this.track.setUserId(this._id);
         this.platform.ready().then(() => {
           if (this.platform.is("cordova")) {
+            this.track.setUserId(this._id);
             const appsflyerOptions: AppsflyerOptions = {
               devKey: "SmETXRWQwsJVhLhWbBBfn",
               onInstallConversionDataListener: true
