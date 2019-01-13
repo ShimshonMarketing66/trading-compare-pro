@@ -327,7 +327,6 @@ export class ItemDetailsStockPage {
 
 
   typing() {
-    console.log("typing");
     this.socket.emit("typing", this.symbol);
   }
 

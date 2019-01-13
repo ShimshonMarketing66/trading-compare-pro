@@ -7,7 +7,7 @@ import { TrackProvider } from '../../providers/track/track';
 import { Vibration } from '@ionic-native/vibration';
 import { Clipboard } from '@ionic-native/clipboard';
 import * as $ from 'jquery'
-import { AdmobProvider } from '../../providers/admob/admob';
+// import { AdmobProvider } from '../../providers/admob/admob';
 
 declare var require: any;
 
@@ -35,7 +35,7 @@ export class AllChatPage implements AfterContentInit {
     public vibration:Vibration,
     public alertCtrl:AlertController,
     public zone:NgZone,
-    public admob:AdmobProvider,
+    // public admob:AdmobProvider,
     public navCtrl: NavController, 
     public navParams: NavParams,
     public globalProvider:GlobalProvider,
@@ -184,11 +184,11 @@ export class AllChatPage implements AfterContentInit {
     console.log('ionViewDidLoad AllChatPage');
   }
   consultar(){
-    this.admob.showBanner()
+    // this.admob.showBanner()
   }
 
   foodd(){
-    this.admob.hideBanner()
+    // this.admob.hideBanner()
   }
 
   scrollTo(elementId: number) {

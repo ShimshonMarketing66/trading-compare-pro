@@ -8,14 +8,14 @@
 
 
 <ion-content padding>
-  <ion-list>
-    <ion-item (click)="navCtrl.push('all-chat')" >
-      <ion-thumbnail item-start>
+  <ion-list mode="md">
+    <ion-item mode="md" (click)="navCtrl.push('all-chat')" >
+      <ion-thumbnail mode="md" item-start>
         <img src="assets/imgs/stocks.png">
       </ion-thumbnail>
       <h4>Trading Compare Chat</h4>
-      <p>Join the Community</p>
-      <button ion-button  item-end>View</button>
+      <p style="font-size: 12px;">Join the Community</p>
+      <button mode="md" ion-button  item-end>View</button>
     </ion-item>
   </ion-list>
 </ion-content>

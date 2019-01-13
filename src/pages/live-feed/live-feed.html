@@ -407,9 +407,17 @@
 
             <ion-col style="text-align: right;margin:auto;padding-right:15px;">
               <div style="font-size:16px;text-align: right;">
-                <span [@changeBackgroundColor]="watchlist.state">
+                <span [ngSwitch]="watchlist.type" [@changeBackgroundColor]="watchlist.state" >
+
+               
+                <span *ngSwitchCase="FOREX">
+                  {{watchlist?.price|tofixed_4}}
+                </span>
+                <span *ngSwitchDefault>
                   {{watchlist?.price|tofixe}}
                 </span>
+
+              </span>
               </div>
 
               <div [ngSwitch]="watchlist.type">
