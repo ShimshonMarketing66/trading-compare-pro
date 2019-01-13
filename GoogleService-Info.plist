@@ -34,7 +34,7 @@
 	<true></true>
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
-	<key>GOOGLE_APP_ID</key>
+	<key>GOOGLE_APP_ID</key> 
 	<string>1:212982281977:ios:5e6f063354e21569</string>
 	<key>DATABASE_URL</key>
 	<string>https://trading-compare-93afb.firebaseio.com</string>
