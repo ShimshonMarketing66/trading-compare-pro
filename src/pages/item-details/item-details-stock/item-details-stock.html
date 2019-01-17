@@ -1,8 +1,18 @@
-<ion-header id="header_stock" (click)="foo()">
+<ion-header *ngIf="orientation_mode == 'portrait'" mode="ios" id="header_stock">
 
-  <ion-navbar>
-    <ion-title>{{item?.name}}</ion-title>
-    <ion-buttons end>
+    <!-- <ion-toolbar>
+        <button ion-button clear large (click)="navCtrl.pop();" style="color: white;">
+            <ion-icon  name="arrow-back"> Back</ion-icon>
+        </button>
+        <ion-title>{{item?.name}}</ion-title>
+      </ion-toolbar> -->
+
+  <ion-navbar mode="ios" hideBackButton="true">
+       <button  mode="ios"  (click)="navCtrl.pop();" style="color: white;background: transparent;">
+            <ion-icon  name="arrow-back"> Back</ion-icon>
+        </button>   
+    <ion-title mode="ios">{{item?.name}}</ion-title>
+    <ion-buttons mode="ios" end>
       <img alt="logo" *ngIf="country!=null" height="40" width="40" style="border-radius: 50px;" src="assets/imgs/flags/{{item?.country}}.png">
     </ion-buttons>
 
@@ -12,7 +22,7 @@
 
 <ion-content [style.top]="header_stock?'0px':'-40px'" #content_detail>
 
-  <ion-grid style="padding:16px;">
+  <ion-grid *ngIf="orientation_mode == 'portrait'" style="padding:16px;">
     <ion-row>
       <ion-col col-3>
         <img style="width: 60px;height: 60px;border-radius: 50px;" [src]="item?.logo" (error)="errorHandler($event)">
@@ -47,7 +57,7 @@
     </ion-row>
   </ion-grid>
 
-  <div style="display: inline-flex;padding:16px;width: 100%;padding-top: unset;">
+  <div *ngIf="orientation_mode == 'portrait'" style="display: inline-flex;padding:16px;width: 100%;padding-top: unset;">
     <span (click)="change_sentiment('BULLISH')" [ngClass]="item?.sentiment == 'BULLISH' && item?.status == 'OPEN' ? 'bullish-active' : 'bullish-disable'">
       BULLISH
     </span>
@@ -65,7 +75,7 @@
     </div>
   </div>
 
-  <div class="container" style="position: sticky;top: 0;z-index:1000;background: #2b2b2b;">
+  <div *ngIf="orientation_mode == 'portrait'" class="container" style="position: sticky;top: 0;z-index:1000;background: #2b2b2b;">
     <table>
       <thead>
         <tr>
@@ -79,8 +89,7 @@
     </table>
   </div>
 
-  <div [ngSwitch]="selectedSegment" swipeSegment [tabsList]="Segments" [(currentTab)]="selectedSegment" (tabChanged)="onTabChanged($event)"
-    class="swipe-area">
+  <div [ngSwitch]="selectedSegment" swipeSegment [tabsList]="Segments" [(currentTab)]="selectedSegment" (tabChanged)="onTabChanged($event)">
 
     <div *ngSwitchCase="'CHAT'" style="padding-bottom: 70px;">
       <div style="text-align: center;font-size: 16px;color: #9B9B9B;margin-top: 35px;font-weight: 300;" *ngIf="comments.length==0">
@@ -154,9 +163,13 @@
     </div>
 
     <div *ngSwitchCase="'CHART'">
-      <div style="height:350px; position: relative !important;">
-        <chart-ui [symbol]="symbol" [exchDisp]="'none'" [group]="'stock'" [country]="country" class="ciq-night"></chart-ui>
+      <div  style=" position: relative !important; width: 100%" [style.height]="height_screen-(orientation_mode=='portrait'?200:0)+'px'">
+        <chart-ui #chart_ui [orientation_mode]="orientation_mode" [symbol]="symbol" [exchDisp]="'none'" [group]="'stock'" [country]="country" class="ciq-night"></chart-ui>
       </div>
+
+      <!-- <div *ngIf="orientation_mode != 'portrait'">
+          <chart-ui [orientation_mode]="'landscape'" [symbol]="symbol" [exchDisp]="'none'" [group]="'stock'" [country]="country" class="ciq-night"></chart-ui>
+        </div> -->
     </div>
 
     <div *ngSwitchCase="'SOCIAL'" style="padding:16px;">
@@ -168,7 +181,7 @@
               <ion-col style="text-align: left;font-size:14px;font-weight: 900;">
                 Twitter @{{item1?.user?.name}}
               </ion-col>
-              <ion-col col-3 style="text-align: right;font-size:12px;color:#9b9b9b">
+              <ion-col col-3 style="text-align: right;font-size:12px;color:#9b9b9b;">
                 {{item1?.created_at}}
               </ion-col>
             </ion-row>

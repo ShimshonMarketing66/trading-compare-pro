@@ -25,8 +25,8 @@ export class HomePage {
   }[] = [];
   selectedSegmentSocialFeeds: string = "Newest";
   AllLeaderboard: boolean = false;
-  newest_comments: any[] = [] = [];
-  newest_following_comments: any[]=[];
+  newest_activities: any[] = [];
+  newest_following_activities: any[]=[];
   constructor(
     public track: TrackProvider,
     public authData: AuthDataProvider,
@@ -35,7 +35,20 @@ export class HomePage {
     public globalProvider: GlobalProvider) {
     track.log_screen("home");
     this.getUsers();
-    this.get_newest_comments()
+    this.get_last_activity()
+    this.globalProvider.get_last_activity_of_following().then((data)=>{
+      console.log("get_last_activity_of_following",data);
+      this.finish_refresh();
+      this.newest_following_activities = data;
+      
+    })
+
+    this.globalProvider.get_last_activity().then((data:any[])=>{
+      this.newest_activities = data;
+      this.finish_refresh();
+    })
+
+   
   }
 
   ionViewDidLoad() {
@@ -62,27 +75,43 @@ export class HomePage {
       }
     })
   }
+  get_last_activity() {
+    console.log("get_last_activity");
+    
+    this.globalProvider.get_last_activity().then((data)=>{
+      console.log("get_last_activity 2 ");
 
-  get_newest_comments() {
-    if (this.authData.isFinishRegistration) {
-  
-
-      this.globalProvider.get_newest_following_comments().then((data: any[]) => {
-        this.newest_following_comments = data;
-      })
-        .catch((err) => {
-          console.error(err);
-        })
-    }
-
-    this.globalProvider.get_newest_comments().then((data: any[]) => {
-      this.newest_comments = data;
+      console.log(data);
+      
     })
-      .catch((err) => {
-        console.error(err);
-      })
-
   }
+in_refreshing = false;
+  refresh(){
+    if (this.in_refreshing) {
+      return;
+    }
+    this.in_refreshing = true;
+    this.counter_refresher = 0;
+
+    this.globalProvider.get_last_activity().then((data:any[])=>{
+      this.newest_activities = data;
+      this.finish_refresh();
+    })
+    this.globalProvider.get_last_activity_of_following().then((data)=>{
+      console.log("get_last_activity_of_following",data);
+      this.finish_refresh();
+      this.newest_following_activities = data;
+      
+    })
+  }
+counter_refresher = 0;
+  finish_refresh(){
+    this.counter_refresher++;
+if (this.counter_refresher == 2) {
+  this.in_refreshing = false;
+}
+  }
+
 
 
   changeSocialFeedSegment(segment) {
@@ -112,10 +141,55 @@ export class HomePage {
     });
   }
 
+  go_to_comment_v2(user, ev){
+    if (ev != undefined) {
+      ev.stopPropagation();
+    }
+
+    if (user._id == undefined && user.user_id != undefined) {
+      user["_id"] = user.user_id;
+    }
+    if (user.symbol == "all") {
+      this.navCtrl.push("all-chat", {
+        primary_key:user.primary_key
+      })
+    } else {
+      var page = "item-details-"
+      console.log("da",user.symbol);
+      var obj={
+        primary_key:user.primary_key,
+        symbol:user.symbol
+      }
+      switch (this.globalProvider.get_symbol_type(user.symbol)) {
+        case "FOREX":
+          page += "forex";
+          break;
+        case "CRYPTO":
+          page += "crypto";
+          break;
+        case "STOCK":
+          page += "stock";
+          break;
+
+        default:
+          break;
+      }
+  
+      this.navCtrl.push(page, {
+        symbol:obj.symbol,
+        primary_key:obj.primary_key
+      })
+    
+  }
+}
+
+
   go_to_user_page(user, ev) {
     if (ev != undefined) {
       ev.stopPropagation();
     }
+    console.log(user);
+    
     if (user._id == this.authData.user._id) {
       this.navCtrl.push('my-profile')
     } else {
@@ -125,6 +199,37 @@ export class HomePage {
       this.navCtrl.push('profile', { user: user })
     }
   }
+
+  go_to_user_profile(user, ev?) {
+    if (ev != undefined) {
+      ev.stopPropagation();
+    }
+    console.log(user);
+    
+    if (user._id == this.authData.user._id || user.user_following == this.authData.user._id|| user.user_id == this.authData.user._id) {
+      this.navCtrl.push('my-profile')
+    } else {
+      switch (user.m_type) {
+        case "comment":
+        user["_id"] = user.user_id;
+          break;
+
+          case "sentiment":
+          user["_id"] = user.user_id;
+          break;
+
+          case "followers":
+          user["_id"] = user.user_following;
+          break;
+      
+        default:
+          break;
+      }
+     
+      this.navCtrl.push('profile', { user: user })
+    }
+  }
+
 
   go_to_comment(user, ev) {
     if (ev != undefined) {

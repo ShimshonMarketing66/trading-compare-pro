@@ -72,6 +72,8 @@ export class AllChatPage implements AfterContentInit {
         console.log("catch", err);
         this.comments = [];
       })
+// http://localhost:5000                https://xosignals.herokuapp.com
+console.log("https://localhost:5000");
 
       this.socket = io.connect("https://xosignals.herokuapp.com/", { path: "/socket/trading-compare-v2/chat" });
 
@@ -160,6 +162,7 @@ export class AllChatPage implements AfterContentInit {
     this.track.log_event("post_comment",{
       screen:"all-chat-page"
     })
+
     
     var data = {
       nickname: this.authData.user.nickname,
@@ -257,9 +260,9 @@ export class AllChatPage implements AfterContentInit {
             if (this.comments[index].primary_key == comment.primary_key) {
               this.comments.splice(index, 1);
               let toast = this.toastCtrl.create({
-                message: 'Message Copied!',
+                message: 'Message deleted!',
                 duration: 1500,
-                position: 'middle'
+                position: 'bottom'
               });
               toast.present();
             }
@@ -295,6 +298,11 @@ export class AllChatPage implements AfterContentInit {
         comment_id:comment.primary_key
       })
     })
+  }
+
+  translate(comment){
+    console.log(comment);
+    
   }
 
 

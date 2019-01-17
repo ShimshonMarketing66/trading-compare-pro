@@ -40,8 +40,7 @@
 
   <div style="position: sticky;padding-top: 5px;z-index: 998;background: #2b2b2b;" [style.top]="selectedSegment == STOCK && '-14px' || selectedSegment != STOCKS && '24px'">
 
-    <ion-grid *ngIf="selectedSegment == STOCK" style="padding-bottom: 10px;padding-left: 8px;padding-right: 8px;"
-      (click)="openCountries()">
+    <ion-grid *ngIf="selectedSegment == STOCK" style="margin-bottom: 10px;padding-left: 8px;padding-right: 8px;" (click)="openCountries()">
       <ion-row style="height: 30px;background: #373737;">
         <ion-col col-2 style="margin:auto;text-align: center;">
           <img style="max-height: 25px;" src="assets/imgs/flags/{{exchangeStock}}.png">

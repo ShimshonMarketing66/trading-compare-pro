@@ -11,11 +11,12 @@ import { TitlecasePipe } from './chartIQ/pipes/title.case.pipe';
 import { Colorpicker } from './chartIQ/colorpicker_component/colorpicker';
 import { MapObjectToArrayPipe } from './chartIQ/pipes/mapObject.pipe';
 import { ChartComponent } from './chartIQ/chart_component/chart.component';
+import { IonicModule } from 'ionic-angular';
 
 
 @NgModule({
 	declarations: [ProgressBarComponent,ChartUI,ChartComponent],
-	imports: [CommonModule],
+	imports: [CommonModule,IonicModule],
 	exports: [ProgressBarComponent,ChartUI,ChartComponent],
 	schemas:[CUSTOM_ELEMENTS_SCHEMA]
 })

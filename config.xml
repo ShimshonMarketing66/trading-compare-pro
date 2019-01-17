@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.tradingcompare.app" version="1.0.6" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.tradingcompare.app" version="1.0.11" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Trading Compare</name>
     <description>An awesome Ionic/Cordova app.</description>
     <author email="hi@ionicframework" href="http://ionicframework.com/">Ionic Framework Team</author>
@@ -19,6 +19,7 @@
     <preference name="AutoHideSplashScreen" value="false" />
     <preference name="KeyboardDisplayRequiresUserAction" value="false" />
     <preference name="DisableDeploy" value="true" />
+    <preference name="orientation" value="portrait" />
     <platform name="android">
         <replace-string file="project.properties" find="play-services-tagmanager:+" replace="play-services-tagmanager:16.0.6" />
         <replace-string file="project.properties" find="firebase-core:+" replace="firebase-core:16.0.6" />
@@ -142,6 +143,7 @@
     </plugin>
     <plugin name="cordova-plugin-firebase" spec="^2.0.5" />
     <plugin name="cordova-plugin-apprate" spec="^1.4.0" />
+    <plugin name="cordova-plugin-screen-orientation" spec="3.0.1" />
     <engine name="ios" spec="4.5.5" />
     <engine name="android" spec="7.1.1" />
 </widget>

@@ -1,5 +1,5 @@
 import { Component, ViewChild, NgZone, HostListener } from '@angular/core';
-import { IonicPage, NavController, NavParams, Content, AlertController, ToastController, ModalController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Content, AlertController, ToastController, ModalController, Platform } from 'ionic-angular';
 
 import { Http } from '@angular/http';
 import { StockProvider } from '../../../providers/stock/stock';
@@ -12,6 +12,8 @@ import { Clipboard } from '@ionic-native/clipboard';
 import { TrackProvider } from '../../../providers/track/track';
 import { AdmobProvider } from '../../../providers/admob/admob';
 import { SocialSharing } from '@ionic-native/social-sharing';
+import { ScreenOrientation } from '@ionic-native/screen-orientation';
+import { ChartUI } from '../../../components/chartIQ/ui_component/ui.component';
 
 @IonicPage({
   name: "item-details-stock"
@@ -24,9 +26,11 @@ import { SocialSharing } from '@ionic-native/social-sharing';
   templateUrl: 'item-details-stock.html',
 })
 export class ItemDetailsStockPage {
+  @ViewChild("chart_ui") chart_ui: ChartUI;
   @ViewChild("content_detail") content_detail: Content;
   @ViewChild("myInput") myInput;
-
+  height_screen =  window.screen.height;
+  orientation_mode="portrait"
   is_on_bottom = true;
   message: string = "";
   item: any;
@@ -47,6 +51,8 @@ export class ItemDetailsStockPage {
   news: any = [];
   country: string;
   constructor(
+    public platform:Platform,
+    private screenOrientation: ScreenOrientation,
     public socialSharing: SocialSharing,
     public track: TrackProvider,
     public admob: AdmobProvider,
@@ -72,7 +78,7 @@ export class ItemDetailsStockPage {
       this.sentiment = data;
     })
     
-    
+
     this.admob.showBanner();
     track.log_screen("item-details-stock-" + symbol);
 
@@ -108,6 +114,7 @@ export class ItemDetailsStockPage {
     } 
     if (this.navParams.get("primary_key") == undefined) {
       this.selectedSegment = "CHART";
+      this.screenOrientation.unlock();
     }else{
       this.selectedSegment = "CHAT";
     }
@@ -183,6 +190,8 @@ export class ItemDetailsStockPage {
   }
 
   foo() {
+    console.log("foo");
+    
     this.admob.showInterstitial();
     // this.scrollTo(571)
   }
@@ -236,18 +245,25 @@ export class ItemDetailsStockPage {
     switch (segment) {
       case "CHAT":
         this.selectedSegment = "CHAT";
-        break;
+        if (this.platform.is("cordova")) {
+           this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT)
+        }      
+          break;
       case "OVERVIEW":
         this.selectedSegment = "OVERVIEW";
+        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT)
         break;
       case "CHART":
         this.selectedSegment = "CHART";
+        this.screenOrientation.unlock();
         break;
       case "SOCIAL":
         this.selectedSegment = "SOCIAL";
+        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT)
         break;
       case "NEWS":
         this.selectedSegment = "NEWS";
+        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT)
         break;
       default:
         break;
@@ -447,10 +463,17 @@ export class ItemDetailsStockPage {
     this.content_detail.scrollToTop(1000);
     this.message = '';
   }
-  ionViewDidLeave() {
+
+   async ionViewWillLeave() {
+    // Unregister the custom back button action for this page
     this.admob.hideBanner();
     this.socket.disconnect();
-  }
+    if (this.platform.is("cordova")) {
+      await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT)
+    }
+}
+
+
 
 
   ionViewDidEnter() {
@@ -467,6 +490,33 @@ export class ItemDetailsStockPage {
         }
       })
     });
+    this.screenOrientation.unlock();
+    this.screenOrientation.onChange().subscribe((data) => {
+          console.log("Orientation Changed",this.screenOrientation.type);
+          if (this.screenOrientation.type.indexOf("portrait") > -1) {
+            this.orientation_mode = "portrait";
+            this.chart_ui.clearStudies()
+            this.height_screen =  window.screen.height;
+          }else{
+            this.height_screen =  window.screen.height;
+            this.orientation_mode = "landscape";
+            if (document.getElementById("ciq-chart-area-for-lanscape-mode").style != undefined) {
+              console.log("aaaa");
+         
+              document.getElementById("ciq-chart-area-for-lanscape-mode").style.height="88%"
+            }
+         
+         
+            if (document.getElementsByTagName("canvas")[0] != undefined) {
+              console.log("bbbb");
+         
+              document.getElementsByTagName("canvas")[0].style.height = "100%"
+            }
+          }
+          
+      }
+   );
+
   }
 
   scroll_up() {

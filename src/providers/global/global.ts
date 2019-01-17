@@ -9,6 +9,7 @@ import { TrackProvider } from '../track/track';
 
 @Injectable()
 export class GlobalProvider {
+ 
   
  
   update_progress:string="0";
@@ -56,6 +57,61 @@ export class GlobalProvider {
     this.sponcer =  data;
    })
   }
+
+  get_last_activity(): Promise<any> {
+   return this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/last-activity",{}).toPromise();
+  }
+
+  
+  get_last_activity_of_following(): Promise<any> {
+    return new Promise((resolve)=>{
+      if (this.authData.isFinishRegistration) {
+       var dataToSend=[];
+        this.authData.getFollowing(this.authData.user._id).then((following_user)=>{
+            console.log(following_user);
+            
+         for (let index = 0; index < following_user.length; index++) {
+          dataToSend.push({
+            _id:following_user[index]._id
+          })
+         }
+         
+         this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/last-activity",{ids:dataToSend}).toPromise().then((data:any[])=>{
+        
+         for (let index = 0; index < data.length; index++) {
+           switch (data[index].m_type) {
+            case "followers":
+            data[index].country_following = data[index].country_following.toLowerCase().replace(" ", "-");
+            data[index].country_followed = data[index].country_followed.toLowerCase().replace(" ", "-");
+
+              break;
+
+              case "comment":
+              data[index].country = data[index].country.toLowerCase().replace(" ", "-");
+              break;
+
+              case "sentiment":
+              data[index].country = data[index].country.toLowerCase().replace(" ", "-");
+              break;
+          
+            default:
+            continue;
+          }
+
+        
+         }
+
+          resolve(data);
+         })
+ 
+        
+       })
+      }else{
+          resolve([]);
+      }
+    })
+   }
+
 
   get_newest_following_comments():Promise<any> {
     var dataToSend=[];

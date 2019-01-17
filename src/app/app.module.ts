@@ -46,6 +46,7 @@ import { AdMobFree } from '@ionic-native/admob-free';
 import { AdmobProvider } from '../providers/admob/admob';
 import { Appsflyer } from '@ionic-native/appsflyer';
 import { GoogleAnalytics } from '@ionic-native/google-analytics';
+import { ScreenOrientation } from '@ionic-native/screen-orientation';
 
 
 const firebaseConfig = {
@@ -88,6 +89,7 @@ export function createTranslateLoader(http: HttpClient) {
     MyApp 
   ],
   providers: [
+    ScreenOrientation,
     SocialSharing,
     Clipboard,
     Vibration,

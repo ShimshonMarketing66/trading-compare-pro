@@ -43,12 +43,16 @@ export class AdmobProvider {
         console.log("banner err admob ",err);
         
       });
-      this.admobFree.interstitial.prepare().then((sa)=>{
-        this.canshow = true;
-        console.log("interstitial admob ",sa);
-      }).catch((err)=>{
-        console.log("interstitial err admob ",err);
-      });
+
+      setTimeout(()=>{
+        this.admobFree.interstitial.prepare().then((sa)=>{
+          this.canshow = true;
+          console.log("interstitial admob ",sa);
+        }).catch((err)=>{
+          console.log("interstitial err admob ",err);
+        });
+      },3000)
+ 
       this.handle_events()
     })
     
