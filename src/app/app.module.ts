@@ -47,6 +47,7 @@ import { AdmobProvider } from '../providers/admob/admob';
 import { Appsflyer } from '@ionic-native/appsflyer';
 import { GoogleAnalytics } from '@ionic-native/google-analytics';
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
+import { Globalization } from '@ionic-native/globalization';
 
 
 const firebaseConfig = {
@@ -115,7 +116,8 @@ export function createTranslateLoader(http: HttpClient) {
     AdmobProvider,
     AdMobFree,
     Appsflyer,
-    GoogleAnalytics
+    GoogleAnalytics,
+    Globalization 
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

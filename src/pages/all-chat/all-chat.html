@@ -34,15 +34,24 @@
             </ion-grid>
 
           </div>
-          <div style="font-size:14px;font-weight: 300;">
+          <div *ngIf="comment.translated_txt == undefined" style="font-size:14px;font-weight: 300;">
             {{comment.txt}}
           </div>
 
+          <div *ngIf="comment.translated_txt != undefined" style="font-size:14px;font-weight: 300;">
+              {{comment.translated_txt}}
+            </div>
+
+
           <div style="padding-top: 5px;text-align: end;">
-            <span (click)="translate(comment)">
+            <span  *ngIf="comment.translated_txt == undefined && authData.isFinishRegistration" (click)="translate(comment)" style="color: #7c7c7c;">
               Translate
             </span>
-            <span  *ngIf="comment.user_id != authData.user._id" (click)="reply(comment)" style="font-size:14px;font-weight: 500;color:#6ae5f5">
+            <span  *ngIf="comment.translated_txt != undefined" (click)="see_original(comment)" style="color: #7c7c7c;">
+                See Original
+              </span>
+
+            <span  *ngIf="comment.user_id != authData.user._id" (click)="reply(comment)" style="font-size:14px;font-weight: 500;color:#12a6f9;">
               Reply
             </span>
 

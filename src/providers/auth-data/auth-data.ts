@@ -6,6 +6,7 @@ import { Facebook } from '@ionic-native/facebook';
 import { GooglePlus } from '@ionic-native/google-plus';
 import firebase from 'firebase';
 import { CountryModel } from '../../models/country-model';
+import { Globalization } from '@ionic-native/globalization';
 
 
 
@@ -20,13 +21,25 @@ export class AuthDataProvider {
   user: Profile = new Profile();
   platform: any = "browser";
   idToken: any;
+  global_language: string = "";
   constructor(
+    private globalization: Globalization,
     private googlePlus: GooglePlus,
     public facebook: Facebook,
     public modalCtrl: ModalController,
     public http: HttpClient,
     public plt: Platform
   ) {
+    this.plt.ready().then(()=>{
+      this.globalization.getPreferredLanguage()
+      .then(res => {
+        this.global_language = res.value.split("-")[0]
+      })
+      .catch(e => {
+        this.global_language = "en";
+        console.log("e",e)});
+    })
+
     console.log("constructor AuthDataProvider");
   }
   /* from here I used these functions */

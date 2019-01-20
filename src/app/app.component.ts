@@ -12,6 +12,7 @@ import { Storage } from '@ionic/storage';
 import { Firebase } from '@ionic-native/firebase';
 import { TrackProvider } from '../providers/track/track';
 import { Appsflyer, AppsflyerOptions } from '@ionic-native/appsflyer';
+import { Globalization } from '@ionic-native/globalization';
 
 @Component({
   templateUrl: 'app.html'
@@ -24,6 +25,7 @@ export class MyApp {
   _id: string;
 
   constructor(
+    private globalization: Globalization,
     public app:App,
     private appsflyer: Appsflyer,
     public zone: NgZone,
@@ -67,6 +69,7 @@ export class MyApp {
         this.platform.ready().then(() => {
           if (this.platform.is("cordova")) {
             this.track.setUserId(this._id);
+         
             const appsflyerOptions: AppsflyerOptions = {
               devKey: "SmETXRWQwsJVhLhWbBBfn",
               onInstallConversionDataListener: true

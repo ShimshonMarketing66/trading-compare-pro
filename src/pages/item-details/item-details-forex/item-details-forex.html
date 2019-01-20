@@ -1,16 +1,20 @@
 
 
-<ion-header id="header_forex" (click)="foo()">
+<ion-header *ngIf="orientation_mode == 'portrait'" mode="ios" id="header_forex">
 
-  <ion-navbar>
-    <ion-title>{{item.pair}}</ion-title>
-  </ion-navbar>
+  <ion-navbar mode="ios" hideBackButton="true">
+      <button  mode="ios"  (click)="navCtrl.pop();" style="color: white;background: transparent;">
+           <ion-icon  name="arrow-back"> Back</ion-icon>
+       </button>   
+   <ion-title mode="ios">{{item.pair}}</ion-title>
+ </ion-navbar>
+
 
 </ion-header>
 
 <ion-content [style.top]="header_forex?'0px':'-40px'" #content_detail>
 
-  <ion-grid style="padding:16px;">
+  <ion-grid *ngIf="orientation_mode == 'portrait'" style="padding:16px;">
     <ion-row>
       <ion-col col-3>
         <img src="{{item.logo}}" style="width: 60px;height: 60px;border-radius: 50px;" alt="example">
@@ -45,7 +49,7 @@
   </ion-grid>
 
 
-  <div style="display: inline-flex;padding:16px;width: 100%;padding-top: unset;">
+  <div *ngIf="orientation_mode == 'portrait'" style="display: inline-flex;padding:16px;width: 100%;padding-top: unset;">
     <span (click)="change_sentiment('BULLISH')" [ngClass]="item.sentiment == 'BULLISH' && item.status == 'OPEN' ? 'bullish-active' : 'bullish-disable'">
       BULLISH
     </span>
@@ -64,7 +68,7 @@
   </div>
 
 
-  <div class="container" style="position: sticky;top: 0;z-index:1000;background: #2b2b2b;">
+  <div *ngIf="orientation_mode == 'portrait'" class="container" style="position: sticky;top: 0;z-index:1000;background: #2b2b2b;">
       <table>
         <thead>
           <tr>
@@ -110,14 +114,28 @@
                   </ion-grid>
   
                 </div>
-                <div style="font-size:14px;font-weight: 300;">
-                  {{comment.txt}}
-                </div>
-                <div style="padding-top: 5px;text-align: end;">
-                  <div *ngIf="comment.user_id != authData.user._id" (click)="reply(comment)" style="font-size:14px;font-weight: 500;color:#6ae5f5">
-                    Reply
+                <div *ngIf="comment.translated_txt == undefined" style="font-size:14px;font-weight: 300;">
+                    {{comment.txt}}
                   </div>
+    
+                  
+              <div *ngIf="comment.translated_txt != undefined" style="font-size:14px;font-weight: 300;">
+                  {{comment.translated_txt}}
                 </div>
+    
+    
+                  <div style="padding-top: 5px;text-align: end;">
+      <span  *ngIf="comment.translated_txt == undefined && authData.isFinishRegistration" (click)="translate(comment)" style="color: #7c7c7c;">
+                  Translate
+                </span>
+                <span  *ngIf="comment.translated_txt != undefined" (click)="see_original(comment)" style="color: #7c7c7c;">
+                    See Original
+                  </span>
+    
+                <span  *ngIf="comment.user_id != authData.user._id" (click)="reply(comment)" style="font-size:14px;font-weight: 500;color:#12a6f9;">
+                  Reply
+                </span>
+                  </div>
               </div>
             </ion-col>
           </ion-row>
@@ -148,10 +166,10 @@
     </div>
 
     <div *ngSwitchCase="'CHART'">
-      <div style="height:350px; position: relative !important;">
-        <chart-ui [symbol]="symbol_chart" [exchDisp]="'none'" [group]="'forex'" class="ciq-night"></chart-ui>
+        <div  style="position: relative !important; width: 100%" [style.height]="height_screen-(orientation_mode=='portrait'?250:0)+'px'">
+          <chart-ui #chart_ui [orientation_mode]="orientation_mode" [symbol]="symbol_chart" [exchDisp]="'none'" [group]="'forex'" class="ciq-night" class="ciq-night"></chart-ui>
+        </div>
       </div>
-    </div>
 
     <div *ngSwitchCase="'SOCIAL'" style="padding:16px;">
       <ion-grid>

@@ -29,8 +29,8 @@ export class ItemDetailsStockPage {
   @ViewChild("chart_ui") chart_ui: ChartUI;
   @ViewChild("content_detail") content_detail: Content;
   @ViewChild("myInput") myInput;
-  height_screen =  window.screen.height;
-  orientation_mode="portrait"
+  height_screen = window.screen.height;
+  orientation_mode = "portrait"
   is_on_bottom = true;
   message: string = "";
   item: any;
@@ -51,7 +51,7 @@ export class ItemDetailsStockPage {
   news: any = [];
   country: string;
   constructor(
-    public platform:Platform,
+    public platform: Platform,
     private screenOrientation: ScreenOrientation,
     public socialSharing: SocialSharing,
     public track: TrackProvider,
@@ -77,7 +77,7 @@ export class ItemDetailsStockPage {
     this.globalProvider.get_sentiment_by_symbol(symbol).then((data) => {
       this.sentiment = data;
     })
-    
+
 
     this.admob.showBanner();
     track.log_screen("item-details-stock-" + symbol);
@@ -90,7 +90,7 @@ export class ItemDetailsStockPage {
     this.header_stock = true;
     this.admob.showBanner();
   }
-  open_broker(){
+  open_broker() {
     window.open(this.globalProvider.sponcer.link);
   }
   foodd() {
@@ -111,11 +111,13 @@ export class ItemDetailsStockPage {
     this.item = this.navParams.get("item");
     if (this.item == undefined) {
       await this.get_item();
-    } 
+    }
     if (this.navParams.get("primary_key") == undefined) {
       this.selectedSegment = "CHART";
-      this.screenOrientation.unlock();
-    }else{
+      if (this.platform.is("cordova")) {
+        this.screenOrientation.unlock();
+      }
+    } else {
       this.selectedSegment = "CHAT";
     }
 
@@ -126,7 +128,7 @@ export class ItemDetailsStockPage {
     this.exchDisp = 'none';
     this.group = "stock";
     this.country = this.item.country
-    
+
     this.height = window.screen.height;
     this.globalProvider.get_comments(this.symbol).then((data) => {
       for (let index = 0; index < data.length; index++) {
@@ -191,7 +193,7 @@ export class ItemDetailsStockPage {
 
   foo() {
     console.log("foo");
-    
+
     this.admob.showInterstitial();
     // this.scrollTo(571)
   }
@@ -246,25 +248,30 @@ export class ItemDetailsStockPage {
       case "CHAT":
         this.selectedSegment = "CHAT";
         if (this.platform.is("cordova")) {
-           this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT)
-        }      
-          break;
+          this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT)
+        }
+        break;
       case "OVERVIEW":
         this.selectedSegment = "OVERVIEW";
-        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT)
-        break;
+        if (this.platform.is("cordova")) {
+          this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT)
+        }        break;
       case "CHART":
         this.selectedSegment = "CHART";
-        this.screenOrientation.unlock();
+        if (this.platform.is("cordova")) {
+          this.screenOrientation.unlock();
+        }  
         break;
       case "SOCIAL":
         this.selectedSegment = "SOCIAL";
-        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT)
-        break;
+        if (this.platform.is("cordova")) {
+          this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT)
+        }        break;
       case "NEWS":
         this.selectedSegment = "NEWS";
-        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT)
-        break;
+        if (this.platform.is("cordova")) {
+          this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT)
+        }        break;
       default:
         break;
     }
@@ -328,7 +335,7 @@ export class ItemDetailsStockPage {
           duration: 2000
         })
         toast.present();
-        this.globalProvider.add_sentiment(this.item.symbol, type, this.item.type, this.item.price,"item-details-stock")
+        this.globalProvider.add_sentiment(this.item.symbol, type, this.item.type, this.item.price, "item-details-stock")
           .then(() => {
 
           })
@@ -362,27 +369,27 @@ export class ItemDetailsStockPage {
 
   open_alert(comment) {
     var buttons = [
-    //   {
-    //   text: 'Share',
-    //   handler: () => {
-    //     this.openShareModal(comment);
-    //   }
-    // }
-    // , 
-    {
-      text: 'Copy',
-      handler: () => {
-        this.clipboard.copy(comment.txt).then(() => {
-          let toast = this.toastCtrl.create({
-            message: 'Message Copied!',
-            duration: 1500,
-            position: 'bottom'
-          });
-          toast.present();
-        })
+      //   {
+      //   text: 'Share',
+      //   handler: () => {
+      //     this.openShareModal(comment);
+      //   }
+      // }
+      // , 
+      {
+        text: 'Copy',
+        handler: () => {
+          this.clipboard.copy(comment.txt).then(() => {
+            let toast = this.toastCtrl.create({
+              message: 'Message Copied!',
+              duration: 1500,
+              position: 'bottom'
+            });
+            toast.present();
+          })
 
-      }
-    }];
+        }
+      }];
     if (comment.user_id == this.authData.user._id && comment.primary_key != undefined && comment.primary_key != null && comment.primary_key !== "") {
       buttons.push({
         text: 'Delete',
@@ -391,9 +398,9 @@ export class ItemDetailsStockPage {
             if (this.comments[index].primary_key == comment.primary_key) {
               this.comments.splice(index, 1);
               let toast = this.toastCtrl.create({
-                message: 'Message Copied!',
+                message: 'Message Deleted!',
                 duration: 1500,
-                position: 'middle'
+                position: 'bottom'
               });
               toast.present();
             }
@@ -429,8 +436,8 @@ export class ItemDetailsStockPage {
         break;
     }
     // this.socialSharing.shareVia(app_id,this.navParams.get("comment").txt,this.navParams.get("comment").symbol,img,)
-    this.socialSharing.share("Check out this message on Trading Compare! https://tradingcompare.com/stock/INTC", "Trading Compare", img ).then((data) => {
-    // this.socialSharing.shareViaWhatsApp("Check out this message on Trading Compare! ", img, "tradingcompare://"  + symbol_type + "/" + symbol)
+    this.socialSharing.share("Check out this message on Trading Compare! https://tradingcompare.com/stock/INTC", "Trading Compare", img).then((data) => {
+      // this.socialSharing.shareViaWhatsApp("Check out this message on Trading Compare! ", img, "tradingcompare://"  + symbol_type + "/" + symbol)
 
     })
   }
@@ -464,14 +471,14 @@ export class ItemDetailsStockPage {
     this.message = '';
   }
 
-   async ionViewWillLeave() {
+  async ionViewWillLeave() {
     // Unregister the custom back button action for this page
     this.admob.hideBanner();
     this.socket.disconnect();
     if (this.platform.is("cordova")) {
       await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT)
     }
-}
+  }
 
 
 
@@ -490,32 +497,34 @@ export class ItemDetailsStockPage {
         }
       })
     });
-    this.screenOrientation.unlock();
+  
     this.screenOrientation.onChange().subscribe((data) => {
-          console.log("Orientation Changed",this.screenOrientation.type);
-          if (this.screenOrientation.type.indexOf("portrait") > -1) {
-            this.orientation_mode = "portrait";
-            this.chart_ui.clearStudies()
-            this.height_screen =  window.screen.height;
-          }else{
-            this.height_screen =  window.screen.height;
-            this.orientation_mode = "landscape";
-            if (document.getElementById("ciq-chart-area-for-lanscape-mode").style != undefined) {
-              console.log("aaaa");
-         
-              document.getElementById("ciq-chart-area-for-lanscape-mode").style.height="88%"
-            }
-         
-         
-            if (document.getElementsByTagName("canvas")[0] != undefined) {
-              console.log("bbbb");
-         
-              document.getElementsByTagName("canvas")[0].style.height = "100%"
-            }
+      console.log("Orientation Changed", this.screenOrientation.type);
+      this.zone.run(()=>{
+        if (this.screenOrientation.type.indexOf("portrait") > -1) {
+          this.orientation_mode = "portrait";
+          this.chart_ui.clearStudies();
+          this.chart_ui.changeChartType({
+            type: 'mountain',
+            label: 'mountain',
+          })
+          this.height_screen = window.screen.height;
+          document.getElementById("ciq-chart-area-for-lanscape-mode").style.height = "70%";
+        } else {
+  
+          this.height_screen = window.screen.height;
+          this.orientation_mode = "landscape";
+          if (document.getElementById("ciq-chart-area-for-lanscape-mode").style != undefined) {
+            document.getElementById("ciq-chart-area-for-lanscape-mode").style.height = "83%";
           }
-          
-      }
-   );
+  
+  
+          if (document.getElementsByTagName("canvas")[0] != undefined) {
+            document.getElementsByTagName("canvas")[0].style.height = "100%"
+          }
+        }
+      })
+    });
 
   }
 
@@ -539,6 +548,31 @@ export class ItemDetailsStockPage {
     } else {
       this.navCtrl.push('profile', { user: comment })
     }
+  }
+
+  translate(comment){
+    if (comment.translated_txt_tmp == undefined) {
+      this.globalProvider.loading("traslate text...")
+      this.globalProvider.translate(comment.txt.replace(/´/g, "'")).then((data)=>{
+        comment["translated_txt_tmp"] = data;
+        comment["translated_txt"] = data;
+        this.globalProvider.dismiss_loading();
+      }).catch((err)=>{
+       console.log("err",err);
+   
+      })
+    }else{
+      comment.translated_txt = comment.translated_txt_tmp
+    }
+  
+    this.track.log_event("translate",{
+      screen:"all-chat-page",
+      comment_id:comment.primary_key
+    })
+    
+  }
+  see_original(comment){
+    comment["translated_txt"] = undefined;
   }
 
 

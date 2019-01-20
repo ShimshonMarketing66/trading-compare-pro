@@ -1,12 +1,5 @@
 <ion-header *ngIf="orientation_mode == 'portrait'" mode="ios" id="header_stock">
 
-    <!-- <ion-toolbar>
-        <button ion-button clear large (click)="navCtrl.pop();" style="color: white;">
-            <ion-icon  name="arrow-back"> Back</ion-icon>
-        </button>
-        <ion-title>{{item?.name}}</ion-title>
-      </ion-toolbar> -->
-
   <ion-navbar mode="ios" hideBackButton="true">
        <button  mode="ios"  (click)="navCtrl.pop();" style="color: white;background: transparent;">
             <ion-icon  name="arrow-back"> Back</ion-icon>
@@ -120,16 +113,27 @@
                 </ion-grid>
 
               </div>
-              <div style="font-size:14px;font-weight: 300;">
+              <div *ngIf="comment.translated_txt == undefined" style="font-size:14px;font-weight: 300;">
                 {{comment.txt}}
               </div>
 
+              
+          <div *ngIf="comment.translated_txt != undefined" style="font-size:14px;font-weight: 300;">
+              {{comment.translated_txt}}
+            </div>
+
+
               <div style="padding-top: 5px;text-align: end;">
+  <span  *ngIf="comment.translated_txt == undefined && authData.isFinishRegistration" (click)="translate(comment)" style="color: #7c7c7c;">
+              Translate
+            </span>
+            <span  *ngIf="comment.translated_txt != undefined" (click)="see_original(comment)" style="color: #7c7c7c;">
+                See Original
+              </span>
 
-                <div *ngIf="comment.user_id != authData.user._id" (click)="reply(comment)" style="font-size:14px;font-weight: 500;color:#6ae5f5">
-                  Reply
-                </div>
-
+            <span  *ngIf="comment.user_id != authData.user._id" (click)="reply(comment)" style="font-size:14px;font-weight: 500;color:#12a6f9;">
+              Reply
+            </span>
               </div>
             </div>
           </ion-col>
@@ -163,7 +167,7 @@
     </div>
 
     <div *ngSwitchCase="'CHART'">
-      <div  style=" position: relative !important; width: 100%" [style.height]="height_screen-(orientation_mode=='portrait'?200:0)+'px'">
+      <div  style=" position: relative !important; width: 100%" [style.height]="height_screen-(orientation_mode=='portrait'?250:0)+'px'">
         <chart-ui #chart_ui [orientation_mode]="orientation_mode" [symbol]="symbol" [exchDisp]="'none'" [group]="'stock'" [country]="country" class="ciq-night"></chart-ui>
       </div>
 

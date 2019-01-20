@@ -30,7 +30,7 @@ export class ChartComponent implements OnInit {
 
   ngOnInit() {    
     this.CIQ = CIQ;
-    this.ciq = new CIQ.ChartEngine({ container: $$$("#chartContainer"),layout:{"chartType": "mountain"}});
+    this.ciq = new CIQ.ChartEngine({ container: $$$("#chartContainer"),allowZoom:false,axisBorders:false,layout:{"chartType": "mountain"}});
     this.ciq.setPeriodicityV2(1, 60);
     this.chartService.attachQuoteFeed(this.ciq);
 

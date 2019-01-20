@@ -37,6 +37,8 @@ export class GlobalProvider {
     public forexProvider: ForexProvider,
     public authData: AuthDataProvider
     ) {
+
+      
       this.get_sponcer()
       
   }
@@ -60,6 +62,17 @@ export class GlobalProvider {
 
   get_last_activity(): Promise<any> {
    return this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/last-activity",{}).toPromise();
+  }
+
+  translate(m_str):Promise<any>{
+
+    let a = {
+      txt:m_str,
+      idToken : this.authData.idToken,
+      language:this.authData.global_language
+    }
+    console.log(a);
+      return this.http.post("https://xosignals.herokuapp.com/trading-compare-v2/translate",a).toPromise()
   }
 
   

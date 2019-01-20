@@ -144,6 +144,7 @@
     <plugin name="cordova-plugin-firebase" spec="^2.0.5" />
     <plugin name="cordova-plugin-apprate" spec="^1.4.0" />
     <plugin name="cordova-plugin-screen-orientation" spec="3.0.1" />
+    <plugin name="cordova-plugin-globalization" spec="^1.11.0" />
     <engine name="ios" spec="4.5.5" />
     <engine name="android" spec="7.1.1" />
 </widget>

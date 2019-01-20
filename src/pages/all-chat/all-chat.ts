@@ -301,8 +301,28 @@ console.log("https://localhost:5000");
   }
 
   translate(comment){
-    console.log(comment);
+    if (comment.translated_txt_tmp == undefined) {
+      this.globalProvider.loading("traslate text...")
+      this.globalProvider.translate(comment.txt.replace(/´/g, "'")).then((data)=>{
+        comment["translated_txt_tmp"] = data;
+        comment["translated_txt"] = data;
+        this.globalProvider.dismiss_loading();
+      }).catch((err)=>{
+       console.log("err",err);
+   
+      })
+    }else{
+      comment.translated_txt = comment.translated_txt_tmp
+    }
+  
+    this.track.log_event("translate",{
+      screen:"all-chat-page",
+      comment_id:comment.primary_key
+    })
     
+  }
+  see_original(comment){
+    comment["translated_txt"] = undefined;
   }
 
 

@@ -1,5 +1,5 @@
 import { Component, ViewChild, NgZone, HostListener } from '@angular/core';
-import { IonicPage, NavController, NavParams, Content, AlertController, ToastController, ModalController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Content, AlertController, ToastController, ModalController, Platform } from 'ionic-angular';
 
 import { Http } from '@angular/http';
 import { GlobalProvider } from '../../../providers/global/global';
@@ -11,6 +11,9 @@ import { Clipboard } from '@ionic-native/clipboard';
 import { TrackProvider } from '../../../providers/track/track';
 import { ForexProvider } from '../../../providers/forex/forex';
 import { AdmobProvider } from '../../../providers/admob/admob';
+import { ScreenOrientation } from '@ionic-native/screen-orientation';
+import { ChartUI } from '../../../components/chartIQ/ui_component/ui.component';
+
 
 @IonicPage({
   name: "item-details-forex"
@@ -25,6 +28,9 @@ import { AdmobProvider } from '../../../providers/admob/admob';
 export class ItemDetailsForexPage {
   @ViewChild("content_detail") content_detail: Content;
   @ViewChild("myInput") myInput;
+  @ViewChild("chart_ui") chart_ui: ChartUI;
+  height_screen = window.screen.height;
+  orientation_mode = "portrait";
 
 
   is_on_bottom = true;
@@ -48,7 +54,10 @@ sentiment:any;
   symbol_chart: string;
 
 
-  constructor( public track:TrackProvider,
+  constructor( 
+    public platform: Platform,
+    private screenOrientation: ScreenOrientation,
+    public track:TrackProvider,
     public admob:AdmobProvider,
     public modalCrl:ModalController,
     private toastCtrl: ToastController,
@@ -227,18 +236,33 @@ sentiment:any;
     switch (segment) {
       case "CHAT":
         this.selectedSegment = "CHAT";
+        if (this.platform.is("cordova")) {
+          this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT)
+        }
         break;
       case "OVERVIEW":
         this.selectedSegment = "OVERVIEW";
+        if (this.platform.is("cordova")) {
+          this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT)
+        }
         break;
       case "CHART":
         this.selectedSegment = "CHART";
+        if (this.platform.is("cordova")) {
+          this.screenOrientation.unlock()
+        }
         break;
       case "SOCIAL":
         this.selectedSegment = "SOCIAL";
+        if (this.platform.is("cordova")) {
+          this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT)
+        }
         break;
       case "NEWS":
         this.selectedSegment = "NEWS";
+        if (this.platform.is("cordova")) {
+          this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT)
+        }
         break;
       default:
         break;
@@ -247,23 +271,6 @@ sentiment:any;
     
   }
 
-  // change_sentiment(type){
-  //   if (this.navParams.get("i") == undefined) {
-  //     if (this.item.status == "CLOSE"||this.item.sentiment == 'none') {
-  //       this.item.sentiment = type;
-  //       this.item.status = "OPEN";
-  //       this.globalProvider.add_sentiment( this.item.symbol,type,this.item.type,this.item.price)
-  //       .then(()=>{
-  
-  //       })
-  //       .catch((err)=>{
-  //         console.error(err);
-  //       })
-  //     }
-  //   }else{
-  //     this.navParams.get("change_sentiment")(type,this.navParams.get("i"),undefined,this.navParams.get('that'))
-  //   }
-  // }
 
   change_sentiment(type) {
     
@@ -358,9 +365,9 @@ sentiment:any;
             if (this.comments[index].primary_key == comment.primary_key) {
               this.comments.splice(index, 1);
               let toast = this.toastCtrl.create({
-                message: 'Message Copied!',
+                message: 'Message Deleted!',
                 duration: 1500,
-                position: 'middle'
+                position: 'bottom'
               });
               toast.present();
             }
@@ -419,9 +426,12 @@ sentiment:any;
     this.message = '';
   }
 
-  ionViewDidLeave() {
+  async ionViewWillLeave() {
     this.admob.hideBanner();
     this.socket.disconnect();
+    if (this.platform.is("cordova")) {
+      await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT)
+    }
   }
 
   
@@ -439,6 +449,38 @@ sentiment:any;
         }
       })
     });
+
+    this.screenOrientation.onChange().subscribe((data) => {
+      console.log("Orientation Changed", this.screenOrientation.type);
+      this.zone.run(()=>{
+
+      if (this.screenOrientation.type.indexOf("portrait") > -1) {
+        this.orientation_mode = "portrait";
+        this.chart_ui.clearStudies();
+        this.chart_ui.changeChartType({
+          type: 'mountain',
+          label: 'mountain',
+        })
+        this.height_screen = window.screen.height;
+        document.getElementById("ciq-chart-area-for-lanscape-mode").style.height = "70%";
+      } else {
+
+        this.height_screen = window.screen.height;
+        this.orientation_mode = "landscape";
+        if (document.getElementById("ciq-chart-area-for-lanscape-mode").style != undefined) {
+          document.getElementById("ciq-chart-area-for-lanscape-mode").style.height = "83%";
+        }
+
+
+        if (document.getElementsByTagName("canvas")[0] != undefined) {
+          document.getElementsByTagName("canvas")[0].style.height = "100%"
+        }
+      }
+
+    });
+  });
+
+
   }
 
   scroll_up() {
@@ -474,6 +516,31 @@ sentiment:any;
     } else {
       this.navCtrl.push('profile', { user: comment })
     }
+  }
+
+  translate(comment){
+    if (comment.translated_txt_tmp == undefined) {
+      this.globalProvider.loading("traslate text...")
+      this.globalProvider.translate(comment.txt.replace(/´/g, "'")).then((data)=>{
+        comment["translated_txt_tmp"] = data;
+        comment["translated_txt"] = data;
+        this.globalProvider.dismiss_loading();
+      }).catch((err)=>{
+       console.log("err",err);
+   
+      })
+    }else{
+      comment.translated_txt = comment.translated_txt_tmp
+    }
+  
+    this.track.log_event("translate",{
+      screen:"all-chat-page",
+      comment_id:comment.primary_key
+    })
+    
+  }
+  see_original(comment){
+    comment["translated_txt"] = undefined;
   }
 
   
