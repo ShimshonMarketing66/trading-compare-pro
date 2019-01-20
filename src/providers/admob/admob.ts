@@ -23,10 +23,12 @@ export class AdmobProvider {
         autoShow: false,
         id:admobid.banner
       };
+
+      let is_android = this.platform.is("android");
   
       const interstitialConfig: AdMobFreeInterstitialConfig = {
         isTesting: false,
-        autoShow: true,
+        autoShow: is_android,
         id:admobid.interstitial
       };
   
@@ -60,14 +62,14 @@ export class AdmobProvider {
   }
 
   showBanner(){
-    if (this.global.authData.platform == "browser" ||  !this.canshow) {
+    if (this.global.authData.platform == "browser" ||  !this.canshow || this.platform.is("ios")) {
       return;
     }
     this.admobFree.banner.show();
   }
 
   hideBanner(){
-    if (this.global.authData.platform == "browser" || !this.canshow ) {
+    if (this.global.authData.platform == "browser" || !this.canshow  || this.platform.is("ios")) {
       return;
     }
     this.admobFree.banner.hide();

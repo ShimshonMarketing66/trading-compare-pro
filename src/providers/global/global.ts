@@ -443,7 +443,7 @@ export class GlobalProvider {
 
  
 
-    if (this.authData.user.watchlist.length + 1 > 10 && this.authData.user.state == "unknown") {
+    if (this.authData.user.watchlist.length + 1 > 25 && this.authData.user.state == "unknown") {
 
       let alert = this.alertCtrl.create({
         title: 'Your watchlist is full.',
