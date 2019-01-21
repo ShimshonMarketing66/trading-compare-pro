@@ -76,7 +76,7 @@ export class AdmobProvider {
   }
 
   showInterstitial(): any {
-    if (this.global.authData.platform == "browser"|| !this.canshow) {
+    if (this.global.authData.platform == "browser"|| !this.canshow || this.platform.is("ios")) {
       return;
     }
     this.admobFree.interstitial.show();
