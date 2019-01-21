@@ -13,6 +13,9 @@
         <ion-segment-button mode="md" value="SENTIMENTS">
          TOP TRADERS
         </ion-segment-button>
+        <ion-segment-button mode="md" value="most_followed">
+          MOST FOLLOWED
+      </ion-segment-button>
         <ion-segment-button mode="md" value="ALL">
             ALL USERS
         </ion-segment-button>
@@ -51,6 +54,51 @@
     </ion-row>
   </ion-grid>
 
+  <ion-grid *ngIf="MODE=='most_followed'">
+    <ion-row style="background: #373737;position: sticky;top: 0;">
+      <ion-col col-1 style="text-align: center;margin:auto;">
+       
+      </ion-col>
+      <ion-col col-2>
+       
+      </ion-col>
+      <ion-col style="margin:auto;">
+        <!-- Username -->
+      </ion-col>
+      <!-- <ion-col style="text-align: right;padding-right: 10px;margin:auto;">
+        Profit
+      </ion-col> -->
+    </ion-row>
+    <ion-row *ngFor="let user of most_followed;let i = index;" style="padding: 6px;" (click)="go_to_user_page(user)">
+      <ion-col col-1 style="text-align: center;margin:auto;">
+        {{i+1}}
+      </ion-col>
+      <ion-col col-2>
+        <img style="max-height: 30px;" [src]="'assets/imgs/flags/'+user.country_followed+'.png'">
+      </ion-col>
+      <ion-col *ngIf="user?.user_followed!=authData.user._id" style="margin:auto;">
+        {{user?.nickname_followed}}
+      </ion-col>
+      <ion-col *ngIf="user?.user_followed==authData.user._id" style="margin:auto;">
+        {{user?.nickname_followed}} (You!)
+      </ion-col>
+
+      <ion-col *ngIf="user.user_followed!=authData.user._id" style="text-align: right;">
+        <button *ngIf="user.is_in_my_following" (click)="remove_follow_other(user,$event)" ion-button style="width: 35px;background: #12a6f9;height: 30px;">
+          <ion-icon name="check-v"></ion-icon>
+        </button>
+        <button  *ngIf="!user.is_in_my_following" (click)="add_follow_other(user,$event)" ion-button style="background: transparent;height: 30px;border: 1px solid #12a6f9;width: 76px;">
+          FOLLOW
+        </button>
+        
+      </ion-col>
+    
+     
+    </ion-row>
+  </ion-grid>
+
+  
+
 
 
   <ion-grid *ngIf="MODE=='ALL'">
@@ -62,7 +110,7 @@
          
         </ion-col>
         <ion-col style="margin:auto;">
-          Username
+          <!-- Username -->
         </ion-col>
         <!-- <ion-col style="text-align: right;padding-right: 10px;margin:auto;">
           Profit

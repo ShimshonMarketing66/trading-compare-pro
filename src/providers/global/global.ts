@@ -24,6 +24,7 @@ export class GlobalProvider {
     link:string
   }
   loading_currently_showing =  false;
+  totalMarketcap : number = 0;
   constructor
     (
       public track:TrackProvider,
@@ -40,7 +41,13 @@ export class GlobalProvider {
 
       
       this.get_sponcer()
-      
+      this.get_market_cap()
+  }
+
+  get_market_cap(){
+    this.http.get("http://afternoon-mountain-15657.herokuapp.com/api/getMarketcap").toPromise().then((data:any)=>{
+      this.totalMarketcap = data.totalMarketcap;
+    })
   }
 
   async get_sponcer(){
@@ -313,6 +320,11 @@ export class GlobalProvider {
   get_all_users(): Promise<any> {
     return this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/get-users").toPromise()
   }
+
+  get_most_followed(): Promise<any> {
+    return this.http.get("https://xosignals.herokuapp.com/trading-compare-v2/most-followed-users").toPromise()
+  }
+
 
   initialProviders(): Promise<any> {
     return new Promise((resolve) => {

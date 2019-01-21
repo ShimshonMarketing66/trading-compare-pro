@@ -288,6 +288,7 @@
     </div>
 
     <div *ngSwitchCase="CRYPTO">
+      <div style="padding-left: 11px;border-bottom: 1px solid #4a4a4a;">Total Market Cap : {{globalProvider.totalMarketcap}}</div>
       <div *ngIf="modeView=='LINES'">
         <ion-grid>
           <ion-row style="border-bottom: 1px solid #4a4a4a;height: 40px;" *ngFor="let crypto of cryptoProvider.cryptos;let i = index;"
